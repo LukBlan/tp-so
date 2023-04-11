@@ -4,6 +4,7 @@
  *  Created on: Apr 11, 2023
  *      Author: utnso
  */
+#include <socket/cliente.h>
 int crear_conexion_servidor(char *ip, char* puerto)
 {
 	struct addrinfo hints;

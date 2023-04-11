@@ -5,29 +5,27 @@
 #include <socket/socket.h>
 
 /**
- * @brief Crea una conexión con un servidor específico.
- *
- * @param ip IP del servidor.
- * @param puerto Puerto del servidor.
- *
+ * @resumen Crea una conexión con un servidor.
+ * @parametros  IP del servidor.
+ * @parametros  Puerto del servidor.
  * @return Socket del cliente.
  */
 int crear_conexion_servidor(char *ip, char *puerto);
 
 /**
- * @brief Libera la conexión con el servidor.
+ * @resumen Libera la conexión con el servidor.
  *
- * @param socketCliente Socket del cliente.
+ * @parametros socketCliente Socket del cliente.
  */
 void liberar_conexion_servidor(int socketCliente);
 
 /**
- * @brief Termina un programa "destruyendo" los parámetros (liberando espacio).
+ * @resumen Termina un programa liberando parametros.
  *
- * @param socket Socket conectado al servidor.
- * @param config Configuración.
- * @param logger Logger.
+ * @param socket .
+ * @param config.
+ * @param logger.
  */
-void terminar_programa(int socket, Config *config, Logger *logger);
+void terminar_programa(int socket, t_config *config, t_log *logger);
 
 #endif

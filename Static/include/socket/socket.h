@@ -13,6 +13,7 @@
 
 #include <commons/log.h>
 #include <commons/config.h>
+#include <socket/log.h>
 
 
 #endif

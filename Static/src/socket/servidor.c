@@ -4,7 +4,8 @@
  *  Created on: Apr 11, 2023
  *      Author: utnso
  */
-int iniciar_servidor(void)
+#include <socket/servidor.h>
+int iniciar_servidor(char *IP,char *PUERTO)
 {
 	// Quitar esta línea cuando hayamos terminado de implementar la funcion
 	//assert(!"no implementado!");

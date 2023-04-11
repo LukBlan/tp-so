@@ -1,13 +1,6 @@
-/*
- * log.h
- *
- *  Created on: Apr 11, 2023
- *      Author: utnso
- */
-
-#ifndef INCLUDE_SOCKET_LOG_H_
-#define INCLUDE_SOCKET_LOG_H_
-
-
-
-#endif /* INCLUDE_SOCKET_LOG_H_ */
+#ifndef LOG_H
+#define LOG_H
+typedef t_config Config;
+typedef t_list Lista;
+typedef t_log Logger;
+#endif
