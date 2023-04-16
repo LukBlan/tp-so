@@ -45,11 +45,11 @@ void liberar_conexion_servidor(int socket_cliente)
 	close(socket_cliente);
 }
 
-void terminar_programa(int conexion, t_log* logger, t_config* config)
+void terminar_programa(int conexion, t_config* config, t_log* logger)
 {
 	log_destroy(logger);
 	config_destroy(config);
-	liberar_conexion(conexion);
+	liberar_conexion_servidor(conexion);
 
 }
 
