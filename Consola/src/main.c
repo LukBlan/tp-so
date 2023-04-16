@@ -4,8 +4,6 @@
  *  Created on: Apr 11, 2023
  *      Author: utnso
  */
-#include <stdio.h>
-#include <stdlib.h>
 #include <consola_utils.h>
 #include <commons/log.h>
 
@@ -24,7 +22,7 @@ int main(int argc, char *argv[])
    }
 
    log_info(logger, "Conexión exitosa. Iniciando cliente...");
-
+   handshake_cliente(socket_kernel);
 
 }
 
