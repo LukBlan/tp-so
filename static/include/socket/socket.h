@@ -1,6 +1,7 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
+#include <estructuras.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>

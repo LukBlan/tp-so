@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 	  exit(EXIT_FAILURE);
   }
   configuracion_consola(config);
+  char *direccionPseudocodigo = argv[2];
   log_info(logger, "Conectando con el Servidor Kernel...");
    int socket_kernel = conectar_kernel();
 
@@ -27,7 +28,15 @@ int main(int argc, char *argv[])
    }
 
    log_info(logger, "Conexión exitosa. Iniciando cliente...");
-   handshake_cliente(socket_kernel);
+   //handshake_cliente(socket_kernel);
+   FILE *instrucciones = fopen (direccionPseudocodigo ,"r");
+   if(instrucciones = NULL){
+	   log_error (logger,"El archivo no se pudo abrir");
+	   exit(EXIT_FAILURE);
+   }
+   t_list *listaInstrucciones = list_create(); // reserva espacio en memoria para la lista
+   generar_lista_instrucciones (listaInstrucciones , instrucciones);
+
 
 }
 

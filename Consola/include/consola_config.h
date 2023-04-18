@@ -16,6 +16,6 @@ ConsolaConfiguracion CONSOLA_CONFIG;
  *
  @param config Configuración.
  */
-void rellenar_configuracion_consola(t_config *config);
+void configuracion_consola(t_config *config);
 
 #endif
