@@ -1,4 +1,4 @@
-#include "../include/cpu_config.h"
+#include "../include/config.h"
 #include <commons/config.h>
 #include <commons/string.h>
 

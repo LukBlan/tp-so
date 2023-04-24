@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/cpu_config.h"
+
+#include "../include/config.h"
+#include "../include/logger.h"
 
 int main(void) {
-  infoConexion infoConexionKernel = obtenerInfoDeConexion("KERNEL");
+  infoConexion infoConexionCpu = obtenerInfoDeConexion("CPU");
   infoConexion infoConexionMemoria = obtenerInfoDeConexion("MEMORIA");
-	return EXIT_SUCCESS;
+  t_log* logger = crearLogger("Cpu");
+  log_info(logger, "test");
+  log_destroy(logger);
+  return EXIT_SUCCESS;
 }
