@@ -1,13 +1,16 @@
 #include <stdlib.h>
 #include "../include/conexion.h"
+#include "../include/logger.h"
 #include <netdb.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <string.h>
 
+typedef struct addrinfo addrServer;
 
-int crearSocket(t_log* logger) {
+int crearSocket(t_log* logger, addrServer* servidor) {
 	int nuevoSocket;
-	if ((nuevoSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((socket(servidor->ai_family, servidor->ai_socktype, servidor->ai_protocol)) < 0) {
 	  log_error(logger, "No se pudo crear el socket correctamente");
 	  exit(EXIT_FAILURE);
 	}
@@ -25,24 +28,41 @@ infoConexion obtenerInfoDeConexion(char* modulo) {
   return infoConexion;
 }
 
-void conectarConModulo(int socket, char* nombreModulo) {
+int conectarConServidor(char* nombreModulo) {
+  t_log* logger= crearLogger("Test1");
   int estado;
   infoConexion infoConexion = obtenerInfoDeConexion(nombreModulo);
-  struct addrinfo* modulo = obtenerServidor(infoConexion);
-  if ((estado = connect(socket, modulo->ai_addr, modulo->ai_addrlen)) < 0) {
+  struct addrinfo* servidor = obtenerServidor(infoConexion);
+  int socketCliente = crearSocket(logger, servidor);
+  if ((estado = connect(socketCliente, servidor->ai_addr, servidor->ai_addrlen)) < 0) {
     printf("\nFallo de Conexion\n");
     exit(EXIT_FAILURE);
   }
-  freeaddrinfo(modulo);
+  freeaddrinfo(servidor);
+  //log_destroy(logger);
+  return socketCliente;
 }
 
 struct addrinfo* obtenerServidor(infoConexion infoConexion) {
   struct addrinfo hints;
   struct addrinfo *serverInfo;
-  hints.ai_family = AF_UNSPEC;
+  char* ip = infoConexion.ip;
+  char* puerto = infoConexion.puerto;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  hints.ai_protocol = 0;
-  getaddrinfo(infoConexion.ip, infoConexion.puerto, &hints, &serverInfo);
+  getaddrinfo("0.0.0.0", "35762", &hints, &serverInfo);
   return serverInfo;
+}
+
+int crearServidor(char* nombreModulo) {
+  infoConexion infoConexion = obtenerInfoDeConexion(nombreModulo);
+  struct addrinfo* servidor = obtenerServidor(infoConexion);
+  int socketServidor = crearSocket(crearLogger("Test"), servidor);
+  bind(socketServidor, servidor->ai_addr, servidor->ai_addrlen);
+  listen(socketServidor, SOMAXCONN);
+  freeaddrinfo(servidor);
+  //log_destroy(logger);
+  return socketServidor;
 }
