@@ -52,5 +52,15 @@ void terminar_programa(int conexion, t_config* config, t_log* logger)
 	liberar_conexion_servidor(conexion);
 
 }
+t_config* abrir_config(char *path)
+{
+	t_config* config;
+
+	if ((config = config_create(path)) == NULL){
+			printf("No se pudo abrir el Archivo");
+			exit (2);
+		}
+	return config;
+}
 
 

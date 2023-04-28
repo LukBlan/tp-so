@@ -9,8 +9,8 @@
 
 int main(int argc, char *argv[])
 {
-  char *direccionConfig = argv[1];
-  t_config *config = fopen(direccionConfig,"r");
+ char *direccionConfig = argv[1];
+  t_config *config = abrir_config(direccionConfig);
   t_log *logger = log_create("Consola.log", "Consola", true, LOG_LEVEL_INFO);
   if(argc!=1 && argc!=2){
 	  log_error(logger,"No se ingreso la cantidad de argumentos necesaria");
