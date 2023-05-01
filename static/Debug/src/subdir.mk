@@ -4,20 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/socket/cliente.c \
-../src/socket/servidor.c 
+../src/estrucutra.c 
 
 C_DEPS += \
-./src/socket/cliente.d \
-./src/socket/servidor.d 
+./src/estrucutra.d 
 
 OBJS += \
-./src/socket/cliente.o \
-./src/socket/servidor.o 
+./src/estrucutra.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/socket/%.o: ../src/socket/%.c src/socket/subdir.mk
+src/%.o: ../src/%.c src/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross GCC Compiler'
 	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/cliente.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/estructuras.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
@@ -25,10 +22,10 @@ src/socket/%.o: ../src/socket/%.c src/socket/subdir.mk
 	@echo ' '
 
 
-clean: clean-src-2f-socket
+clean: clean-src
 
-clean-src-2f-socket:
-	-$(RM) ./src/socket/cliente.d ./src/socket/cliente.o ./src/socket/servidor.d ./src/socket/servidor.o
+clean-src:
+	-$(RM) ./src/estrucutra.d ./src/estrucutra.o
 
-.PHONY: clean-src-2f-socket
+.PHONY: clean-src
 

@@ -36,6 +36,11 @@ int main(int argc, char *argv[])
    }
    t_list *listaInstrucciones = list_create(); // reserva espacio en memoria para la lista
    generar_lista_instrucciones (listaInstrucciones , instrucciones);
+   Paquete* paquete = crear_paquete(LINEAS_INSTRUCCION);
+   serializar_lineas_instruccion(paquete,listaInstrucciones,//tmanioProceso );
+		   ;
+   enviar_paquete(paquete,socket_kernel);
+   log_info(logger,"Enviando lista de instrucciones al servidor Kernel.");
 
 
 }

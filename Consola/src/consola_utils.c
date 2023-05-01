@@ -7,11 +7,11 @@ int conectar_kernel()
 
 void generar_lista_instrucciones (t_list *lista,FILE *archivo){
 	while (!feof(archivo)){
-		Instruccion *instruccion = leer_instruccion (archivo);
+		linea_Instruccion *instruccion = leer_instruccion (archivo);
 		agregar_instruccion (instruccion,lista);
 	}
 }
-void asignar_params(Instruccion *instruc, char **params){
+void asignar_params(linea_Instruccion *instruc, char **params){
 	instruc->identifier = strdup(params[0]);
 	instruc->parametros[0] = strdup(params[1]);
 	instruc->parametros[1] = strdup(params[2]);
@@ -19,14 +19,14 @@ void asignar_params(Instruccion *instruc, char **params){
 
 	free(*params);
 }
-void agregar_instruccion (Instruccion *instruc , t_list *lista){
+void agregar_instruccion (linea_Instruccion *instruc , t_list *lista){
 	list_add(lista,instruc);
 }
-Instruccion *leer_instruccion(FILE *arch){
+linea_Instruccion *leer_instruccion(FILE *arch){
 	char *linea = leer_linea(arch);
 	char **params = obterner_params(linea);
 
-	Instruccion instruc = malloc(sizeof(Instruccion));
+	linea_Instruccion instruc = malloc(sizeof(Instruccion));
 	asignar_params(instruc,params);
 
 	free(linea);

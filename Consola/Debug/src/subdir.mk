@@ -23,7 +23,7 @@ OBJS += \
 src/%.o: ../src/%.c src/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include" -I/home/utnso/so-commons-library -Icommons -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include/consola_config.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/socket.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	gcc -I/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include" -I/home/utnso/so-commons-library -Icommons -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include/consola_config.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/estructuras.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/socket.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

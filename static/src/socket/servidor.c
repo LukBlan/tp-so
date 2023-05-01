@@ -8,7 +8,7 @@
 uint32_t handshake;
 uint32_t resultOk = 0;
 uint32_t resultError = -1;
-t_log logger;
+t_log* logger;
 int iniciar_servidor(char *IP,char *PUERTO)
 {
 
