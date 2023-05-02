@@ -16,10 +16,13 @@ typedef enum op_code{
 	MENSAJE,
 	LINEAS_INSTRUCCION
 }op_code;
-
-typedef struct linea_Instruccion {
+union Parametro{
+	int integer;
+	char* string;
+};
+typedef struct Linea_Instruccion {
 	char *identifier;
-	int parametros[3];
+	Parametro parametros[3];
 }Linea_Instruccion;
 
 typedef struct{
@@ -31,5 +34,10 @@ typedef struct{
 	op_code codigo_operacion;
 	t_buffer* buffer;
 } Paquete;
-
+void eliminar_paquete(Paquete *paquete);
+void iniciar_buffer(Paquete *paquete);
+Paquete *crear_paquete (op_code codigoOperacion);
+void agregar_a_paquete(Paquete* paquete, void* valor, int tamanio);
+void* serializar_paquete(Paquete* paquete, int bytes);
+void enviar_paquete(Paquete* paquete, int socket_cliente);
 #endif /* INCLUDE_ESTRUCTURAS_H_ */

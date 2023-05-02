@@ -4,7 +4,7 @@
  *  Created on: May 1, 2023
  *      Author: utnso
  */
-#include <protocolo.h>
+#include <estructuras.h>
 
 void eliminar_paquete(Paquete *paquete){
 	if (paquete != NULL){
@@ -57,4 +57,18 @@ void enviar_paquete(Paquete* paquete, int socket_cliente)
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
+}
+void serializar_lista_instruc (Paquete *paquete, t_list *instrucciones){
+	int cantDeInstrucciones  = list_size(instrucciones);
+	agregar_a_paquete(paquete,&cantDeInstrucciones,sizeof(int));
+	Linea_Instruccion *linea;
+	//Mientras hay instrucciones se siguen sumando al paquete
+	for(int k=0;k<cantDeInstrucciones;k++)
+	{
+		linea = list_get(instrucciones,k);
+		agregar_a_paquete(paquete,linea->identifier,strlen(linea->identifier)+1);
+		for(int i = 0;i<=2;i++){
+		agregar_a_paquete(paquete,linea->parametros[i],sizeof(linea->parametros[i]+1));
+		}
+	}
 }

@@ -7,11 +7,11 @@ int conectar_kernel()
 
 void generar_lista_instrucciones (t_list *lista,FILE *archivo){
 	while (!feof(archivo)){
-		linea_Instruccion *instruccion = leer_instruccion (archivo);
+		Linea_Instruccion *instruccion = leer_instruccion (archivo);
 		agregar_instruccion (instruccion,lista);
 	}
 }
-void asignar_params(linea_Instruccion *instruc, char **params){
+void asignar_params(Linea_Instruccion *instruc, char **params){
 	instruc->identifier = strdup(params[0]);
 	instruc->parametros[0] = strdup(params[1]);
 	instruc->parametros[1] = strdup(params[2]);
@@ -19,14 +19,31 @@ void asignar_params(linea_Instruccion *instruc, char **params){
 
 	free(*params);
 }
-void agregar_instruccion (linea_Instruccion *instruc , t_list *lista){
+void agregar_instruccion (Linea_Instruccion *instruc , t_list *lista){
 	list_add(lista,instruc);
 }
-linea_Instruccion *leer_instruccion(FILE *arch){
-	char *linea = leer_linea(arch);
-	char **params = obterner_params(linea);
+char *leer_linea(FILE *arch){
+	char *linea = NULL;
+	int buffersize=0;
 
-	linea_Instruccion instruc = malloc(sizeof(Instruccion));
+	getline(&linea,&buffersize,arch);
+	eliminar_salto(linea);
+	return linea;
+}
+void eliminar_salto(char *linea){
+	if(linea == '\n'){
+		linea = '\0';
+	}
+}
+char **obtener_params (char *linea){
+	int cant_params =cant_params(linea);
+	char **params =
+}
+Linea_Instruccion *leer_instruccion(FILE *arch){
+	char *linea = leer_linea(arch);
+	char **params = obtener_params(linea);
+
+	Linea_Instruccion instruc = malloc(sizeof(Linea_Instruccion));
 	asignar_params(instruc,params);
 
 	free(linea);
