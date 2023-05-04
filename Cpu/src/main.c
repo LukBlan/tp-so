@@ -1,22 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include "../include/conexion.h"
-#include "../include/logger.h"
 #include <pthread.h>
+#include "../include/configuracion.h"
 
-void* aceptarClientes(void* socketServidor) {
-  int valor = *(int*)socketServidor;
-  printf("%d", valor);
-  int nuevoSocket = accept(valor, NULL, NULL);
-}
 
 int main(void) {
-  int socketServidor = crearServidor("MEMORIA");
-  pthread_t hilo;
-  pthread_create(&hilo, NULL, &aceptarClientes, &socketServidor);
-  int socketCliente = conectarConServidor("MEMORIA");
-  close(socketCliente);
+  configuracion configuracion = obtenerConfiguracion();
+  printf("%d\n", configuracion.PUERTO_ESCUCHA);
+  printf("%s\n", configuracion.IP_MEMORIA);
+  printf("%d\n", configuracion.RETARDO_INSTRUCCION);
+  printf("%d\n", configuracion.TAM_MAX_SEGMENTO);
+  printf("%d\n", configuracion.PUERTO_ESCUCHA);
   return EXIT_SUCCESS;
 }
