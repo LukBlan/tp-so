@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
    }
 
    log_info(logger, "Conexión exitosa. Iniciando cliente...");
-   //handshake_cliente(socket_kernel);
    FILE *instrucciones = fopen (direccionPseudocodigo ,"r");
    if(instrucciones = NULL){
 	   log_error (logger,"El archivo no se pudo abrir");
@@ -40,6 +39,9 @@ int main(int argc, char *argv[])
    serializar_lineas_instruccion(paquete,listaInstrucciones);
    enviar_paquete(paquete,socket_kernel);
    log_info(logger,"Enviando lista de instrucciones al servidor Kernel.");
+   //funcion para comprobar el handshake con Kernel
+   //Logger para salir del Kernel
+   //Terminar la consola
 
 
 }

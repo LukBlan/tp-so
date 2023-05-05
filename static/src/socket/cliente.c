@@ -31,14 +31,14 @@ int crear_conexion_servidor(char *ip, char* puerto)
 
 	return socket_cliente;
 }
-void handshake_cliente(int socket_cliente){
-	send(socket_cliente, &handshake, sizeof(uint32_t), NULL);
-	recv(socket_cliente, &result, sizeof(uint32_t), MSG_WAITALL);
-	if(result == 0)
-		   printf("Handshake realizado con exito");
-		else
-			printf("Handshake ha fallado");
-}
+//void handshake_cliente(int socket_cliente){
+//	send(socket_cliente, &handshake, sizeof(uint32_t), NULL);
+//	recv(socket_cliente, &result, sizeof(uint32_t), MSG_WAITALL);
+//	if(result == 0)
+//		   printf("Handshake realizado con exito");
+//		else
+//			printf("Handshake ha fallado");
+//}
 
 void liberar_conexion_servidor(int socket_cliente)
 {

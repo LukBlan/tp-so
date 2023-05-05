@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/estrucutra.c 
+../src/estructuras.c 
 
 C_DEPS += \
-./src/estrucutra.d 
+./src/estructuras.d 
 
 OBJS += \
-./src/estrucutra.o 
+./src/estructuras.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -25,7 +25,7 @@ src/%.o: ../src/%.c src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/estrucutra.d ./src/estrucutra.o
+	-$(RM) ./src/estructuras.d ./src/estructuras.o
 
 .PHONY: clean-src
 

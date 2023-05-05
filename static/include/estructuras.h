@@ -13,16 +13,17 @@
 
 typedef enum op_code{
 	DESCONEXION = -1,
-	MENSAJE,
 	LINEAS_INSTRUCCION
 }op_code;
+
 union Parametro{
 	int integer;
 	char* string;
 };
+
 typedef struct Linea_Instruccion {
 	char *identifier;
-	Parametro parametros[3];
+	union Parametro parametros[3];
 }Linea_Instruccion;
 
 typedef struct{
@@ -34,6 +35,7 @@ typedef struct{
 	op_code codigo_operacion;
 	t_buffer* buffer;
 } Paquete;
+
 void eliminar_paquete(Paquete *paquete);
 void iniciar_buffer(Paquete *paquete);
 Paquete *crear_paquete (op_code codigoOperacion);

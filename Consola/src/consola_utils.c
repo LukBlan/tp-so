@@ -35,9 +35,27 @@ void eliminar_salto(char *linea){
 		linea = '\0';
 	}
 }
+int cant_params (char *linea){
+	int veces;
+	for (int k = 0; k < strlen(linea); k++)
+	    if (linea[k] == " ")
+	      veces++;
+	  return veces;
+}
 char **obtener_params (char *linea){
-	int cant_params =cant_params(linea);
-	char **params =
+	int cant_params = cant_params(linea);
+	char **params = string_n_split(linea,cant_params," ");//Funcion commons que divide los string
+	rellenar_espacios_vacios(cant_params,params);
+	return params;
+}
+void rellenar_espacios_vacios(int cant_params, char **params)
+{
+  if (cant_params < 1)
+	  params[0] = "-1"; //ver si es mejor poner NULL
+  if (cant_params < 2)
+	  params[1] = "-1";
+  if (cant_params < 3)
+	  params[2] = "-1";
 }
 Linea_Instruccion *leer_instruccion(FILE *arch){
 	char *linea = leer_linea(arch);
