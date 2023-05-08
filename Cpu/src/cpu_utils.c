@@ -17,6 +17,7 @@ TipoInstruccion obtener_tipo_instruccion(char *instruccion)
     return DESCONOCIDA;
 }
 
+/*
 void ejecutar_EXIT(Pcb *pcb, int socketKernel)
 {
   //pcb->escenario->estado = TERMINADO;
@@ -29,9 +30,12 @@ void ejecutar_EXIT(Pcb *pcb, int socketKernel)
   eliminar_paquete(paquete);
 
 }
-void ejecutar_set(){
+*/
+
+void ejecutar_set() {
 
 }
-void ejecutar_yield(){
+
+void ejecutar_yield() {
 
 }
