@@ -1,15 +1,15 @@
-#ifndef CONFIGURACION_H_
-#define CONFIGURACION_H_
-
+#ifndef CPU_CONFIG_H_
+#define CPU_CONFIG_H_
 
 typedef struct {
 	int RETARDO_INSTRUCCION;
 	char* IP_MEMORIA;
+	char* IP_ESCUCHA;
 	int PUERTO_MEMORIA;
 	int PUERTO_ESCUCHA;
 	int TAM_MAX_SEGMENTO;
-}configuracion;
+} configuracion;
 
 configuracion obtenerConfiguracion();
 
-#endif /* CONFIGURACION_H_ */
+#endif /* CPU_CONFIG_H_ */

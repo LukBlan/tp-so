@@ -5,9 +5,5 @@
 #include <commons/string.h>
 #include <commons/txt.h>
 
-typedef struct {
-
-}pcb;
-
 
 #endif /* CPU_UTILS_H_ */

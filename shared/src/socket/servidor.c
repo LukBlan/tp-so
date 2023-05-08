@@ -17,10 +17,13 @@ int iniciar_servidor(char *IP,char *PUERTO) {
 	socket_servidor = socket(servinfo->ai_family,
 							 servinfo->ai_socktype,
 							 servinfo->ai_protocol);
+
+	int reuse_addr = 1;
+	setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(int));
+
 	bind(socket_servidor,servinfo->ai_addr,servinfo->ai_addrlen);
 	listen(socket_servidor,SOMAXCONN);
 	freeaddrinfo(servinfo);
-	log_trace(logger, "Listo para escuchar a mi cliente");
 	return socket_servidor;
 }
 
