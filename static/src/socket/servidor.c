@@ -29,7 +29,7 @@ void handshake_servidor(int socket_cliente){
 	uint32_t resultOk = 0;
 	uint32_t resultError = -1;
 	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
-	if(handshake == 1) {
+	if (handshake == 1) {
 		send(socket_cliente, &resultOk, sizeof(uint32_t), NULL);
 	} else {
 		send(socket_cliente, &resultError, sizeof(uint32_t), NULL);
