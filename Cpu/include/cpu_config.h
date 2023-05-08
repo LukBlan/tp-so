@@ -1,5 +1,5 @@
-#ifndef CONFIGURACION_H_
-#define CONFIGURACION_H_
+#ifndef CPU_CONFIG_H_
+#define CPU_CONFIG_H_
 
 
 typedef struct {
@@ -12,4 +12,4 @@ typedef struct {
 
 configuracion obtenerConfiguracion();
 
-#endif /* CONFIGURACION_H_ */
+#endif /* CPU_CONFIG_H_ */

@@ -1,6 +1,6 @@
-#include "../include/configuracion.h"
 #include <commons/config.h>
 #include <commons/string.h>
+#include <cpu_config.h>
 
 configuracion obtenerConfiguracion() {
   configuracion configuracion;
