@@ -1,15 +1,10 @@
 #include <cpu_utils.h>
 
-t_log *iniciar_logger_cpu()
-{
-  return log_create("CPU.log", "CPU", true, LOG_LEVEL_INFO);
-}
-
 TipoInstruccion obtener_tipo_instruccion(char *instruccion)
 {
   if (!strcmp(instruccion, "SET"))
     return SET;
-  else if (!strcmp(instruccion, "YIELD"))
+  else if (!strcmp( instruccion, "YIELD"))
     return YIELD;
   else if (!strcmp(instruccion, "EXIT"))
     return EXIT;
