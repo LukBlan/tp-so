@@ -11,11 +11,11 @@ void generar_lista_instrucciones (t_list *lista,FILE *archivo){
 		agregar_instruccion (instruccion,lista);
 	}
 }
-void asignar_params(Linea_Instruccion *instruc, char **params){
+void asignar_params(Linea_Instruccion* instruc, char **params){
 	instruc->identifier = strdup(params[0]);
-	instruc->parametros[0] = strdup(params[1]);
-	instruc->parametros[1] = strdup(params[2]);
-	instruc->parametros[2] = strdup(params[3]);
+	instruc->parametros[0] = atoi(params[1]);
+	instruc->parametros[1] = atoi(params[2]);
+	instruc->parametros[2] = atoi(params[3]);
 
 	free(*params);
 }

@@ -12,9 +12,9 @@
  * @return Socket del cliente.
  */
 int conectar_con_kernel();
-void asignar_params(linea_Instruccion *instruc, char **params);
+void asignar_params(Linea_Instruccion *instruc, char **params);
 void generar_lista_instrucciones (t_list *lista,FILE *archivo);
-void agregar_instruccion (linea_Instruccion *instruc , t_list *lista);
-linea_Instruccion *leer_instruccion(FILE *arch);
+void agregar_instruccion (Linea_Instruccion *instruc , t_list *lista);
+Linea_Instruccion *leer_instruccion(FILE *arch);
 
 #endif

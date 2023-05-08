@@ -13,8 +13,16 @@
 
 typedef enum op_code{
 	DESCONEXION = -1,
-	LINEAS_INSTRUCCION
+	LINEAS_INSTRUCCION,
+	PCB
 }op_code;
+
+typedef enum TipoInstruccion {
+	DESCONOCIDA = -1,
+	SET,
+	YIELD,
+	EXIT
+}TipoInstruccion;
 
 union Parametro{
 	int integer;

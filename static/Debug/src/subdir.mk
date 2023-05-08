@@ -17,7 +17,7 @@ OBJS += \
 src/%.o: ../src/%.c src/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross GCC Compiler'
-	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/cliente.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/estructuras.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/cliente.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/socket/servidor.h" -include"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/static/include/estructuras.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
