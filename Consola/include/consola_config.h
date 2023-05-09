@@ -3,13 +3,11 @@
 #include <commons/log.h>
 #include <commons/config.h>
 
-typedef struct ConsolaConfiguracion
+typedef struct
 {
   char *IP_KERNEL;
   char *PUERTO_KERNEL;
-} ConsolaConfiguracion;
-
-ConsolaConfiguracion CONSOLA_CONFIG;
+} consolaConfig;
 
 /**
  * @brief Rellena la variable CONSOLE_CONFIG con las configuraciones de la consola por archivo.

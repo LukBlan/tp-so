@@ -65,9 +65,9 @@ void serializar_lista_instruc (Paquete *paquete, t_list *instrucciones){
 	for(int k=0;k<cantDeInstrucciones;k++)
 	{
 		linea = list_get(instrucciones,k);
-		agregar_a_paquete(paquete,linea->identifier,strlen(linea->identifier)+1);
-		for(int i = 0;i<=2;i++){
-		//agregar_a_paquete(paquete, &(linea->parametros[i]), sizeof(linea->parametros[i] + 1));
-		}
+		agregar_a_paquete(paquete, linea->identifier, strlen(linea->identifier) + 1);
+		agregar_a_paquete(paquete, &(linea->parametros[0]), sizeof(union Parametro));
+		agregar_a_paquete(paquete, &(linea->parametros[1]), sizeof(union Parametro));
+		agregar_a_paquete(paquete, &(linea->parametros[2]), sizeof(union Parametro));
 	}
 }

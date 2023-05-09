@@ -1,10 +1,11 @@
 #ifndef CONSOLA_UTILS_H
 #define CONSOLA_UTILS_H
 
-#include <socket/cliente.h>
+
 #include <consola_config.h>
 #include <commons/string.h>
 #include <commons/txt.h>
+#include <socket/cliente.h>
 
 /**
  * @funcion Crea una conexión con el  Kernel.
