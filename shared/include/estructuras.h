@@ -6,10 +6,22 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 
+
+typedef struct PCB{
+	unsigned int pid;
+	t_list *instrucciones;
+	unsigned int programCounter;
+	struct registros;
+	struct tablaSegmentos;
+	float estimadoRafaga;
+	unsigned int llegadaReady;
+	t_list *archivosAbiertos;
+};
+
 typedef enum op_code{
 	DESCONEXION = -1,
 	LINEAS_INSTRUCCION,
-	PCB
+	Pcb
 }op_code;
 
 typedef enum TipoInstruccion {

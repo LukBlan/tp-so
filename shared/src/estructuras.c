@@ -1,5 +1,6 @@
 #include <estructuras.h>
 
+
 void eliminar_paquete(Paquete *paquete){
 	if (paquete != NULL){
 		if(paquete-> buffer !=NULL){

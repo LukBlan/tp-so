@@ -1,9 +1,9 @@
 #include <consola_utils.h>
-consolaConfig CONSOLA_CONFIG_UTILS;
+
 
 int conectar_kernel()
 {
-  return crear_conexion_servidor(CONSOLA_CONFIG_UTILS.IP_KERNEL, CONSOLA_CONFIG_UTILS.PUERTO_KERNEL);
+  return crear_conexion_servidor(CONSOLA_CONFIG.IP_KERNEL, CONSOLA_CONFIG.PUERTO_KERNEL);
 }
 
 void generar_lista_instrucciones (t_list *lista,FILE *archivo){

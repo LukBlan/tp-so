@@ -9,6 +9,7 @@ typedef struct
   char *PUERTO_KERNEL;
 } consolaConfig;
 
+extern consolaConfig CONSOLA_CONFIG;
 /**
  * @brief Rellena la variable CONSOLE_CONFIG con las configuraciones de la consola por archivo.
  *

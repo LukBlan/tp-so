@@ -13,20 +13,22 @@ struct Registro{
 	char nombre[20];
 	union Valor valor;
 };
-extern AX;
-extern BX;
-extern CX;
-extern DX;
+extern struct Registro AX;
+extern struct Registro BX;
+extern struct Registro CX;
+extern struct Registro DX;
 
-extern EAX;
-extern EBX;
-extern ECX;
-extern EDX;
+extern struct Registro EAX;
+extern struct Registro EBX;
+extern struct Registro ECX;
+extern struct Registro EDX;
 
-extern RAX;
-extern RBX;
-extern RCX;
-extern RDX;
+extern struct Registro RAX;
+extern struct Registro RBX;
+extern struct Registro RCX;
+extern struct Registro RDX;
+
+extern struct Registro registros;
 
 struct Registro buscar_registro (char nombre_registro);
 
