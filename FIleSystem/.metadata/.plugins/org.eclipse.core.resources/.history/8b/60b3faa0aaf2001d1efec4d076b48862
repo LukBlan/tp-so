@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include "../include/configuracion.h"
+#include "../include/logger.h"
+#include <commons/log.h>
+
+
+int main(void) {
+  t_log* logger;
+  configuracion configuracion = getConfiguracion("MEMORIA");
+  printf("%s\n", configuracion.IP_MEMORIA);
+  printf("%d\n", configuracion.PUERTO_MEMORIA);
+  printf("%d\n", configuracion.PUERTO_ESCUCHA);
+  printf("%s\n", configuracion.PATH_SUPERBLOQUE);
+  printf("%s\n", configuracion.PATH_BITMAP);
+  printf("%s\n", configuracion.PATH_BLOQUES);
+  printf("%s\n", configuracion.PATH_FCB);
+  printf("%d\n", configuracion.RETARDO_ACCESO_BLOQUE);
+
+
+
+  logger = iniciar_logger();
+  escucharKernel(logger);
+  int socketServidor = crear_servidor("MEMORIA", logger);
+  int socketCliente = conectarConServidor("MEMORIA");
+  close(socketCliente);
+  log_destroy(logger);
+
+
+  return EXIT_SUCCESS;
+}
+int esperar_cliente(int socket_servidor) {
+	return accept(socket_servidor,NULL,NULL);
+}
+
+int escucharKernel(t_log* logger){
+	logger = log_create("log.log", "Servidor", 1, LOG_LEVEL_DEBUG);
+
+	int server_fd = crear_servidor("MEMORIA", logger);
+	log_info(logger, "Servidor listo para recibir al cliente");
+	int cliente_fd = esperar_cliente(server_fd);
+
+	t_list* lista;
+	while (1) {
+		int cod_op = recibir_operacion(cliente_fd);
+		switch (cod_op) {
+		case MENSAJE:
+			recibir_mensaje(cliente_fd);
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(cliente_fd);
+			log_info(logger, "Me llegaron los siguientes valores:\n");
+			list_iterate(lista, (void*) iterator);
+			break;
+		case -1:
+			log_error(logger, "el cliente se desconecto. Terminando servidor");
+			return EXIT_FAILURE;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
+			}
+		}
+	return EXIT_SUCCESS;
+
+}
+
+

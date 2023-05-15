@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Cpu&apos; to &apos;File_System&apos;" description="Rename resource &apos;Cpu&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Cpu" name="File_System" stamp="1684113102750" updateReferences="true"/>
+</session>

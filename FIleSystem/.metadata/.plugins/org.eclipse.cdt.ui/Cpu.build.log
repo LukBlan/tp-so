@@ -1,0 +1,29 @@
+23:37:01 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+Building file: ../src/main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function ‘main’:
+../src/main.c:25:3: warning: implicit declaration of function ‘escucharKernel’ [-Wimplicit-function-declaration]
+   25 |   escucharKernel(logger);
+      |   ^~~~~~~~~~~~~~
+../src/main.c:27:23: warning: implicit declaration of function ‘conectarConServidor’ [-Wimplicit-function-declaration]
+   27 |   int socketCliente = conectarConServidor("MEMORIA");
+      |                       ^~~~~~~~~~~~~~~~~~~
+../src/main.c:26:7: warning: unused variable ‘socketServidor’ [-Wunused-variable]
+   26 |   int socketServidor = crear_servidor("MEMORIA", logger);
+      |       ^~~~~~~~~~~~~~
+../src/main.c: In function ‘escucharKernel’:
+../src/main.c:41:13: warning: unused variable ‘cliente_fd’ [-Wunused-variable]
+   41 |         int cliente_fd = esperar_cliente(server_fd);
+      |             ^~~~~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: Cpu
+Invoking: GCC C Linker
+gcc  -o "Cpu" ./src/configuracion.o ./src/logger.o ./src/main.o    -lcommons
+Finished building target: Cpu
+ 
+
+23:37:01 Build Finished. 0 errors, 4 warnings. (took 379ms)
+

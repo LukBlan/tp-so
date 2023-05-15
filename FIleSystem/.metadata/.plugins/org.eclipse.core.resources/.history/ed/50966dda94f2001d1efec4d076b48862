@@ -1,0 +1,79 @@
+#include "../include/configuracion.h"
+#include <commons/config.h>
+#include <commons/string.h>
+#include<sys/socket.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/socket.h>
+#include<unistd.h>
+#include<netdb.h>
+#include<commons/log.h>
+#include<commons/collections/list.h>
+#include<string.h>
+#include<assert.h>
+
+
+
+configuracion getConfiguracion(char* nombreModulo) {
+  configuracion configuracion;
+  t_config* archivoConfiguracion = config_create("fileSystem.config");
+  char* ipModulo = string_from_format("IP_%s", nombreModulo);
+  char* puertoModulo = string_from_format("PUERTO_%s", nombreModulo);
+
+  configuracion.IP_MEMORIA = string_duplicate(config_get_string_value(archivoConfiguracion, ipModulo));
+  configuracion.PUERTO_MEMORIA = config_get_int_value(archivoConfiguracion, puertoModulo);
+  configuracion.PUERTO_ESCUCHA = config_get_int_value(archivoConfiguracion, "PUERTO_ESCUCHA");
+  configuracion.PATH_SUPERBLOQUE = string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_SUPERBLOQUE"));
+  configuracion.PATH_BITMAP= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_BITMAP"));
+  configuracion.PATH_BLOQUES= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_BLOQUES"));
+  configuracion.PATH_FCB= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_FCB"));
+  configuracion.RETARDO_ACCESO_BLOQUE= config_get_int_value(archivoConfiguracion, "RETARDO_ACCESO_BLOQUE");
+  config_destroy(archivoConfiguracion);
+  return configuracion;
+}
+
+
+int crear_servidor(char* nombreModulo, t_log* logger) {
+	configuracion configuracion;
+	int socket_servidor;
+	struct addrinfo hints;
+	struct addrinfo *servinfo;
+
+	configuracion = getConfiguracion(nombreModulo);
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	getaddrinfo(NULL, configuracion.PUERTO_MEMORIA, &hints, &servinfo);
+
+	socket_servidor = socket(servinfo->ai_family,
+							 servinfo->ai_socktype,
+							 servinfo->ai_protocol);
+	if(socket_servidor > 0 ){
+		log_info(logger, "rompe socket");
+		exit(EXIT_FAILURE);
+	}
+
+	int reuse_addr = 1;
+	setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(int));
+
+	bind(socket_servidor,servinfo->ai_addr,servinfo->ai_addrlen);
+	listen(socket_servidor,SOMAXCONN);
+	freeaddrinfo(servinfo);
+	return socket_servidor;
+}
+
+
+/*struct addinfo* getServidor(infoConexion){
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	getaddrinfo("0.0.0.0", "35705", &hints, &serverInfo);
+	return serverInfo;
+}*/

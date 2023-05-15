@@ -1,0 +1,152 @@
+00:44:12 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+Building file: ../src/configuracion.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/configuracion.d" -MT"src/configuracion.o" -o "src/configuracion.o" "../src/configuracion.c"
+../src/configuracion.c: In function ‘crear_servidor’:
+../src/configuracion.c:49:40: warning: passing argument 2 of ‘getaddrinfo’ makes pointer from integer without a cast [-Wint-conversion]
+   49 |         getaddrinfo(NULL, configuracion.PUERTO_MEMORIA, &hints, &servinfo);
+      |                           ~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+      |                                        |
+      |                                        int
+In file included from ../src/../include/configuracion.h:12,
+                 from ../src/configuracion.c:1:
+/usr/include/netdb.h:661:48: note: expected ‘const char * restrict’ but argument is of type ‘int’
+  661 |                         const char *__restrict __service,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+Finished building: ../src/configuracion.c
+ 
+Building file: ../src/logger.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/logger.d" -MT"src/logger.o" -o "src/logger.o" "../src/logger.c"
+Finished building: ../src/logger.c
+ 
+Building file: ../src/main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function ‘main’:
+../src/main.c:25:7: warning: unused variable ‘socketServidor’ [-Wunused-variable]
+   25 |   int socketServidor = crear_servidor("MEMORIA", logger);
+      |       ^~~~~~~~~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: Cpu
+Invoking: GCC C Linker
+gcc  -o "Cpu" ./src/configuracion.o ./src/logger.o ./src/main.o    -lcommons
+Finished building target: Cpu
+ 
+00:44:18 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+00:44:47 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+00:44:49 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+00:48:29 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+00:48:46 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+00:48:47 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+make: Nothing to be done for 'all'.
+23:36:24 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+Building file: ../src/configuracion.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/configuracion.d" -MT"src/configuracion.o" -o "src/configuracion.o" "../src/configuracion.c"
+../src/configuracion.c: In function ‘crear_servidor’:
+../src/configuracion.c:49:40: warning: passing argument 2 of ‘getaddrinfo’ makes pointer from integer without a cast [-Wint-conversion]
+   49 |         getaddrinfo(NULL, configuracion.PUERTO_MEMORIA, &hints, &servinfo);
+      |                           ~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+      |                                        |
+      |                                        int
+In file included from ../src/../include/configuracion.h:12,
+                 from ../src/configuracion.c:1:
+/usr/include/netdb.h:661:48: note: expected ‘const char * restrict’ but argument is of type ‘int’
+  661 |                         const char *__restrict __service,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+../src/configuracion.c: In function ‘conectarConServidor’:
+../src/configuracion.c:78:60: warning: passing argument 2 of ‘getaddrinfo’ makes pointer from integer without a cast [-Wint-conversion]
+   78 |         getaddrinfo(configuracion.IP_MEMORIA, configuracion.PUERTO_ESCUCHA, &hints, &server_info);
+      |                                               ~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+      |                                                            |
+      |                                                            int
+In file included from ../src/../include/configuracion.h:12,
+                 from ../src/configuracion.c:1:
+/usr/include/netdb.h:661:48: note: expected ‘const char * restrict’ but argument is of type ‘int’
+  661 |                         const char *__restrict __service,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+../src/configuracion.c: In function ‘getServidor’:
+../src/configuracion.c:99:16: warning: returning ‘struct addrinfo *’ from a function with incompatible return type ‘struct addinfo *’ [-Wincompatible-pointer-types]
+   99 |         return serverInfo;
+      |                ^~~~~~~~~~
+Finished building: ../src/configuracion.c
+ 
+Building file: ../src/main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function ‘main’:
+../src/main.c:25:3: warning: implicit declaration of function ‘escucharKernel’ [-Wimplicit-function-declaration]
+   25 |   escucharKernel(logger);
+      |   ^~~~~~~~~~~~~~
+../src/main.c:27:23: warning: implicit declaration of function ‘conectarConServidor’ [-Wimplicit-function-declaration]
+   27 |   int socketCliente = conectarConServidor("MEMORIA");
+      |                       ^~~~~~~~~~~~~~~~~~~
+../src/main.c:26:7: warning: unused variable ‘socketServidor’ [-Wunused-variable]
+   26 |   int socketServidor = crear_servidor("MEMORIA", logger);
+      |       ^~~~~~~~~~~~~~
+../src/main.c: In function ‘escucharKernel’:
+../src/main.c:45:30: warning: implicit declaration of function ‘recibir_operacion’ [-Wimplicit-function-declaration]
+   45 |                 int cod_op = recibir_operacion(cliente_fd);
+      |                              ^~~~~~~~~~~~~~~~~
+../src/main.c:47:22: error: ‘MENSAJE’ undeclared (first use in this function)
+   47 |                 case MENSAJE:
+      |                      ^~~~~~~
+../src/main.c:47:22: note: each undeclared identifier is reported only once for each function it appears in
+../src/main.c:48:25: warning: implicit declaration of function ‘recibir_mensaje’ [-Wimplicit-function-declaration]
+   48 |                         recibir_mensaje(cliente_fd);
+      |                         ^~~~~~~~~~~~~~~
+../src/main.c:50:22: error: ‘PAQUETE’ undeclared (first use in this function)
+   50 |                 case PAQUETE:
+      |                      ^~~~~~~
+../src/main.c:51:33: warning: implicit declaration of function ‘recibir_paquete’ [-Wimplicit-function-declaration]
+   51 |                         lista = recibir_paquete(cliente_fd);
+      |                                 ^~~~~~~~~~~~~~~
+../src/main.c:51:31: warning: assignment to ‘t_list *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+   51 |                         lista = recibir_paquete(cliente_fd);
+      |                               ^
+../src/main.c:53:53: error: ‘iterator’ undeclared (first use in this function)
+   53 |                         list_iterate(lista, (void*) iterator);
+      |                                                     ^~~~~~~~
+make: *** [src/subdir.mk:26: src/main.o] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+23:37:01 **** Incremental Build of configuration Debug for project Cpu ****
+make all 
+Building file: ../src/main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function ‘main’:
+../src/main.c:25:3: warning: implicit declaration of function ‘escucharKernel’ [-Wimplicit-function-declaration]
+   25 |   escucharKernel(logger);
+      |   ^~~~~~~~~~~~~~
+../src/main.c:27:23: warning: implicit declaration of function ‘conectarConServidor’ [-Wimplicit-function-declaration]
+   27 |   int socketCliente = conectarConServidor("MEMORIA");
+      |                       ^~~~~~~~~~~~~~~~~~~
+../src/main.c:26:7: warning: unused variable ‘socketServidor’ [-Wunused-variable]
+   26 |   int socketServidor = crear_servidor("MEMORIA", logger);
+      |       ^~~~~~~~~~~~~~
+../src/main.c: In function ‘escucharKernel’:
+../src/main.c:41:13: warning: unused variable ‘cliente_fd’ [-Wunused-variable]
+   41 |         int cliente_fd = esperar_cliente(server_fd);
+      |             ^~~~~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: Cpu
+Invoking: GCC C Linker
+gcc  -o "Cpu" ./src/configuracion.o ./src/logger.o ./src/main.o    -lcommons
+Finished building target: Cpu
+ 

@@ -1,0 +1,21 @@
+#include "../include/configuracion.h"
+#include <commons/config.h>
+#include <commons/string.h>
+#include <commons/log.h>
+
+
+
+configuracion getConfiguracion() {
+  configuracion configuracion;
+  t_config* archivoConfiguracion = config_create("fileSystem.config");
+  configuracion.IP_MEMORIA = string_duplicate(config_get_string_value(archivoConfiguracion, "IP_MEMORIA"));
+  configuracion.PUERTO_MEMORIA = config_get_int_value(archivoConfiguracion, "PUERTO_MEMORIA");
+  configuracion.PUERTO_ESCUCHA = config_get_int_value(archivoConfiguracion, "PUERTO_ESCUCHA");
+  configuracion.PATH_SUPERBLOQUE = string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_SUPERBLOQUE"));
+  configuracion.PATH_BITMAP= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_BITMAP"));
+  configuracion.PATH_BLOQUES= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_BLOQUES"));
+  configuracion.PATH_FCB= string_duplicate(config_get_string_value(archivoConfiguracion, "PATH_FCB"));
+  configuracion.RETARDO_ACCESO_BLOQUE= config_get_int_value(archivoConfiguracion, "RETARDO_ACCESO_BLOQUE");
+  config_destroy(archivoConfiguracion);
+  return configuracion;
+}

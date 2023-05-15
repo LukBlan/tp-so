@@ -1,0 +1,20 @@
+#ifndef CONFIGURACION_H_
+#define CONFIGURACION_H_
+
+
+typedef struct {
+	char* IP_MEMORIA;
+	int PUERTO_MEMORIA;
+	int PUERTO_ESCUCHA;
+	char* PATH_SUPERBLOQUE;
+	char* PATH_BITMAP;
+	char* PATH_BLOQUES;
+	char* PATH_FCB;
+	int RETARDO_ACCESO_BLOQUE;
+}configuracion;
+
+configuracion getConfiguracion();
+int crear_servidor(char* nombreModulo, t_log* logger);
+struct addinfo* getServidor(infoConexion);
+
+#endif /* CONFIGURACION_H_ */

@@ -1,0 +1,8 @@
+#include "../include/configuracion.h"
+#include <commons/config.h>
+#include <commons/string.h>
+#include <commons/log.h>
+
+t_log *iniciar_logger_fileSYStem() {
+  return log_create("fileSystem.log", "FileSystem", true, LOG_LEVEL_INFO);
+}
