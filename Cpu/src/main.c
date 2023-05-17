@@ -6,7 +6,7 @@
 #include <cpu_conexion.h>
 
 int main(void) {
-  configuracion* configuracion = obtenerConfiguracion();
+  configuracion* configuracion = obtenerConfiguracion("cpu.config");
 
   pthread_t hiloServer;
   pthread_create(&hiloServer, NULL, &montar_servidor, configuracion);

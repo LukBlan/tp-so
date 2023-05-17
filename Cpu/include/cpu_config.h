@@ -10,6 +10,6 @@ typedef struct {
 	int TAM_MAX_SEGMENTO;
 } configuracion;
 
-configuracion* obtenerConfiguracion();
+configuracion* obtenerConfiguracion(char*);
 
 #endif /* CPU_CONFIG_H_ */

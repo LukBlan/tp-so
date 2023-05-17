@@ -48,6 +48,7 @@ struct Registro RDX = {
 	.nombre = "RDX",
 	.valor.dieciseis_bytes=0};
 
+/*
 struct Registro registros[]={
 		AX,
 		BX,
@@ -70,10 +71,13 @@ struct Registro buscar_registro (char nombre_registro){
 	}
 	return 0;
 }
+
 void setear_valor_registro(char nombre_registro,char valor){
 	struct Registro registro_encontrado = buscar_registro(nombre_registro);
 	registro_encontrado.valor = valor;
 }
+
+*/
 
 TipoInstruccion obtener_tipo_instruccion(char *instruccion)
 {

@@ -21,11 +21,7 @@ void* montar_servidor(void* args) {
 
 void* conectar_con_memoria(void* args) {
   configuracion config = *(configuracion*) args;
-  int *datos = malloc(sizeof(int));
-  *datos = 3;
   int socketCliente = crear_conexion_servidor(config.IP_MEMORIA, string_itoa(config.PUERTO_MEMORIA));
-  send(socketCliente, datos, sizeof(int), 0);
-  free(datos);
   close(socketCliente);
 }
 
