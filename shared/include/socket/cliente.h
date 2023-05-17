@@ -27,4 +27,6 @@ void liberar_conexion_servidor(int socketCliente);
  */
 void terminar_programa(int socket, t_config *config, t_log *logger);
 
+t_config* abrir_config(char *path);
+
 #endif
