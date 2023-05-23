@@ -16,6 +16,7 @@ void* montar_servidor(void* args) {
     log_info(logger, "Recibi un cliente");
     close(socketCliente);
   }
+  close(socketServidor);
 }
 
 void* conectar_con_memoria(void* args) {
