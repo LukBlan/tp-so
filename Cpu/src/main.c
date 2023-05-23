@@ -8,7 +8,7 @@
 
 int main(void) {
   recursos* recursosModulo = obtenerRecursosModulo("cpu.config", "cpu.log");
-  /*
+
   pthread_t hiloServer;
   pthread_create(&hiloServer, NULL, &montar_servidor, recursosModulo);
   pthread_t hiloCliente;
@@ -16,7 +16,7 @@ int main(void) {
 
   pthread_join(hiloCliente, NULL);
   pthread_join(hiloServer, NULL);
-  */
+
   // Hay que hacer free de los strings?
   //liberarRecursos(recursosModulo);
   return EXIT_SUCCESS;

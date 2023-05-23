@@ -6,22 +6,23 @@
 #include <socket/cliente.h>
 
 void* montar_servidor(void* args) {
-  configuracion config = *(configuracion*) args;
-  int *datos = malloc(sizeof(int));
-  int socketServidor = iniciar_servidor(config.IP_ESCUCHA, string_itoa(config.PUERTO_ESCUCHA));;
+  recursos recursosModulo = *(recursos*) args;
+  configuracion* config = recursosModulo.configuracion;
+  t_log* logger = recursosModulo.logger;
+  int socketServidor = iniciar_servidor(config->IP_ESCUCHA, string_itoa(config->PUERTO_ESCUCHA));;
 
   while (1) {
     int socketCliente = esperar_cliente(socketServidor);
-    recv(socketCliente, datos, sizeof(int), 0);
-    printf("%d\n", *datos);
+    log_info(logger, "Recibi un cliente");
     close(socketCliente);
   }
-  free(datos);
 }
 
 void* conectar_con_memoria(void* args) {
-  configuracion config = *(configuracion*) args;
-  int socketCliente = crear_conexion_servidor(config.IP_MEMORIA, string_itoa(config.PUERTO_MEMORIA));
+  recursos recursosModulo = *(recursos*) args;
+  configuracion* config = recursosModulo.configuracion;
+  t_log* logger = recursosModulo.logger;
+  int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, string_itoa(config->PUERTO_MEMORIA));
   close(socketCliente);
 }
 
