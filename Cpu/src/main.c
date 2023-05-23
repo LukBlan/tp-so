@@ -17,7 +17,6 @@ int main(void) {
   pthread_join(hiloCliente, NULL);
   pthread_join(hiloServer, NULL);
 
-  // Hay que hacer free de los strings?
-  //liberarRecursos(recursosModulo);
+  liberarRecursos(recursosModulo);
   return EXIT_SUCCESS;
 }

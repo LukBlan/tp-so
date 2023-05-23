@@ -19,5 +19,6 @@ typedef struct {
 
 configuracion* obtenerConfiguracion(char*);
 recursos* obtenerRecursosModulo(char*, char*);
+void liberarRecursos(recursos*);
 
 #endif /* CPU_RECURSOS_H_ */

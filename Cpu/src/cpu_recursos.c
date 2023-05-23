@@ -24,3 +24,10 @@ recursos* obtenerRecursosModulo(char* pathConfiguracion, char* pathLogger) {
 	recursosModulo->logger = logger;
 	return recursosModulo;
 }
+
+void liberarRecursos(recursos* recursosModulo) {
+  log_destroy(recursosModulo->logger);
+  free(recursosModulo->configuracion->IP_ESCUCHA);
+  free(recursosModulo->configuracion->IP_MEMORIA);
+  free(recursosModulo->configuracion);
+}
