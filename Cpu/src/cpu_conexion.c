@@ -1,9 +1,9 @@
 #include <commons/string.h>
 #include <cpu_conexion.h>
-#include <cpu_config.h>
+#include <cpu_recursos.h>
+#include <cpu_recursos.h>
 #include <socket/servidor.h>
 #include <socket/cliente.h>
-#include <cpu_config.h>
 
 void* montar_servidor(void* args) {
   configuracion config = *(configuracion*) args;

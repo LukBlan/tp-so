@@ -1,6 +1,6 @@
-#include <cpu_config.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <cpu_recursos.h>
 #include <socket/cliente.h>
 
 configuracion* obtenerConfiguracion(char* pathArchivo) {
@@ -14,4 +14,13 @@ configuracion* obtenerConfiguracion(char* pathArchivo) {
   config->RETARDO_INSTRUCCION = config_get_int_value(fileConfig, "RETARDO_INSTRUCCION");
   config_destroy(fileConfig);
   return config;
+}
+
+recursos* obtenerRecursosModulo(char* pathConfiguracion, char* pathLogger) {
+	recursos* recursosModulo = malloc(sizeof(recursos));
+	t_log* logger = log_create(pathLogger, "CPU", 1, LOG_LEVEL_INFO);
+	configuracion* configuracion = obtenerConfiguracion(pathConfiguracion);
+	recursosModulo->configuracion = configuracion;
+	recursosModulo->logger = logger;
+	return recursosModulo;
 }
