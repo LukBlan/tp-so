@@ -3,43 +3,37 @@
 #include <kernel_config.h>
 #include <socket/servidor.h>
 #include <socket/cliente.h>
+#include <estructuras.h>
 
-void* subthread(void* args) {
-	configuracion config = *(configuracion*) args;
-    int *datos = malloc(sizeof(int));
-    int socketServidor = iniciar_servidor(config.IP_ESCUCHA, string_itoa(config.PUERTO_ESCUCHA));;
-
-    while (1) {
-    	int socketConsola = esperar_cliente(socketServidor);
-    	printf("%d\n", socketConsola);
-    	recv(socketConsola, datos, sizeof(int), 0);
-    	printf("%d\n", *datos);
-    	close(socketConsola);
-      }
-    free(datos);
-}
 
 void* montar_servidor(void* args) {
   configuracion config = *(configuracion*) args;
-  int *datos = malloc(sizeof(int));
   int socketServidor = iniciar_servidor(config.IP_ESCUCHA, string_itoa(config.PUERTO_ESCUCHA));
-  printf("%d\n", socketServidor);
-
   while (1) {
     int socketCliente = esperar_cliente(socketServidor);
-    /**/
-    pthread_t subthread_id;
-    int subthread_arg = 1;
-    pthread_create(&subthread_id, NULL, subthread, (void*)&subthread_arg);
-
-    pthread_join(subthread_id, NULL);
-    pthread_exit(NULL);
-
-    printf("%d\n", socketCliente);
+    obtener_codigo_operacion(socketCliente);
     close(socketCliente);
   }
-  free(datos);
+  close(socketServidor);
 }
+
+
+/*
+Pcb crear_pcb(t_listlistaInstrucciones) {
+  Pcb *pcb = malloc(sizeof(Pcb));
+  pthread_mutex_lock(&mutexNumeroProceso);
+  pcb->pid = idProceso++;
+  pthread_mutex_unlock(&mutexNumeroProceso);
+  pcb->programCounter = 0;
+  pcb->estimadoRafaga = KERNEL_CONFIG.ESTIMACION_RAFAGA;
+  pcb->instrucciones = list_duplicate(listaInstrucciones);
+  pcb->llegadaReady = 0;
+
+  list_destroy(listaInstrucciones);
+
+  return pcb;
+}
+*/
 
 void* conectar_con_memoria(void* args) {
   configuracion config = *(configuracion*) args;

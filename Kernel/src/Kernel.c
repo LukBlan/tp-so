@@ -9,23 +9,19 @@
 
 int main(void) {
   configuracion* configuracion = obtenerConfiguracion();
-  printf("%d\n",configuracion->PUERTO_CPU);
-  char* puerto = string_itoa(configuracion->PUERTO_ESCUCHA);
-  int socket_servidor = iniciar_servidor(configuracion->IP_ESCUCHA,puerto);
-  printf("%d\n",socket_servidor);
 
   pthread_t hiloServer;
   pthread_create(&hiloServer, NULL, &montar_servidor, configuracion);
-  pthread_join(hiloServer, NULL);
 
   pthread_t hiloClienteMemoria;
   pthread_create(&hiloClienteMemoria, NULL, &conectar_con_memoria, configuracion);
-  pthread_join(hiloClienteMemoria, NULL);
 
   pthread_t hiloCliente;
   pthread_create(&hiloCliente, NULL, &conectar_con_cpu, configuracion);
-  pthread_join(hiloCliente, NULL);
 
+  pthread_join(hiloCliente, NULL);
+  pthread_join(hiloClienteMemoria, NULL);
+  pthread_join(hiloServer, NULL);
   free(configuracion);
 
   return EXIT_SUCCESS;
