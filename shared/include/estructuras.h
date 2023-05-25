@@ -31,14 +31,9 @@ typedef enum TipoInstruccion {
 	EXIT
 }TipoInstruccion;
 
-union Parametro{
-	int integer;
-	char* string;
-};
-
 typedef struct Linea_Instruccion {
 	char *identifier;
-	union Parametro parametros[3];
+	char* parametros[3];
 }Linea_Instruccion;
 
 typedef struct{
@@ -57,4 +52,5 @@ Paquete *crear_paquete (op_code codigoOperacion);
 void agregar_a_paquete(Paquete* paquete, void* valor, int tamanio);
 void* serializar_paquete(Paquete* paquete, int bytes);
 void enviar_paquete(Paquete* paquete, int socket_cliente);
+op_code obtener_codigo_operacion(int socketCliente);
 #endif /* INCLUDE_ESTRUCTURAS_H_ */
