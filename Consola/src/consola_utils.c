@@ -8,21 +8,24 @@ int conectar_kernel()
 
 void generar_lista_instrucciones (t_list *lista,FILE *archivo){
 	while (!feof(archivo)){
-		Linea_Instruccion *instruccion = leer_instruccion (archivo);
-		agregar_instruccion (instruccion,lista);
+		Linea_Instruccion *instruccion = leer_instruccion(archivo);
+		agregar_instruccion(instruccion,lista);
 	}
 }
-void asignar_params(Linea_Instruccion* instruc, char **params){
-	instruc->identifier = strdup(params[0]);
-	//instruc->parametros[0] = atoi(params[1]);
-	//instruc->parametros[1] = atoi(params[2]);
-	//instruc->parametros[2] = atoi(params[3]);
 
-	free(*params);
+void asignar_params(Linea_Instruccion* instruc, char **params) {
+  instruc->identifier = params[0];
+	instruc->parametros[0] = params[1];
+	instruc->parametros[1] = params[2];
+	instruc->parametros[2] = params[3];
+	printf("%s", params[0]);
+	free(params);
 }
-void agregar_instruccion (Linea_Instruccion *instruc , t_list *lista){
+
+void agregar_instruccion (Linea_Instruccion *instruc , t_list *lista) {
 	list_add(lista,instruc);
 }
+
 void eliminar_salto_linea(char *linea)
 {
   if (linea[strlen(linea) - 1] == '\n')
@@ -49,11 +52,11 @@ int cant_params (char *linea){
 void rellenar_espacios_vacios(int cant_params, char **params)
 {
   if (cant_params < 1)
-	  params[0] = "-1"; //ver si es mejor poner NULL
+	  params[1] = "-1"; //ver si es mejor poner NULL
   if (cant_params < 2)
-	  params[1] = "-1";
-  if (cant_params < 3)
 	  params[2] = "-1";
+  if (cant_params < 3)
+	  params[3] = "-1";
 }
 char **obtener_params (char *linea){
 	int cantParams = cant_params(linea);
