@@ -8,9 +8,7 @@ void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
 }
 
 paquete* enpaquetarInstrucciones(t_list* instrucciones) {
-  paquete* paquete;
-
-  paquete = crear_paquete(LINEAS_INSTRUCCION);
+  paquete* paquete = crear_paquete(LINEAS_INSTRUCCION);
   serializarInstrucciones(paquete, instrucciones);
   return paquete;
 }
