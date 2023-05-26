@@ -1,5 +1,6 @@
 #include <cpu_utils.h>
 
+/*
 struct Registro AX = {
 	.nombre = "AX",
 	.valor.cuatro_bytes=0};
@@ -48,7 +49,6 @@ struct Registro RDX = {
 	.nombre = "RDX",
 	.valor.dieciseis_bytes=0};
 
-/*
 struct Registro registros[]={
 		AX,
 		BX,

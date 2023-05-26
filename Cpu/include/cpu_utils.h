@@ -12,9 +12,10 @@ union Valor {
 };
 
 typedef struct {
-	char nombre[20];
-	union Valor valor;
+  char nombre[20];
+  union Valor valor;
 } Registro;
+
 
 extern Registro AX;
 extern Registro BX;
