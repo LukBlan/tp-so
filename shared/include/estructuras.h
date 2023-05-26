@@ -7,7 +7,7 @@
 #include <commons/collections/list.h>
 
 
-typedef struct PCB{
+typedef struct {
 	unsigned int pid;
 	t_list *instrucciones;
 	unsigned int programCounter;
@@ -16,32 +16,33 @@ typedef struct PCB{
 	float estimadoRafaga;
 	unsigned int llegadaReady;
 	t_list *archivosAbiertos;
-};
+} PCB;
 
-typedef enum op_code{
+typedef enum {
 	DESCONEXION = -1,
 	LINEAS_INSTRUCCION,
 	Pcb
-}op_code;
+} op_code;
 
 typedef enum TipoInstruccion {
 	DESCONOCIDA = -1,
 	SET,
 	YIELD,
 	EXIT
-}TipoInstruccion;
+} TipoInstruccion;
 
-typedef struct Linea_Instruccion {
-	char *identifier;
+typedef struct {
+	char *identificador;
+	char *longitudIdentificador;
 	char* parametros[3];
-}Linea_Instruccion;
+} instruccion;
 
-typedef struct{
+typedef struct {
 	int size;
 	void *stream;
-}t_buffer;
+} t_buffer;
 
-typedef struct{
+typedef struct {
 	op_code codigo_operacion;
 	t_buffer* buffer;
 } Paquete;
@@ -53,4 +54,5 @@ void agregar_a_paquete(Paquete* paquete, void* valor, int tamanio);
 void* serializar_paquete(Paquete* paquete, int bytes);
 void enviar_paquete(Paquete* paquete, int socket_cliente);
 op_code obtener_codigo_operacion(int socketCliente);
+
 #endif /* INCLUDE_ESTRUCTURAS_H_ */

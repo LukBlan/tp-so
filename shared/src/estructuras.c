@@ -3,6 +3,7 @@
 op_code obtener_codigo_operacion(int socketCliente) {
   op_code codigoOperacion;
   if (recv(socketCliente, &codigoOperacion, sizeof(int), MSG_WAITALL) > 0) {
+    printf("codigo operacion %d ", codigoOperacion);
     return codigoOperacion;
   } else {
     puts("DESCONEXION");
@@ -64,12 +65,12 @@ void enviar_paquete(Paquete* paquete, int socket_cliente) {
 
 void serializar_lista_instruc (Paquete *paquete, t_list *instrucciones){
 	int cantDeInstrucciones  = list_size(instrucciones);
-	agregar_a_paquete(paquete,&cantDeInstrucciones,sizeof(int));
-	Linea_Instruccion *linea;
+	agregar_a_paquete(paquete, &cantDeInstrucciones, sizeof(int));
+	instruccion *linea;
 	//Mientras hay instrucciones se siguen sumando al paquete
-	for(int k=0;k<cantDeInstrucciones;k++) {
-		linea = list_get(instrucciones,k);
-		agregar_a_paquete(paquete, linea->identifier, strlen(linea->identifier) + 1);
+	for(int k=0; k < cantDeInstrucciones; k++) {
+		linea = list_get(instrucciones, k);
+		agregar_a_paquete(paquete, linea->identificador, strlen(linea->identificador) + 1);
 		//agregar_a_paquete(paquete, &(linea->parametros[0]), sizeof(union Parametro));
 		//agregar_a_paquete(paquete, &(linea->parametros[1]), sizeof(union Parametro));
 		//agregar_a_paquete(paquete, &(linea->parametros[2]), sizeof(union Parametro));
