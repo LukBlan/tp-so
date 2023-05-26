@@ -24,7 +24,7 @@ typedef enum {
 	Pcb
 } op_code;
 
-typedef enum TipoInstruccion {
+typedef enum {
 	DESCONOCIDA = -1,
 	SET,
 	YIELD,
@@ -45,14 +45,14 @@ typedef struct {
 typedef struct {
 	op_code codigo_operacion;
 	t_buffer* buffer;
-} Paquete;
+} paquete;
 
-void eliminar_paquete(Paquete *paquete);
-void iniciar_buffer(Paquete *paquete);
-Paquete *crear_paquete (op_code codigoOperacion);
-void agregar_a_paquete(Paquete* paquete, void* valor, int tamanio);
-void* serializar_paquete(Paquete* paquete, int bytes);
-void enviar_paquete(Paquete* paquete, int socket_cliente);
+void eliminar_paquete(paquete* paquete);
+void iniciar_buffer(paquete* paquete);
+paquete *crear_paquete (op_code codigoOperacion);
+void agregar_a_paquete(paquete* paquete, void* valor, int tamanio);
+void* serializar_paquete(paquete* paquete, int bytes);
+void enviar_paquete(paquete* paquete, int socketCliente);
 op_code obtener_codigo_operacion(int socketCliente);
 
 #endif /* INCLUDE_ESTRUCTURAS_H_ */
