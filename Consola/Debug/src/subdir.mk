@@ -4,16 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/consola_instruccion.c \
 ../src/consola_recursos.c \
 ../src/consola_utils.c \
 ../src/main.c 
 
 C_DEPS += \
+./src/consola_instruccion.d \
 ./src/consola_recursos.d \
 ./src/consola_utils.d \
 ./src/main.d 
 
 OBJS += \
+./src/consola_instruccion.o \
 ./src/consola_recursos.o \
 ./src/consola_utils.o \
 ./src/main.o 
@@ -31,7 +34,7 @@ src/%.o: ../src/%.c src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/consola_recursos.d ./src/consola_recursos.o ./src/consola_utils.d ./src/consola_utils.o ./src/main.d ./src/main.o
+	-$(RM) ./src/consola_instruccion.d ./src/consola_instruccion.o ./src/consola_recursos.d ./src/consola_recursos.o ./src/consola_utils.d ./src/consola_utils.o ./src/main.d ./src/main.o
 
 .PHONY: clean-src
 

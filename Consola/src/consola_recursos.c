@@ -1,5 +1,4 @@
 #include <consola_recursos.h>
-#include <commons/config.h>
 
 recursos* generarLogger(char* pathLogger) {
   recursos* recursosConsola = malloc(sizeof(recursos));
