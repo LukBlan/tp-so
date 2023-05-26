@@ -23,7 +23,7 @@ void eliminar_paquete(paquete* paquete){
 }
 
 void iniciar_buffer(paquete* paquete){
-	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer = malloc(sizeof(buffer));
 	paquete->buffer->size = 0;
 	paquete->buffer->stream = NULL;
 }
@@ -43,7 +43,7 @@ void agregar_a_paquete(paquete* paquete, void* valor, int tamanio) {
 }
 
 void* serializar_paquete(paquete* paquete, int bytes) {
-	void * magic = malloc(bytes);
+	void* magic = malloc(bytes);
 	int desplazamiento = 0;
 
 	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
@@ -63,10 +63,11 @@ void enviar_paquete(paquete* paquete, int socketCliente) {
 	free(a_enviar);
 }
 
-void serializar_lista_instruc (paquete* paquete, t_list *instrucciones) {
-	int cantDeInstrucciones  = list_size(instrucciones);
-	agregar_a_paquete(paquete, &cantDeInstrucciones, sizeof(int));
+void serializarInstrucciones(paquete* paquete, t_list *instrucciones) {
+	int cantDeInstrucciones = list_size(instrucciones);
 	instruccion *linea;
+
+	agregar_a_paquete(paquete, &cantDeInstrucciones, sizeof(int));
 	//Mientras hay instrucciones se siguen sumando al paquete
 	for(int k=0; k < cantDeInstrucciones; k++) {
 		linea = list_get(instrucciones, k);

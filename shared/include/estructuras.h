@@ -6,7 +6,6 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 
-
 typedef struct {
 	unsigned int pid;
 	t_list *instrucciones;
@@ -33,18 +32,19 @@ typedef enum {
 
 typedef struct {
 	char *identificador;
-	char *longitudIdentificador;
+	int longitudIdentificador;
 	char* parametros[3];
+	int longitudParametros[3];
 } instruccion;
 
 typedef struct {
 	int size;
 	void *stream;
-} t_buffer;
+} buffer;
 
 typedef struct {
 	op_code codigo_operacion;
-	t_buffer* buffer;
+	buffer* buffer;
 } paquete;
 
 void eliminar_paquete(paquete* paquete);
