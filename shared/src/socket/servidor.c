@@ -1,7 +1,5 @@
 #include <socket/servidor.h>
 
-t_log* logger;
-
 int iniciar_servidor(char *IP,char *PUERTO) {
 	int socket_servidor;
 	struct addrinfo hints;
