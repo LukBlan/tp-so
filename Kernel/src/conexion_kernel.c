@@ -5,18 +5,40 @@
 #include <socket/cliente.h>
 #include <estructuras.h>
 
-
 void* montar_servidor(void* args) {
   configuracion config = *(configuracion*) args;
   int socketServidor = iniciar_servidor(config.IP_ESCUCHA, string_itoa(config.PUERTO_ESCUCHA));
   while (1) {
     int socketCliente = esperar_cliente(socketServidor);
     obtener_codigo_operacion(socketCliente);
+    obtenerDatos(socketCliente);
     close(socketCliente);
   }
   close(socketServidor);
 }
 
+
+void obtenerDatos(socketCliente) {
+  int tamanioBuffer;
+  recv(socketCliente, &tamanioBuffer, sizeof(int), MSG_WAITALL);
+  printf("%d\n", tamanioBuffer);
+
+  void* stream = malloc(sizeof(tamanioBuffer));
+  recv(socketCliente, stream, sizeof(tamanioBuffer), MSG_WAITALL);
+  buffer* buffer = malloc(tamanioBuffer + sizeof(int));
+  buffer->stream = stream;
+  buffer->size = tamanioBuffer;
+
+  int posicion = 0;
+  int tamanioPrimeraInstruccion;
+  memcpy(&tamanioPrimeraInstruccion, stream, sizeof(int));
+  posicion += sizeof(int);
+  printf("%d\n", tamanioPrimeraInstruccion);
+
+  char* nombreInstruccion = string_new();
+  memcpy(nombreInstruccion, stream + posicion, tamanioPrimeraInstruccion);
+  printf("%s\n", nombreInstruccion);
+}
 
 /*
 Pcb crear_pcb(t_listlistaInstrucciones) {
