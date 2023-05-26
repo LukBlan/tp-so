@@ -7,6 +7,14 @@ void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
   }
 }
 
+paquete* enpaquetarInstrucciones(t_list* instrucciones) {
+  paquete* paquete;
+
+  paquete = crear_paquete(LINEAS_INSTRUCCION);
+  serializar_lista_instruc(paquete, instrucciones);
+  return paquete;
+}
+
 int generarConexionConKernel(recursos* recursosConsola) {
   configuracion* configuracion = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
