@@ -14,6 +14,6 @@ void eliminar_salto_linea(char *linea);
 char* leer_linea(FILE* arch);
 char** obtener_params (char* linea);
 void rellenar_espacios_vacios(int cantidadParametros, char** params);
-
+int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones);
 #endif
 

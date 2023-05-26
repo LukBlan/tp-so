@@ -9,5 +9,8 @@
 void checkearArgumentosMain(t_log* logger, int cantidadArgumentos);
 int generarConexionConKernel(recursos* recursosConsola);
 paquete* enpaquetarInstrucciones(t_list* instrucciones);
+buffer* generarBuffer(int tamanio);
+void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int cantidadDeInstrucciones);
+paquete* generarPaquete(buffer* buffer, op_code codigoOperacion);
 
 #endif

@@ -7,11 +7,80 @@ void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
   }
 }
 
+int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
+  int tamanioTotal = 0;
+  for (int i = 0; i < cantidadDeInstrucciones; i++) {
+    instruccion* instruccion = list_get(instrucciones, i);
+    tamanioTotal += instruccion->longitudIdentificador;
+    tamanioTotal += instruccion->longitudParametros[0];
+    tamanioTotal += instruccion->longitudParametros[1];
+    tamanioTotal += instruccion->longitudParametros[2];
+    tamanioTotal += sizeof(int) * 4;
+  }
+  return tamanioTotal;
+}
+
 paquete* enpaquetarInstrucciones(t_list* instrucciones) {
-  paquete* paquete = crear_paquete(LINEAS_INSTRUCCION);
-  serializarInstrucciones(paquete, instrucciones);
+  //estructura -> buffer -> empaqueto -> envio;
+  int cantidadDeInstrucciones = list_size(instrucciones);
+  int tamanioTotalInstrucciones = calcularTamanio(instrucciones, cantidadDeInstrucciones);
+
+  buffer* buffer = generarBuffer(tamanioTotalInstrucciones);
+  serializarListaInstrucciones(buffer, instrucciones, cantidadDeInstrucciones);
+  paquete* paquete = generarPaquete(buffer, LINEAS_INSTRUCCION);
   return paquete;
 }
+
+buffer* generarBuffer(int tamanio) {
+  buffer* buffer = malloc(tamanio + sizeof(int));
+  buffer->stream = malloc(tamanio);;
+  buffer->size = tamanio;
+  return buffer;
+}
+
+void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int cantDeInstrucciones) {
+  int posicion = 0;
+  for(int i = 0; i < cantDeInstrucciones; i++) {
+    instruccion *linea = list_get(instrucciones, i);
+    memcpy(buffer->stream + posicion, &(linea->longitudIdentificador), sizeof(int));
+    posicion += sizeof(int);
+    memcpy(buffer->stream + posicion, linea->identificador, linea->longitudIdentificador);
+    posicion += linea->longitudIdentificador;
+
+    memcpy(buffer->stream + posicion, &(linea->longitudParametros[0]), sizeof(int));
+    posicion += sizeof(int);
+    memcpy(buffer->stream + posicion, linea->parametros[0], linea->longitudParametros[0]);
+    posicion += linea->longitudParametros[0];
+
+    memcpy(buffer->stream + posicion, &(linea->longitudParametros[1]), sizeof(int));
+    posicion += sizeof(int);
+    memcpy(buffer->stream + posicion, linea->parametros[1], linea->longitudParametros[1]);
+    posicion += linea->longitudParametros[1];
+
+    memcpy(buffer->stream + posicion, &(linea->longitudParametros[2]), sizeof(int));
+    posicion += sizeof(int);
+    memcpy(buffer->stream + posicion, linea->parametros[2], linea->longitudParametros[2]);
+    posicion += linea->longitudParametros[2];
+  }
+
+    int posicion2 = 0;
+    int tamanioPrimeraInstruccion;
+    memcpy(&tamanioPrimeraInstruccion, buffer->stream, sizeof(int));
+    posicion2 += sizeof(int);
+    printf("%d\n", tamanioPrimeraInstruccion);
+
+    char* nombreInstruccion = string_new();
+    memcpy(nombreInstruccion, buffer->stream + posicion2, tamanioPrimeraInstruccion);
+    printf("%s\n", nombreInstruccion);
+}
+
+paquete* generarPaquete(buffer* buffer, op_code codigoOperacion) {
+  paquete* paquete = malloc(sizeof(buffer->size) + sizeof(int) * 2);
+  paquete->buffer = buffer;
+  paquete->codigo_operacion = codigoOperacion;
+  return paquete;
+}
+
 
 int generarConexionConKernel(recursos* recursosConsola) {
   configuracion* configuracion = recursosConsola->configuracion;
