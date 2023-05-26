@@ -13,7 +13,6 @@
 #include <netdb.h>
 #include <commons/log.h>
 #include <commons/config.h>
-
-
 #include <estructuras.h>
+
 #endif
