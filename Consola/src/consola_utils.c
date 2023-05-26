@@ -1,75 +1,88 @@
 #include <consola_utils.h>
 
+void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
+  if(cantidadArgumentos!=3){
+    log_error(logger,"No se ingreso la cantidad de argumentos necesaria");
+    exit(EXIT_FAILURE);
+  }
+}
 
-int conectar_kernel()
-{
-  return crear_conexion_servidor(CONSOLA_CONFIG.IP_KERNEL, CONSOLA_CONFIG.PUERTO_KERNEL);
+int conectar_kernel(recursos* recursosConsola) {
+  configuracion* configuracion = recursosConsola->configuracion;
+  return crear_conexion_servidor(configuracion->IP_KERNEL, configuracion->PUERTO_KERNEL);
 }
 
 void generar_lista_instrucciones (t_list *lista,FILE *archivo){
 	while (!feof(archivo)){
-		Linea_Instruccion *instruccion = leer_instruccion(archivo);
+		instruccion *instruccion = leer_instruccion(archivo);
 		agregar_instruccion(instruccion,lista);
 	}
 }
 
-void asignar_params(Linea_Instruccion* instruc, char **params) {
-  instruc->identifier = params[0];
+void asignar_params(instruccion* instruc, char **params) {
+  instruc->identificador = params[0];
 	instruc->parametros[0] = params[1];
 	instruc->parametros[1] = params[2];
 	instruc->parametros[2] = params[3];
-	printf("%s", params[0]);
 	free(params);
 }
 
-void agregar_instruccion (Linea_Instruccion *instruc , t_list *lista) {
+void agregar_instruccion (instruccion *instruc , t_list *lista) {
 	list_add(lista,instruc);
 }
 
-void eliminar_salto_linea(char *linea)
-{
-  if (linea[strlen(linea) - 1] == '\n')
+void eliminar_salto_linea(char *linea) {
+  if (linea[strlen(linea) - 1] == '\n') {
     linea[strlen(linea) - 1] = '\0';
+  }
 }
-char *leer_linea(FILE *arch){
+
+char *leer_linea(FILE *arch) {
 	char *linea = NULL;
 	int buffersize=0;
 
-	getline(&linea,&buffersize,arch);
+	getline(&linea, &buffersize, arch);
 	eliminar_salto_linea(linea);
 	return linea;
 }
 
-int cant_params (char *linea){
-	 int veces = 0;
+int cant_params (char *linea) {
+  int veces = 0;
 
-	  for (int i = 0; i < string_length(linea); i++)
-	    if (linea[i] == ' ' )
-	      veces++;
+  for (int i = 0; i < string_length(linea); i++) {
+    if (linea[i] == ' ' ) {
+      veces++;
+    }
+  }
+  return veces;
+}
 
-	  return veces;
+void rellenar_espacios_vacios(int cant_params, char **params) {
+  if (cant_params < 1) {
+    params[1] = "-1";
+  }
+
+  if (cant_params < 2) {
+    params[2] = "-1";
+  }
+
+  if (cant_params < 3) {
+    params[3] = "-1";
+  }
 }
-void rellenar_espacios_vacios(int cant_params, char **params)
-{
-  if (cant_params < 1)
-	  params[1] = "-1"; //ver si es mejor poner NULL
-  if (cant_params < 2)
-	  params[2] = "-1";
-  if (cant_params < 3)
-	  params[3] = "-1";
-}
+
 char **obtener_params (char *linea){
 	int cantParams = cant_params(linea);
-	char **params = string_n_split(linea,cantParams," ");//Funcion commons que divide los string
+	char **params = string_n_split(linea,cantParams," ");
 	rellenar_espacios_vacios(cantParams,params);
 	return params;
 }
 
-Linea_Instruccion *leer_instruccion(FILE *arch){
+instruccion *leer_instruccion(FILE *arch){
 	char *linea = leer_linea(arch);
 	char **params = obtener_params(linea);
 
-	Linea_Instruccion *instruc = malloc(sizeof(Linea_Instruccion));
+	instruccion *instruc = malloc(sizeof(instruccion));
 	asignar_params(instruc,params);
 
 	free(linea);
