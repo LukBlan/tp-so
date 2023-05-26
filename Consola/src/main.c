@@ -20,5 +20,6 @@ int main(int argc, char *argv[]) {
   //funcion para comprobar el handshake con Kernel
   //Logger para salir del Kernel
   //Terminar la consola
+  liberarRecursos(recursosConsola);
 }
 

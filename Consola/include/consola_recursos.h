@@ -19,7 +19,7 @@ typedef struct {
 recursos* generarLogger(char*);
 void obtenerConfiguracion(recursos*, char*);
 void obtenerPseudoCodigo(recursos*, char*);
-
 void configuracion_consola(t_config *config);
+void liberarRecursos(recursos* recursosConsola);
 
 #endif

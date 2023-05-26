@@ -20,3 +20,11 @@ void obtenerConfiguracion(recursos* recursosConsola, char* pathConfiguracion) {
 void obtenerPseudoCodigo(recursos* recursosConsola, char* pathPseudoCodigo) {
   recursosConsola->pathPseudoCodigo = pathPseudoCodigo;
 }
+
+void liberarRecursos(recursos* recursosConsola) {
+  free(recursosConsola->configuracion->IP_KERNEL);
+  free(recursosConsola->configuracion->PUERTO_KERNEL);
+  free(recursosConsola->configuracion);
+  log_destroy(recursosConsola->logger);
+  free(recursosConsola);
+}
