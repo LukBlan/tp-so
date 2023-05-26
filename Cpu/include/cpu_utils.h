@@ -4,33 +4,36 @@
 #include <socket/cliente.h>
 #include <commons/string.h>
 #include <commons/txt.h>
-union Valor{
+
+union Valor {
 	uint32_t cuatro_bytes;
 	uint64_t ocho_bytes;
 	uint32_t dieciseis_bytes [4];
 };
-struct Registro{
+
+typedef struct {
 	char nombre[20];
 	union Valor valor;
-};
-extern struct Registro AX;
-extern struct Registro BX;
-extern struct Registro CX;
-extern struct Registro DX;
+} Registro;
 
-extern struct Registro EAX;
-extern struct Registro EBX;
-extern struct Registro ECX;
-extern struct Registro EDX;
+extern Registro AX;
+extern Registro BX;
+extern Registro CX;
+extern Registro DX;
 
-extern struct Registro RAX;
-extern struct Registro RBX;
-extern struct Registro RCX;
-extern struct Registro RDX;
+extern Registro EAX;
+extern Registro EBX;
+extern Registro ECX;
+extern Registro EDX;
 
-extern struct Registro registros;
+extern Registro RAX;
+extern Registro RBX;
+extern Registro RCX;
+extern Registro RDX;
 
-struct Registro buscar_registro (char nombre_registro);
+extern Registro registros;
+
+Registro buscar_registro(char nombre_registro);
 
 void setear_valor_registro(char nombre_registro,char valor);
 

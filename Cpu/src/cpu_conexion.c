@@ -23,6 +23,7 @@ void* conectar_con_memoria(void* args) {
   recursos recursosModulo = *(recursos*) args;
   configuracion* config = recursosModulo.configuracion;
   t_log* logger = recursosModulo.logger;
+  //int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, string_itoa(config->PUERTO_MEMORIA));
   int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, string_itoa(config->PUERTO_MEMORIA));
   close(socketCliente);
 }
