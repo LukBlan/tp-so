@@ -7,7 +7,8 @@
 #include <socket/cliente.h>
 
 void checkearArgumentosMain(t_log*, int);
-int conectar_con_kernel();
+int generarConexionConKernel(recursos*);
+t_list* generarListaDeInstrucciones(recursos*);
 void asignar_params(instruccion *instruc, char **params);
 void generar_lista_instrucciones (t_list *lista, FILE *archivo);
 void agregar_instruccion (instruccion *instruc, t_list *lista);

@@ -1,18 +1,43 @@
 #include <consola_utils.h>
 
 void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
-  if(cantidadArgumentos!=3){
+  if (cantidadArgumentos != 3) {
     log_error(logger,"No se ingreso la cantidad de argumentos necesaria");
     exit(EXIT_FAILURE);
   }
 }
 
-int conectar_kernel(recursos* recursosConsola) {
+int generarConexionConKernel(recursos* recursosConsola) {
   configuracion* configuracion = recursosConsola->configuracion;
-  return crear_conexion_servidor(configuracion->IP_KERNEL, configuracion->PUERTO_KERNEL);
+  t_log* logger = recursosConsola->logger;
+
+  int socketKernel = crear_conexion_servidor(configuracion->IP_KERNEL, configuracion->PUERTO_KERNEL);
+  log_info(logger, "Conectando con el Servidor Kernel...");
+
+  if (socketKernel < 0) {
+    log_error(logger, "Conexión rechazada. El Servidor Kernel no se encuentra disponible en este momento.");
+    return EXIT_FAILURE;
+  }
+
+  log_info(logger, "Conexión exitosa. Iniciando cliente...");
+  return socketKernel;
 }
 
-void generar_lista_instrucciones (t_list *lista,FILE *archivo){
+t_list* generarListaDeInstrucciones(recursos* recursosConsola) {
+  char* pathPseudoCodigo = recursosConsola->pathPseudoCodigo;
+  t_list *instrucciones = list_create();
+  FILE *archivoDeInstrucciones = fopen(pathPseudoCodigo, "r");
+
+  if(archivoDeInstrucciones == NULL){
+    log_error(recursosConsola->logger, "El archivo no se pudo abrir");
+    exit(EXIT_FAILURE);
+  }
+
+  generar_lista_instrucciones(instrucciones, archivoDeInstrucciones);
+  return instrucciones;
+}
+
+void generar_lista_instrucciones (t_list *lista, FILE *archivo) {
 	while (!feof(archivo)){
 		instruccion *instruccion = leer_instruccion(archivo);
 		agregar_instruccion(instruccion,lista);
