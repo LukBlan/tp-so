@@ -17,13 +17,13 @@ void mostrar(t_list* instrucciones) {
 
 void montar_servidor(configuracion* config) {
   int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
-  //while (1) {
+  while (1) {
     int socketCliente = esperar_cliente(socketServidor);
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
     mostrar(instrucciones);
     close(socketCliente);
-  //}
+  }
   close(socketServidor);
 }
 
