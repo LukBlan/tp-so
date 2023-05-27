@@ -1,9 +1,4 @@
 /*
- * planificacion.c
- *
- *  Created on: May 27, 2023
- *      Author: utnso
- */
 void iniciarSemaforos(){
 		pthread_mutex_init(&mutexNumeroProceso, NULL);
 
@@ -126,3 +121,4 @@ bool sePuedeAgregarMasProcesos()
 {
     return (cantidad_procesos_memoria() < KERNEL_CONFIG.GRADO_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNuevos, &mutexColaNuevos) > 0 || lectura_cola_mutex(colaSuspendidoListo, &mutexColaSuspendidoListo) > 0);
 }
+*/

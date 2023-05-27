@@ -23,8 +23,8 @@ void obtenerDatos(socketCliente) {
   recv(socketCliente, &tamanioBuffer, sizeof(int), MSG_WAITALL);
   printf("%d\n", tamanioBuffer);
 
-  void* stream = malloc(sizeof(tamanioBuffer));
-  recv(socketCliente, stream, sizeof(tamanioBuffer), MSG_WAITALL);
+  void* stream = malloc(tamanioBuffer);
+  recv(socketCliente, stream, tamanioBuffer, MSG_WAITALL);
   buffer* buffer = malloc(tamanioBuffer + sizeof(int));
   buffer->stream = stream;
   buffer->size = tamanioBuffer;
