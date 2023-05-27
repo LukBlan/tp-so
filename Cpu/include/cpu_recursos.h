@@ -7,8 +7,8 @@ typedef struct {
 	int RETARDO_INSTRUCCION;
 	char* IP_MEMORIA;
 	char* IP_ESCUCHA;
-	int PUERTO_MEMORIA;
-	int PUERTO_ESCUCHA;
+	char* PUERTO_MEMORIA;
+	char* PUERTO_ESCUCHA;
 	int TAM_MAX_SEGMENTO;
 } configuracion;
 

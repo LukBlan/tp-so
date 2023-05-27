@@ -9,8 +9,8 @@ configuracion* obtenerConfiguracion(char* pathArchivo) {
   config->IP_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "IP_MEMORIA"));
   config->IP_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "IP_ESCUCHA"));
   config->TAM_MAX_SEGMENTO = config_get_int_value(fileConfig, "TAM_MAX_SEGMENTO");
-  config->PUERTO_ESCUCHA = config_get_int_value(fileConfig, "PUERTO_ESCUCHA");
-  config->PUERTO_MEMORIA = config_get_int_value(fileConfig, "PUERTO_MEMORIA");
+  config->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_ESCUCHA"));
+  config->PUERTO_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_MEMORIA"));
   config->RETARDO_INSTRUCCION = config_get_int_value(fileConfig, "RETARDO_INSTRUCCION");
   config_destroy(fileConfig);
   return config;
@@ -26,6 +26,8 @@ recursos* obtenerRecursosModulo(char* pathConfiguracion, char* pathLogger) {
 }
 
 void liberarRecursos(recursos* recursosModulo) {
+  free(recursosModulo->configuracion->PUERTO_ESCUCHA);
+  free(recursosModulo->configuracion->PUERTO_MEMORIA);
   free(recursosModulo->configuracion->IP_ESCUCHA);
   free(recursosModulo->configuracion->IP_MEMORIA);
   free(recursosModulo->configuracion);
