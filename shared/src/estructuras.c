@@ -2,9 +2,7 @@
 
 op_code obtener_codigo_operacion(int socketCliente) {
   op_code codigoOperacion;
-  puts("llegue aca");
   if (recv(socketCliente, &codigoOperacion, sizeof(int), MSG_WAITALL) > 0) {
-    printf("codigo operacion %d\n", codigoOperacion);
     return codigoOperacion;
   } else {
     puts("DESCONEXION");
