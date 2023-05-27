@@ -8,7 +8,6 @@
 
 int main(void) {
   recursos* recursosModulo = obtenerRecursosModulo("cpu.config", "cpu.log");
-
   pthread_t hiloServer;
   pthread_create(&hiloServer, NULL, (void*)montar_servidor, recursosModulo);
   pthread_t hiloCliente;
