@@ -3,9 +3,9 @@
 
 int main(int argc, char *argv[]) {
   int socketKernel;
-  paquete* paquete;
+  t_paquete* paquete;
   t_list *instrucciones = list_create();
-  recursos* recursosConsola;
+  t_recursos* recursosConsola;
 
   recursosConsola = generarLogger("consola.log");
   checkearArgumentosMain(recursosConsola->logger, argc);
@@ -22,6 +22,10 @@ int main(int argc, char *argv[]) {
   //Logger para salir del Kernel
   //Terminar la consola
   //Liberar las instrucciones?
+
+  //liberarInstrucciones(instrucciones);
+  liberarPaquete(paquete);
   liberarRecursos(recursosConsola);
+  close(socketKernel);
 }
 

@@ -11,7 +11,7 @@ int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
   // empieza en sizeof(int) por la cantidad de instrucciones
   int tamanioTotal = sizeof(int);
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
-    instruccion* instruccion = list_get(instrucciones, i);
+    t_instruccion* instruccion = list_get(instrucciones, i);
     tamanioTotal += instruccion->longitudIdentificador;
     tamanioTotal += instruccion->longitudParametros[0];
     tamanioTotal += instruccion->longitudParametros[1];
@@ -21,31 +21,42 @@ int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
   return tamanioTotal;
 }
 
-paquete* enpaquetarInstrucciones(t_list* instrucciones) {
+t_paquete* enpaquetarInstrucciones(t_list* instrucciones) {
   int cantidadDeInstrucciones = list_size(instrucciones);
   int tamanioTotalInstrucciones = calcularTamanio(instrucciones, cantidadDeInstrucciones);
 
-  buffer* buffer = generarBuffer(tamanioTotalInstrucciones);
+  t_buffer* buffer = generarBuffer(tamanioTotalInstrucciones);
   serializarListaInstrucciones(buffer, instrucciones, cantidadDeInstrucciones);
-  paquete* paquete = generarPaquete(buffer, LINEAS_INSTRUCCION);
+  t_paquete* paquete = generarPaquete(buffer, LINEAS_INSTRUCCION);
   return paquete;
 }
 
-buffer* generarBuffer(int tamanio) {
-  buffer* buffer = malloc(tamanio + sizeof(int));
+void liberarInstrucciones(t_list* instrucciones) {
+  int tamanio = list_size(instrucciones);
+  for (int i = 0; i < tamanio; i++) {
+    t_instruccion* instruccion = list_get(instrucciones, i);
+    printf("%s\n", instruccion->identificador);
+    free(instruccion->identificador);
+    free(instruccion);
+  }
+  list_destroy(instrucciones);
+}
+
+t_buffer* generarBuffer(int tamanio) {
+  t_buffer* buffer = malloc(tamanio + sizeof(int));
   buffer->stream = malloc(tamanio);;
   buffer->size = tamanio;
   return buffer;
 }
 
-void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int cantDeInstrucciones) {
+void serializarListaInstrucciones(t_buffer* buffer, t_list* instrucciones, int cantDeInstrucciones) {
   int posicion = 0;
   memcpy(buffer->stream, &(cantDeInstrucciones), sizeof(int));
   posicion += sizeof(int);
 
   for(int i = 0; i < cantDeInstrucciones; i++) {
     // Nombre Instruccion
-    instruccion *linea = list_get(instrucciones, i);
+    t_instruccion *linea = list_get(instrucciones, i);
     memcpy(buffer->stream + posicion, &(linea->longitudIdentificador), sizeof(int));
     posicion += sizeof(int);
     memcpy(buffer->stream + posicion, linea->identificador, linea->longitudIdentificador);
@@ -69,30 +80,23 @@ void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int can
     memcpy(buffer->stream + posicion, linea->parametros[2], linea->longitudParametros[2]);
     posicion += linea->longitudParametros[2];
   }
-
-    int posicion2 = 0;
-    int cantidadDeInstrucciones = 0;
-    memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
-    posicion2 += sizeof(int);
-
-    int tamanioPrimeraInstruccion;
-    memcpy(&tamanioPrimeraInstruccion, buffer->stream + posicion2, sizeof(int));
-    posicion2 += sizeof(int);
-
-    char* nombreInstruccion = string_new();
-    memcpy(nombreInstruccion, buffer->stream + posicion2, tamanioPrimeraInstruccion);
 }
 
-paquete* generarPaquete(buffer* buffer, op_code codigoOperacion) {
-  paquete* paquete = malloc(sizeof(buffer->size) + sizeof(int) * 2);
+t_paquete* generarPaquete(t_buffer* buffer, op_code codigoOperacion) {
+  t_paquete* paquete = malloc(buffer->size + sizeof(int) * 2);
   paquete->buffer = buffer;
   paquete->codigo_operacion = codigoOperacion;
   return paquete;
 }
 
+void liberarPaquete(t_paquete* paquete) {
+  free(paquete->buffer->stream);
+  free(paquete->buffer);
+  free(paquete);
+}
 
-int generarConexionConKernel(recursos* recursosConsola) {
-  configuracion* configuracion = recursosConsola->configuracion;
+int generarConexionConKernel(t_recursos* recursosConsola) {
+  t_configuracion* configuracion = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
 
   int socketKernel = crear_conexion_servidor(configuracion->IP_KERNEL, configuracion->PUERTO_KERNEL);

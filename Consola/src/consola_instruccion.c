@@ -1,6 +1,6 @@
 #include <consola_instruccion.h>
 
-void generarListaDeInstrucciones(recursos* recursosConsola, t_list* instrucciones) {
+void generarListaDeInstrucciones(t_recursos* recursosConsola, t_list* instrucciones) {
   char* pathPseudoCodigo = recursosConsola->pathPseudoCodigo;
   FILE* archivoDeInstrucciones = fopen(pathPseudoCodigo, "r");
 
@@ -14,12 +14,12 @@ void generarListaDeInstrucciones(recursos* recursosConsola, t_list* instruccione
 
 void generar_lista_instrucciones (t_list *lista, FILE *archivo) {
   while (!feof(archivo)){
-    instruccion *instruccion = leer_instruccion(archivo);
+    t_instruccion *instruccion = leer_instruccion(archivo);
     agregar_instruccion(instruccion,lista);
   }
 }
 
-void asignar_params(instruccion* instruccion, char **params) {
+void asignar_params(t_instruccion* instruccion, char **params) {
   instruccion->identificador = params[0];
   instruccion->longitudIdentificador = string_length(instruccion->identificador) + 1;
 
@@ -34,7 +34,7 @@ void asignar_params(instruccion* instruccion, char **params) {
   free(params);
 }
 
-void agregar_instruccion (instruccion *instruc , t_list *lista) {
+void agregar_instruccion (t_instruccion *instruc , t_list *lista) {
   list_add(lista,instruc);
 }
 
@@ -44,11 +44,11 @@ void eliminar_salto_linea(char *linea) {
   }
 }
 
-instruccion* leer_instruccion(FILE* arch){
+t_instruccion* leer_instruccion(FILE* arch){
   char* linea = leer_linea(arch);
   char** params = obtener_params(linea);
 
-  instruccion* instruc = malloc(sizeof(instruccion));
+  t_instruccion* instruc = malloc(sizeof(t_instruccion));
   asignar_params(instruc, params);
   free(linea);
   return instruc;
