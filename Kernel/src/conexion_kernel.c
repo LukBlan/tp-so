@@ -5,13 +5,25 @@
 #include <socket/cliente.h>
 #include <estructuras.h>
 
+void mostrar(t_list* instrucciones) {
+  int tamaño = list_size(instrucciones);
+  for (int i = 0; i < tamaño; i++) {
+     instruccion* instruccion = list_get(instrucciones, i);
+     printf("%s", instruccion->identificador);
+     printf(" %s", instruccion->parametros[0]);
+     printf(" %s", instruccion->parametros[1]);
+     printf(" %s\n", instruccion->parametros[2]);
+  }
+}
+
 void* montar_servidor(void* args) {
   configuracion config = *(configuracion*) args;
   int socketServidor = iniciar_servidor(config.IP_ESCUCHA, string_itoa(config.PUERTO_ESCUCHA));
   while (1) {
     int socketCliente = esperar_cliente(socketServidor);
     obtener_codigo_operacion(socketCliente);
-    generarListaDeInstrucciones(socketCliente);
+    t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
+    mostrar(instrucciones);
     close(socketCliente);
   }
   close(socketServidor);
@@ -37,9 +49,11 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
   memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
   posicion += sizeof(int);
-  printf("cantidad instrucciones %d\n", cantidadDeInstrucciones);
 
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
+    instruccion* instruccionExample;
+    instruccion* instruccion = malloc(sizeof(instruccion));
+
     int tamanioPrimeraInstruccion;
     memcpy(&tamanioPrimeraInstruccion, buffer->stream + posicion, sizeof(int));
     posicion += sizeof(int);
@@ -47,15 +61,12 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
     char* nombreInstruccion = string_new();
     memcpy(nombreInstruccion, buffer->stream + posicion, tamanioPrimeraInstruccion);
     posicion += tamanioPrimeraInstruccion;
-    printf("%s ", nombreInstruccion);
-
     int tamañoPrimerParametro;
     memcpy(&tamañoPrimerParametro, buffer->stream + posicion, sizeof(int));
     posicion += sizeof(int);
 
     char* nombrePrimerParametro = string_new();
     memcpy(nombrePrimerParametro, buffer->stream + posicion, tamañoPrimerParametro);
-    printf("%s ", nombrePrimerParametro);
     posicion += tamañoPrimerParametro;
 
     int tamañoSegundoParametro;
@@ -64,7 +75,6 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
     char* nombreSegundoParametro = string_new();
     memcpy(nombreSegundoParametro, buffer->stream + posicion, tamañoSegundoParametro);
-    printf("%s ", nombreSegundoParametro);
     posicion += tamañoSegundoParametro;
 
     int tamañoTercerParametro;
@@ -73,12 +83,15 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
     char* nombreTercerParametro = string_new();
     memcpy(nombreTercerParametro, buffer->stream + posicion, tamañoTercerParametro);
-    printf("%s\n", nombreTercerParametro);
     posicion += tamañoTercerParametro;
-    //printf("%s %s\n", nombreInstruccion, nombrePrimerParametro);
 
+    instruccion->identificador = string_duplicate(nombreInstruccion);
+    instruccion->parametros[0] = nombrePrimerParametro;
+    instruccion->parametros[1] = nombreSegundoParametro;
+    instruccion->parametros[2] = nombreTercerParametro;
+    list_add(instrucciones, instruccion);
+    instruccionExample = list_get(instrucciones, i);
   }
-
   return instrucciones;
 }
 
