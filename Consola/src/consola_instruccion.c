@@ -39,8 +39,8 @@ void agregar_instruccion (t_instruccion *instruc , t_list *lista) {
 }
 
 void eliminar_salto_linea(char *linea) {
-  if (linea[strlen(linea) - 1] == '\n') {
-    linea[strlen(linea) - 1] = '\0';
+  if (linea[string_length(linea) - 1] == '\n') {
+    linea[string_length(linea) - 1] = '\0';
   }
 }
 
