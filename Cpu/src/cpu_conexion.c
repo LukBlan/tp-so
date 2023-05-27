@@ -11,11 +11,11 @@ void* montar_servidor(void* args) {
   t_log* logger = recursosModulo.logger;
   int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);;
 
-  //while (1) {
+  while (1) {
     int socketCliente = esperar_cliente(socketServidor);
     log_info(logger, "Recibi un cliente");
     close(socketCliente);
-  //}
+  }
   close(socketServidor);
 }
 
