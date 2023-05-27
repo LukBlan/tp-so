@@ -7,8 +7,9 @@
 
 void mostrar(t_list* instrucciones) {
   int tamaño = list_size(instrucciones);
+  printf("%d\n", tamaño);
   for (int i = 0; i < tamaño; i++) {
-     instruccion* instruccion = list_get(instrucciones, i);
+     t_instruccion* instruccion = list_get(instrucciones, i);
      printf("%s", instruccion->identificador);
      printf(" %s", instruccion->parametros[0]);
      printf(" %s", instruccion->parametros[1]);
@@ -29,12 +30,12 @@ void* montar_servidor(void* args) {
   close(socketServidor);
 }
 
-buffer* obtenerBuffer(int socketCliente) {
+t_buffer* obtenerBuffer(int socketCliente) {
   int tamanioBuffer;
   recv(socketCliente, &tamanioBuffer, sizeof(int), MSG_WAITALL);
   void* stream = malloc(tamanioBuffer);
   recv(socketCliente, stream, tamanioBuffer, MSG_WAITALL);
-  buffer* buffer = malloc(tamanioBuffer + sizeof(int));
+  t_buffer* buffer = malloc(tamanioBuffer + sizeof(int));
   buffer->stream = stream;
   buffer->size = tamanioBuffer;
   return buffer;
@@ -42,17 +43,16 @@ buffer* obtenerBuffer(int socketCliente) {
 
 t_list* generarListaDeInstrucciones(int socketCliente) {
   t_list* instrucciones = list_create();
-  buffer* buffer = obtenerBuffer(socketCliente);
+  t_buffer* buffer = obtenerBuffer(socketCliente);
   int posicion = 0;
 
   int cantidadDeInstrucciones;
 
   memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
   posicion += sizeof(int);
-
+  printf("%d\n", cantidadDeInstrucciones);
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
-    instruccion* instruccionExample;
-    instruccion* instruccion = malloc(sizeof(instruccion));
+    t_instruccion* instruccion = malloc(sizeof(instruccion));
 
     int tamanioPrimeraInstruccion;
     memcpy(&tamanioPrimeraInstruccion, buffer->stream + posicion, sizeof(int));
@@ -84,13 +84,11 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
     char* nombreTercerParametro = string_new();
     memcpy(nombreTercerParametro, buffer->stream + posicion, tamañoTercerParametro);
     posicion += tamañoTercerParametro;
-
     instruccion->identificador = string_duplicate(nombreInstruccion);
     instruccion->parametros[0] = nombrePrimerParametro;
     instruccion->parametros[1] = nombreSegundoParametro;
     instruccion->parametros[2] = nombreTercerParametro;
     list_add(instrucciones, instruccion);
-    instruccionExample = list_get(instrucciones, i);
   }
   return instrucciones;
 }
