@@ -8,7 +8,8 @@ void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
 }
 
 int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
-  int tamanioTotal = 0;
+  // empieza en sizeof(int) por la cantidad de instrucciones
+  int tamanioTotal = sizeof(int);
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
     instruccion* instruccion = list_get(instrucciones, i);
     tamanioTotal += instruccion->longitudIdentificador;
@@ -40,6 +41,8 @@ buffer* generarBuffer(int tamanio) {
 
 void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int cantDeInstrucciones) {
   int posicion = 0;
+  memcpy(buffer->stream, &(cantDeInstrucciones), sizeof(int));
+  posicion += sizeof(int);
   for(int i = 0; i < cantDeInstrucciones; i++) {
     instruccion *linea = list_get(instrucciones, i);
     memcpy(buffer->stream + posicion, &(linea->longitudIdentificador), sizeof(int));
@@ -64,14 +67,19 @@ void serializarListaInstrucciones(buffer* buffer, t_list* instrucciones, int can
   }
 
     int posicion2 = 0;
-    int tamanioPrimeraInstruccion;
-    memcpy(&tamanioPrimeraInstruccion, buffer->stream, sizeof(int));
+    int cantidadDeInstrucciones = 0;
+    memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
     posicion2 += sizeof(int);
-    printf("%d\n", tamanioPrimeraInstruccion);
+    printf("cantidad instrucciones: %d\n", cantidadDeInstrucciones);
+
+    int tamanioPrimeraInstruccion;
+    memcpy(&tamanioPrimeraInstruccion, buffer->stream + posicion2, sizeof(int));
+    posicion2 += sizeof(int);
+    printf("tamaño nombre %d\n", tamanioPrimeraInstruccion);
 
     char* nombreInstruccion = string_new();
     memcpy(nombreInstruccion, buffer->stream + posicion2, tamanioPrimeraInstruccion);
-    printf("%s\n", nombreInstruccion);
+    printf("nombre %s\n", nombreInstruccion);
 }
 
 paquete* generarPaquete(buffer* buffer, op_code codigoOperacion) {
