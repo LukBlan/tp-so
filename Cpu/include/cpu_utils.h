@@ -4,6 +4,7 @@
 #include <socket/cliente.h>
 #include <commons/string.h>
 #include <commons/txt.h>
+#include <unistd.h>
 
 union Valor {
 	uint32_t cuatro_bytes;

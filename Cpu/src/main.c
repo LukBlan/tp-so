@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <pthread.h>
 #include <cpu_conexion.h>
-#include <cpu_recursos.h>
-#include <commons/log.h>
 
 int main(void) {
   recursos* recursosModulo = obtenerRecursosModulo("cpu.config", "cpu.log");
@@ -17,5 +12,5 @@ int main(void) {
   pthread_join(hiloServer, NULL);
 
   liberarRecursos(recursosModulo);
-  return EXIT_SUCCESS;
+  return 0;
 }
