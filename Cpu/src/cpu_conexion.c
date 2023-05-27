@@ -5,10 +5,9 @@
 #include <socket/servidor.h>
 #include <socket/cliente.h>
 
-void* montar_servidor(void* args) {
-  recursos recursosModulo = *(recursos*) args;
-  configuracion* config = recursosModulo.configuracion;
-  t_log* logger = recursosModulo.logger;
+void montar_servidor(recursos* recursosModulo) {
+  configuracion* config = recursosModulo->configuracion;
+  t_log* logger = recursosModulo->logger;
   int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);;
 
   while (1) {
@@ -19,10 +18,9 @@ void* montar_servidor(void* args) {
   close(socketServidor);
 }
 
-void* conectar_con_memoria(void* args) {
-  recursos recursosModulo = *(recursos*) args;
-  configuracion* config = recursosModulo.configuracion;
-  t_log* logger = recursosModulo.logger;
+void conectar_con_memoria(recursos* recursosModulo) {
+  configuracion* config = recursosModulo->configuracion;
+  //t_log* logger = recursosModulo->logger;
   int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketCliente);
 }
