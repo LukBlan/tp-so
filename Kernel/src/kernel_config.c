@@ -9,12 +9,12 @@ configuracion* obtenerConfiguracion() {
 
   config->IP_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "IP_ESCUCHA"));
   config->IP_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "IP_MEMORIA"));
-  config->PUERTO_MEMORIA = config_get_int_value(fileConfig, "PUERTO_MEMORIA");
+  config->PUERTO_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_MEMORIA"));
   config->IP_FILESYSTEM = string_duplicate(config_get_string_value(fileConfig, "IP_FILESYSTEM"));
-  config->PUERTO_FILESYSTEM = config_get_int_value(fileConfig, "PUERTO_FILESYSTEM");
+  config->PUERTO_FILESYSTEM = string_duplicate(config_get_string_value(fileConfig, "PUERTO_FILESYSTEM"));
   config->IP_CPU = string_duplicate(config_get_string_value(fileConfig, "IP_CPU"));
-  config->PUERTO_CPU = config_get_int_value(fileConfig, "PUERTO_CPU");
-  config->PUERTO_ESCUCHA = config_get_int_value(fileConfig, "PUERTO_ESCUCHA");
+  config->PUERTO_CPU = string_duplicate(config_get_string_value(fileConfig, "PUERTO_CPU"));
+  config->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_ESCUCHA"));
   config->ALGORITMO_PLANIFICACION = config_get_string_value(fileConfig,"ALGORITMO_PLANIFICACION");
   config->ESTIMACION_INICIAL = config_get_int_value(fileConfig,"ESTIMACION_INICIAL");
   config->HRRN_ALFA = config_get_int_value(fileConfig,"HRRN_ALFA");

@@ -16,14 +16,14 @@ void mostrar(t_list* instrucciones) {
 }
 
 void montar_servidor(configuracion* config) {
-  int socketServidor = iniciar_servidor(config->IP_ESCUCHA, string_itoa(config->PUERTO_ESCUCHA));
-  while (1) {
+  int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
+  //while (1) {
     int socketCliente = esperar_cliente(socketServidor);
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
     mostrar(instrucciones);
     close(socketCliente);
-  }
+  //}
   close(socketServidor);
 }
 
@@ -48,7 +48,7 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
   memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
   posicion += sizeof(int);
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
-    t_instruccion* instruccion = malloc(sizeof(instruccion));
+    t_instruccion* instruccion = malloc(sizeof(t_instruccion));
 
     int tamanioPrimeraInstruccion;
     memcpy(&tamanioPrimeraInstruccion, buffer->stream + posicion, sizeof(int));
@@ -107,12 +107,12 @@ Pcb crear_pcb(t_listlistaInstrucciones) {
 */
 
 void conectar_con_memoria(configuracion* config) {
-  int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, string_itoa(config->PUERTO_MEMORIA));
+  int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketCliente);
 }
 
 void conectar_con_cpu(configuracion* config) {
-	int socketClienteConCpu = crear_conexion_servidor(config->IP_CPU, string_itoa(config->PUERTO_CPU));
+	int socketClienteConCpu = crear_conexion_servidor(config->IP_CPU, config->PUERTO_CPU);
 	close(socketClienteConCpu);
 }
 
