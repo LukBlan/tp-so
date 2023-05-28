@@ -2,6 +2,8 @@
 #include <commons/config.h>
 #include <commons/string.h>
 
+configuracion* CONFIG_KERNEL;
+
 configuracion* obtenerConfiguracion() {
   configuracion* config = malloc(sizeof(configuracion));
 

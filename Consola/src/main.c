@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
   //Terminar la consola
   //Liberar las instrucciones?
 
+  //list_destroy(instrucciones);
   //liberarInstrucciones(instrucciones);
   liberarPaquete(paquete);
   liberarRecursos(recursosConsola);

@@ -1,6 +1,8 @@
 #ifndef KERNEL_CONFIG_H_
 #define KERNEL_CONFIG_H_
 
+
+
 typedef struct {
 	char* IP_ESCUCHA;
 	char* IP_MEMORIA;
@@ -17,6 +19,8 @@ typedef struct {
 	int RECURSOS;//es una lista de char
 	int INSTANCIAS_RECURSOS;// es una lista de int
 } configuracion;
+
+extern configuracion* CONFIG_KERNEL;
 
 configuracion* obtenerConfiguracion();
 

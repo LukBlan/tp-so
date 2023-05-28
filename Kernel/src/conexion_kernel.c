@@ -3,6 +3,9 @@
 #include <socket/servidor.h>
 #include <socket/cliente.h>
 #include <estructuras.h>
+#include <planificacion.h>
+
+int idProceso = 0;
 
 void mostrar(t_list* instrucciones) {
   int tamaño = list_size(instrucciones);
@@ -15,6 +18,13 @@ void mostrar(t_list* instrucciones) {
   }
 }
 
+void agregarANew(PCB* pcb) {
+  queue_push(colaNew, pcb);
+  sem_post(&largoPlazo);
+  cambiarEstado(NEW, pcb);
+  //looger de instruccion
+}
+
 void montar_servidor(configuracion* config) {
   int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
   while (1) {
@@ -22,9 +32,25 @@ void montar_servidor(configuracion* config) {
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
     mostrar(instrucciones);
+    PCB* pcb = crear_pcb(instrucciones);
+    agregarANew(pcb);
     close(socketCliente);
   }
   close(socketServidor);
+}
+
+//TODO agregar tabla de segmentos
+PCB* crear_pcb(t_list* listaInstrucciones) {
+  PCB* pcb = malloc(sizeof(PCB));
+  pthread_mutex_lock(&mutexNumeroProceso);
+  pcb->pid = idProceso++;
+  pthread_mutex_unlock(&mutexNumeroProceso);
+  pcb->programCounter = 0;
+  pcb->estimadoRafaga = CONFIG_KERNEL->ESTIMACION_INICIAL;
+  pcb->instrucciones = list_duplicate(listaInstrucciones);
+  pcb->llegadaReady = 0;
+  list_destroy(listaInstrucciones);
+  return pcb;
 }
 
 t_buffer* obtenerBuffer(int socketCliente) {
@@ -89,22 +115,6 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
   return instrucciones;
 }
 
-/*
-Pcb crear_pcb(t_listlistaInstrucciones) {
-  Pcb *pcb = malloc(sizeof(Pcb));
-  pthread_mutex_lock(&mutexNumeroProceso);
-  pcb->pid = idProceso++;
-  pthread_mutex_unlock(&mutexNumeroProceso);
-  pcb->programCounter = 0;
-  pcb->estimadoRafaga = KERNEL_CONFIG.ESTIMACION_RAFAGA;
-  pcb->instrucciones = list_duplicate(listaInstrucciones);
-  pcb->llegadaReady = 0;
-
-  list_destroy(listaInstrucciones);
-
-  return pcb;
-}
-*/
 
 void conectar_con_memoria(configuracion* config) {
   int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);

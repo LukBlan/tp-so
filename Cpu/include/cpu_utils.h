@@ -4,19 +4,7 @@
 #include <socket/cliente.h>
 #include <commons/string.h>
 #include <commons/txt.h>
-#include <unistd.h>
-
-union Valor {
-	uint32_t cuatro_bytes;
-	uint64_t ocho_bytes;
-	uint32_t dieciseis_bytes [4];
-};
-
-typedef struct {
-  char nombre[20];
-  union Valor valor;
-} Registro;
-
+#include <estructuras.h>
 
 extern Registro AX;
 extern Registro BX;

@@ -5,16 +5,36 @@
 #include <stdlib.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
+#include <stdint.h>
+
+typedef union {
+  uint32_t cuatro_bytes;
+  uint64_t ocho_bytes;
+  uint32_t dieciseis_bytes [4];
+}Valor;
+
+typedef struct {
+  char nombre[20];
+ Valor valor;
+} Registro;
+
+typedef enum {
+  NEW,
+  READY,
+  EXEC,
+  BLOCK
+} estadoProceso;
 
 typedef struct {
 	unsigned int pid;
 	t_list *instrucciones;
 	unsigned int programCounter;
-	struct registros;
-	struct tablaSegmentos;
+	Registro registros;
+	//struct tablaSegmentos;
 	float estimadoRafaga;
 	unsigned int llegadaReady;
 	t_list *archivosAbiertos;
+	estadoProceso estado;
 } PCB;
 
 typedef enum {

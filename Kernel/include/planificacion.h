@@ -13,34 +13,48 @@
 #include <commons/collections/queue.h>
 
 #include <estructuras.h>
+#include <stdbool.h>
 
-t_queue *colaNews;
-t_queue *colaBlock;
-t_list *colaRead;
-t_queue *colaExec;
-t_queue *colaEnd;
+extern t_queue* colaNew;
+extern t_queue* colaBlock;
+extern t_queue* colaReady;
+extern t_queue* colaExec;
+extern t_queue* colaEnd;
 
-pthread_mutex_t mutexNumeroProceso;
-pthread_mutex_t mutexProcesoListo;
+extern pthread_mutex_t mutexNumeroProceso;
+extern pthread_mutex_t mutexProcesoListo;
 
-pthread_mutex_t mutexColaNew;
-pthread_mutex_t mutexColaReady;
-pthread_mutex_t mutexColaBlock;
-pthread_mutex_t mutexColaExec;
-pthread_mutex_t mutexColaEnd;
+extern pthread_mutex_t mutexColaNew;
+extern pthread_mutex_t mutexColaReady;
+extern pthread_mutex_t mutexColaBlock;
+extern pthread_mutex_t mutexColaExec;
+extern pthread_mutex_t mutexColaEnd;
 
-pthread_mutex_t mutex_cola;
-pthread_mutex_t mutexcantidadProcesosMemoria;
+extern pthread_mutex_t mutex_cola;
+extern pthread_mutex_t mutexcantidadProcesosMemoria;
 
-sem_t semProcesoNew;
-sem_t semaProcesoReady;
-sem_t semaProcesoExec;
+extern sem_t semProcesoNew;
+extern sem_t semProcesoReady;
+extern sem_t semaProcesoExec;
 
-sem_t blockCounter;
+extern sem_t blockCounter;
 
-sem_t largoPlazo;
+extern sem_t largoPlazo;
 
-sem_t semaforoCantidadProcesosExec
-sem_t comunicacionMemoria;
+extern sem_t semaforoCantidadProcesosExec;
+extern sem_t comunicacionMemoria;
+
+void iniciarColas();
+void iniciarSemaforos();
+
+void comenzarPlanificador();
+
+void planificador_largo_plazo();
+
+void agregarAListo(PCB* proceso);
+
+int sePuedeAgregarMasProcesos();
+void cambiarEstado(estadoProceso estado, PCB* proceso);
+
 
 #endif
