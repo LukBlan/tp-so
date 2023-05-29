@@ -5,19 +5,17 @@
 void generarConexionConKernel() {
   t_configuracion* config = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
-  int* socketServer = malloc(sizeof(int));
-  int estadoConexion;
+  int socketKernel;
 
-  estadoConexion = crearConexionServidor(socketServer, config->IP_KERNEL, config->PUERTO_KERNEL);
+  socketKernel = crearConexionServidor(config->IP_KERNEL, config->PUERTO_KERNEL);
   log_info(logger, "Conectando con el Servidor Kernel...");
 
-  if (estadoConexion < 0) {
+  if (socketKernel < 0) {
     log_error(logger, "Conexión rechazada. El Servidor Kernel no se encuentra disponible en este momento.");
     liberarRecursos();
     exit(-1);
   }
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
-  recursosConsola->socketKernel = *socketServer;
-  free(socketServer);
+  recursosConsola->socketKernel = socketKernel;
 }
