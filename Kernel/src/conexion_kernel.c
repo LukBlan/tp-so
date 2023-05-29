@@ -3,6 +3,7 @@
 #include <conexiones.h>
 #include <estructuras.h>
 #include <planificacion.h>
+#include <netdb.h>
 
 int idProceso = 0;
 
@@ -116,13 +117,21 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
 
 void conectar_con_memoria(configuracion* config) {
-  int socketCliente = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
-  close(socketCliente);
+  int* socket = malloc(sizeof(int));
+  int socketMemoria;
+  int estadoConexion = crearConexionServidor(socket, config->IP_MEMORIA, config->PUERTO_MEMORIA);
+  socketMemoria = *socket;
+  free(socket);
+  close(socketMemoria);
 }
 
 void conectar_con_cpu(configuracion* config) {
-	int socketClienteConCpu = crearConexionServidor(config->IP_CPU, config->PUERTO_CPU);
-	close(socketClienteConCpu);
+  int* socket = malloc(sizeof(int));;
+  int socketCpu;
+  int estadoConexion = crearConexionServidor(socket, config->IP_MEMORIA, config->PUERTO_MEMORIA);
+  socketCpu = *socket;
+  free(socket);
+  close(socketCpu);
 }
 
 
