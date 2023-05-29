@@ -1,4 +1,4 @@
-#include <memory_recursos.h>
+#include <recursos.h>
 #include <utils.h>
 
 int main(int argc, char* argv[]) {

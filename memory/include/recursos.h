@@ -1,6 +1,7 @@
 #ifndef CONFIGURACION_H_
 #define CONFIGURACION_H_
 
+#include <commons/log.h>
 
 typedef struct {
 	char* PUERTO_ESCUCHA;
@@ -14,10 +15,15 @@ typedef struct {
 
 typedef struct {
   t_log* logger;
-  t_configuracion configuracion;
+  t_configuracion* configuracion;
   int socketServidor;
-};
+} t_recursos;
 
-t_configuracion* obtenerConfiguracion(char* pathConfiguracion);
+extern t_recursos* recursosMemoria;
+
+void inicializarRecursos(char* pathLogger, char* pathConfiguracion);
+void crearRecursosMemoria();
+void cargarLogger(char* pathLogger);
+void cargarConfiguracion(char* pathArchivoConfiguracion);
 
 #endif /* CONFIGURACION_H_ */
