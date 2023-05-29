@@ -2,11 +2,10 @@
 #include <consola_conexiones.h>
 #include <recursos.h>
 
-int generarConexionConKernel() {
+void generarConexionConKernel() {
   t_configuracion* config = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
   int* socketServer = malloc(sizeof(int));
-  int socketKernel;
   int estadoConexion;
 
   estadoConexion = crearConexionServidor(socketServer, config->IP_KERNEL, config->PUERTO_KERNEL);
@@ -19,7 +18,6 @@ int generarConexionConKernel() {
   }
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
-  socketKernel = *socketServer;
+  recursosConsola->socketKernel = *socketServer;
   free(socketServer);
-  return socketKernel;
 }

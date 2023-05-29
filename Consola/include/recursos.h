@@ -14,13 +14,14 @@
     t_configuracion* configuracion;
     t_log* logger;
     char* pathPseudoCodigo;
+    int socketKernel;
   } t_recursos;
 
   extern t_recursos* recursosConsola;
 
   void inicializarRecursos(char* pathLogger, char* pathConfiguracion, char* pathPseudoCodigo);
   void cargarLogger(char* pathLogger);
-  void cargaronfiguracion(char* pathConfiguracion);
+  void cargarConfiguracion(char* pathConfiguracion);
   void cargarPseudoCodigo(char* pathPseudoCodigo);
   void configuracion_consola(t_config* config);
   void liberarRecursos();
