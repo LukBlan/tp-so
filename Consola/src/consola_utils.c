@@ -1,4 +1,6 @@
 #include <consola_utils.h>
+#include <stdlib.h>
+#include <string.h>
 
 int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
   // empieza en sizeof(int) por la cantidad de instrucciones

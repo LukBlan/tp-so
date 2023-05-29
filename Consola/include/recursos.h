@@ -23,6 +23,6 @@
   void cargaronfiguracion(char* pathConfiguracion);
   void cargarPseudoCodigo(char* pathPseudoCodigo);
   void configuracion_consola(t_config* config);
-  void liberarRecursos(t_recursos* recursosConsola);
+  void liberarRecursos();
 
 #endif

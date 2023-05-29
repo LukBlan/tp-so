@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   //list_destroy(instrucciones);
   //liberarInstrucciones(instrucciones);
   liberarPaquete(paquete);
-  liberarRecursos(recursosConsola);
+  liberarRecursos();
   cerrarConexion(socketKernel);
 }
 
