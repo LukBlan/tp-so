@@ -1,4 +1,5 @@
 #include <instrucciones.h>
+#include <stdlib.h>
 
 void generarListaDeInstrucciones(t_recursos* recursosConsola, t_list* instrucciones) {
   char* pathPseudoCodigo = recursosConsola->pathPseudoCodigo;
@@ -6,7 +7,7 @@ void generarListaDeInstrucciones(t_recursos* recursosConsola, t_list* instruccio
 
   if(archivoDeInstrucciones == NULL){
     log_error(recursosConsola->logger, "El archivo no se pudo abrir");
-    exit(EXIT_FAILURE);
+    exit(-1);
   }
 
   generar_lista_instrucciones(instrucciones, archivoDeInstrucciones);

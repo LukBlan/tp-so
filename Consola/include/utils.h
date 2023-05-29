@@ -4,7 +4,8 @@
   #include <commons/string.h>
   #include <commons/txt.h>
   #include <recursos.h>
-  #include <socket/cliente.h>
+  #include <conexiones.h>
+  #include <estructuras.h>
 
   void checkearArgumentosMain(t_log* logger, int cantidadArgumentos);
   int generarConexionConKernel(t_recursos* recursosConsola);

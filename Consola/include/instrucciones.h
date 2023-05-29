@@ -1,8 +1,8 @@
-#include <estructuras.h>
-#include <recursos.h>
+#ifndef INSTRUCCIONES_H
+#define INSTRUCCIONES_H
 
-  #ifndef INSTRUCCIONES_H
-  #define INSTRUCCIONES_H
+  #include <estructuras.h>
+  #include <recursos.h>
 
   void generarListaDeInstrucciones(t_recursos* recursosConsola, t_list* instrucciones);
   void asignar_params(t_instruccion* instrucciones, char** params);

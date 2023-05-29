@@ -95,21 +95,5 @@ void liberarPaquete(t_paquete* paquete) {
   free(paquete);
 }
 
-int generarConexionConKernel(t_recursos* recursosConsola) {
-  t_configuracion* configuracion = recursosConsola->configuracion;
-  t_log* logger = recursosConsola->logger;
-
-  int socketKernel = crear_conexion_servidor(configuracion->IP_KERNEL, configuracion->PUERTO_KERNEL);
-  log_info(logger, "Conectando con el Servidor Kernel...");
-
-  if (socketKernel < 0) {
-    log_error(logger, "Conexión rechazada. El Servidor Kernel no se encuentra disponible en este momento.");
-    return EXIT_FAILURE;
-  }
-
-  log_info(logger, "Conexión exitosa. Iniciando cliente...");
-  return socketKernel;
-}
-
 
 
