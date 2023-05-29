@@ -1,20 +1,10 @@
-/*
- ============================================================================
- Name        : memory.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
+#include <memory_recursos.h>
+#include <utils.h>
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <memory_config.h>
-
-int main(void) {
-
-
-	  return EXIT_SUCCESS;
+int main(int argc, char* argv[]) {
+  validarCantidadArgumentosMain(argc, 2);
+  inicializarRecursos("memory.log", argv[1]);
+  puts("salio");
+  //liberarRecursos();
+  return 0;
 }

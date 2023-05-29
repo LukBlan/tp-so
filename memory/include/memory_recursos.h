@@ -3,15 +3,21 @@
 
 
 typedef struct {
-	int PUERTO_ESCUCHA;
+	char* PUERTO_ESCUCHA;
 	int TAM_MEMORIA;
 	int TAM_SEGMENTO_0;
 	int CANT_SEGMENTOS;
 	int RETARDO_MEMORIA;
 	int RETARDO_COMPACTACION;
 	char* ALGOTIRMO_ASIGNACION;
-}configuracion;
+} t_configuracion;
 
-configuracion* obtenerConfiguracion(char*);
+typedef struct {
+  t_log* logger;
+  t_configuracion configuracion;
+  int socketServidor;
+};
+
+t_configuracion* obtenerConfiguracion(char* pathConfiguracion);
 
 #endif /* CONFIGURACION_H_ */

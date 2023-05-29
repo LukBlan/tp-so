@@ -1,8 +1,8 @@
 #include <commons/string.h>
 #include <memory_conexion.h>
 
-
-void montar_servidor(configuracion* config) {
+/*
+void montar_servidor(t_configuracion* config) {
 	int socketServidor = iniciarServidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
 		while (1) {
 			int socketCliente = esperarCliente(socketServidor);
@@ -11,3 +11,4 @@ void montar_servidor(configuracion* config) {
 					}
 				close(socketServidor);
 	}
+	*/
