@@ -1,11 +1,10 @@
-#include <consola_utils.h>
 #include <commons/collections/list.h>
+#include <utils.h>
 
 int main(int argc, char *argv[]) {
   int socketKernel;
   t_paquete* paquete;
   t_list *instrucciones = list_create();
-  t_recursos* recursosConsola;
 
   recursosConsola = generarLogger("consola.log");
   checkearArgumentosMain(recursosConsola->logger, argc);

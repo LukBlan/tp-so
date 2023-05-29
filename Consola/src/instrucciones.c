@@ -1,4 +1,4 @@
-#include <consola_instruccion.h>
+#include <instrucciones.h>
 
 void generarListaDeInstrucciones(t_recursos* recursosConsola, t_list* instrucciones) {
   char* pathPseudoCodigo = recursosConsola->pathPseudoCodigo;
