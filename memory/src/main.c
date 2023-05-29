@@ -6,6 +6,6 @@ int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
   inicializarRecursos("memory.log", argv[1]);
   montarServidor();
-  //liberarRecursos();
+  liberarRecursos();
   return 0;
 }

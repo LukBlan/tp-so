@@ -26,5 +26,6 @@ void inicializarRecursos(char* pathLogger, char* pathConfiguracion);
 void crearRecursosMemoria();
 void cargarLogger(char* pathLogger);
 void cargarConfiguracion(char* pathArchivoConfiguracion);
+void liberarRecursos();
 
 #endif /* CONFIGURACION_H_ */

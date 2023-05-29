@@ -12,7 +12,7 @@ void montarServidor() {
 
   if (socketServidor < 0) {
     log_error(logger, "Error intentando iniciar Servidor Memoria.");
-    //liberarRecursos();
+    liberarRecursos();
     exit(-1);
   }
 

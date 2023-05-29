@@ -2,6 +2,7 @@
 #include <commons/string.h>
 #include <recursos.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 t_recursos* recursosMemoria;
 
@@ -35,4 +36,22 @@ void cargarConfiguracion(char* pathArchivoConfiguracion) {
   configuracion->ALGOTIRMO_ASIGNACION = string_duplicate(config_get_string_value(archivoConfiguracion, "ALGORITMO_ASIGNACION"));
   config_destroy(archivoConfiguracion);
   recursosMemoria->configuracion = configuracion;
+}
+
+void liberarRecursos() {
+  if (recursosMemoria->configuracion != NULL) {
+    free(recursosMemoria->configuracion->PUERTO_ESCUCHA);
+    free(recursosMemoria->configuracion->IP_ESCUCHA);
+    free(recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION);
+    free(recursosMemoria->configuracion);
+  }
+
+  if (recursosMemoria->socketServidor > 0) {
+    log_info(recursosMemoria->logger, "Cerrando Servidor Memoria...");
+    close(recursosMemoria->socketServidor);
+  }
+
+  if (recursosMemoria->logger != NULL) {
+    log_destroy(recursosMemoria->logger);
+  }
 }
