@@ -4,12 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/conexiones.c \
 ../src/estructuras.c 
 
 C_DEPS += \
+./src/conexiones.d \
 ./src/estructuras.d 
 
 OBJS += \
+./src/conexiones.o \
 ./src/estructuras.o 
 
 
@@ -25,7 +28,7 @@ src/%.o: ../src/%.c src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/estructuras.d ./src/estructuras.o
+	-$(RM) ./src/conexiones.d ./src/conexiones.o ./src/estructuras.d ./src/estructuras.o
 
 .PHONY: clean-src
 

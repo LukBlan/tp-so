@@ -1,4 +1,7 @@
 #include <estructuras.h>
+#include <netdb.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 op_code obtener_codigo_operacion(int socketCliente) {
   op_code codigoOperacion;
