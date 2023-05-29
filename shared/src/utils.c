@@ -1,4 +1,5 @@
 #include <utils.h>
+#include <stdlib.h>
 
 void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenosEsperadosada) {
    if (cantidadArgumentos != cantidadArgumenosEsperadosada) {

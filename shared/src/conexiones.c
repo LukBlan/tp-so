@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int crearConexionServidor(int* socketCliente, char *ip, char* puerto) {
+int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
   struct addrinfo *serverInfo;
 
@@ -14,13 +14,13 @@ int crearConexionServidor(int* socketCliente, char *ip, char* puerto) {
 
   getaddrinfo(ip, puerto, &hints, &serverInfo);
 
-  *socketCliente = socket(serverInfo->ai_family,
+  int socketCliente = socket(serverInfo->ai_family,
       serverInfo->ai_socktype,
       serverInfo->ai_protocol);
 
-  int estadoConexion = connect(*socketCliente, serverInfo->ai_addr, serverInfo->ai_addrlen);
+  int estadoConexion = connect(socketCliente, serverInfo->ai_addr, serverInfo->ai_addrlen);
   freeaddrinfo(serverInfo);
-  return estadoConexion;
+  return (estadoConexion < 0)? estadoConexion : socketCliente;
 }
 
 int iniciarServidor(char*ip, char* puerto) {
