@@ -1,11 +1,14 @@
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ifndef CONEXIONES_H
+#define CONEXIONES_H
 
-int crear_conexion_servidor(char* ip, char* puerto);
-void liberar_conexion_servidor(int socket_cliente);
-int iniciar_servidor(char* ip,char* puerto);
-int esperar_cliente(int socket_servidor);
-void cerrarConexion(int socket);
+  #include <string.h>
+  #include <stdlib.h>
+  #include <unistd.h>
+
+  int crearConexionServidor(char* ip, char* puerto);
+  int iniciarServidor(char* ip, char* puerto);
+  int esperar_cliente(int socketServidor);
+  void cerrarConexion(int socket);
+
+#endif
 

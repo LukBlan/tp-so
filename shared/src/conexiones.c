@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int crear_conexion_servidor(char *ip, char* puerto) {
+int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
   struct addrinfo *serverInfo;
 
@@ -23,8 +23,8 @@ int crear_conexion_servidor(char *ip, char* puerto) {
   return socket_cliente;
 }
 
-int iniciar_servidor(char*ip, char* puerto) {
-  int socket_servidor;
+int iniciarServidor(char*ip, char* puerto) {
+  int socketServidor;
   struct addrinfo hints;
   struct addrinfo *serverInfo;
 
@@ -35,21 +35,21 @@ int iniciar_servidor(char*ip, char* puerto) {
 
   getaddrinfo(NULL, puerto, &hints, &serverInfo);
 
-  socket_servidor = socket(serverInfo->ai_family,
+  socketServidor = socket(serverInfo->ai_family,
       serverInfo->ai_socktype,
       serverInfo->ai_protocol);
 
   int reuse_addr = 1;
-  setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(int));
+  setsockopt(socketServidor, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(int));
 
-  bind(socket_servidor, serverInfo->ai_addr, serverInfo->ai_addrlen);
-  listen(socket_servidor,SOMAXCONN);
+  bind(socketServidor, serverInfo->ai_addr, serverInfo->ai_addrlen);
+  listen(socketServidor,SOMAXCONN);
   freeaddrinfo(serverInfo);
-  return socket_servidor;
+  return socketServidor;
 }
 
-int esperar_cliente(int socket_servidor) {
-  return accept(socket_servidor, NULL, NULL);
+int esperarCliente(int socketServidor) {
+  return accept(socketServidor, NULL, NULL);
 }
 
 void cerrarConexion(int socketServidor) {
