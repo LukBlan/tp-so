@@ -1,11 +1,4 @@
-#include <utils.h>
-
-void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
-  if (cantidadArgumentos != 3) {
-    log_error(logger,"No se ingreso la cantidad de argumentos necesaria");
-    exit(-1);
-  }
-}
+#include <consola_utils.h>
 
 int calcularTamanio(t_list* instrucciones, int cantidadDeInstrucciones) {
   // empieza en sizeof(int) por la cantidad de instrucciones

@@ -5,21 +5,21 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/consola_conexiones.c \
+../src/consola_utils.c \
 ../src/main.c \
-../src/recursos.c \
-../src/utils.c 
+../src/recursos.c 
 
 C_DEPS += \
 ./src/consola_conexiones.d \
+./src/consola_utils.d \
 ./src/main.d \
-./src/recursos.d \
-./src/utils.d 
+./src/recursos.d 
 
 OBJS += \
 ./src/consola_conexiones.o \
+./src/consola_utils.o \
 ./src/main.o \
-./src/recursos.o \
-./src/utils.o 
+./src/recursos.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -34,7 +34,7 @@ src/%.o: ../src/%.c src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/consola_conexiones.d ./src/consola_conexiones.o ./src/main.d ./src/main.o ./src/recursos.d ./src/recursos.o ./src/utils.d ./src/utils.o
+	-$(RM) ./src/consola_conexiones.d ./src/consola_conexiones.o ./src/consola_utils.d ./src/consola_utils.o ./src/main.d ./src/main.o ./src/recursos.d ./src/recursos.o
 
 .PHONY: clean-src
 

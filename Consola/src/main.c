@@ -1,11 +1,12 @@
-#include <utils.h>
 #include <recursos.h>
 #include <conexiones.h>
 #include <consola_conexiones.h>
+#include <consola_utils.h>
+#include <utils.h>
 #include <instrucciones/lista_instrucciones.h>
 
 int main(int argc, char *argv[]) {
-  //checkearArgumentosMain(argc);
+  validarCantidadArgumentosMain(argc, 3);
 
   int socketKernel;
   t_paquete* paquete;
