@@ -12,6 +12,6 @@ typedef struct {
 	char* ALGOTIRMO_ASIGNACION;
 }configuracion;
 
-configuracion obtenerConfiguracion();
+configuracion* obtenerConfiguracion(char*);
 
 #endif /* CONFIGURACION_H_ */
