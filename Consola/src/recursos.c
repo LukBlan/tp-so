@@ -27,6 +27,7 @@ void cargarLogger(char* pathLogger) {
 
 void cargarConfiguracion(char* pathConfiguracion) {
   t_config *archivoConfig = config_create(pathConfiguracion);
+
   if (archivoConfig != NULL) {
     t_configuracion* config = malloc(sizeof(t_configuracion));
     config->IP_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "IP_KERNEL"));
