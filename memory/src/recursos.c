@@ -23,9 +23,10 @@ void cargarLogger(char* pathLogger) {
 }
 
 void cargarConfiguracion(char* pathArchivoConfiguracion) {
-  t_configuracion* configuracion = malloc(sizeof(configuracion));
+  t_configuracion* configuracion = malloc(sizeof(t_configuracion));
   t_config* archivoConfiguracion = config_create(pathArchivoConfiguracion);
   configuracion->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(archivoConfiguracion, "PUERTO_ESCUCHA"));
+  configuracion->IP_ESCUCHA = string_duplicate(config_get_string_value(archivoConfiguracion, "IP_ESCUCHA"));
   configuracion->TAM_MEMORIA = config_get_int_value(archivoConfiguracion, "TAM_MEMORIA");
   configuracion->TAM_SEGMENTO_0 = config_get_int_value(archivoConfiguracion, "TAM_SEGMENTO_0");
   configuracion->CANT_SEGMENTOS = config_get_int_value(archivoConfiguracion, "CANT_SEGMENTOS");
