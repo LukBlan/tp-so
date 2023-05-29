@@ -6,15 +6,19 @@
 t_recursos* recursosConsola;
 
 void inicializarRecursos(char* pathLoger, char* pathConfiguracion, char* pathPseudoCodigo) {
-  recursosConsola = malloc(sizeof(t_recursos));
-  recursosConsola->configuracion = NULL;
-  recursosConsola->logger = NULL;
-  recursosConsola->pathPseudoCodigo = NULL;
-  recursosConsola->socketKernel = -1;
+  crearRecursosConsola();
   cargarLogger(pathLoger);
   cargarConfiguracion(pathConfiguracion);
   cargarPseudoCodigo(pathPseudoCodigo);
   generarConexionConKernel();
+}
+
+void crearRecursosConsola() {
+  recursosConsola = malloc(sizeof(t_recursos));
+  recursosConsola->configuracion = NULL;
+  recursosConsola->logger = NULL;
+  recursosConsola->archivoPseudoCodigo = NULL;
+  recursosConsola->socketKernel = -1;
 }
 
 void cargarLogger(char* pathLogger) {
@@ -23,20 +27,28 @@ void cargarLogger(char* pathLogger) {
 
 void cargarConfiguracion(char* pathConfiguracion) {
   t_config *archivoConfig = config_create(pathConfiguracion);
-  t_configuracion* config = malloc(sizeof(t_configuracion));
-  config->IP_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "IP_KERNEL"));
-  config->PUERTO_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "PUERTO_KERNEL"));
-  recursosConsola->configuracion = config;
-  config_destroy(archivoConfig);
+  if (archivoConfig != NULL) {
+    t_configuracion* config = malloc(sizeof(t_configuracion));
+    config->IP_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "IP_KERNEL"));
+    config->PUERTO_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "PUERTO_KERNEL"));
+    recursosConsola->configuracion = config;
+    config_destroy(archivoConfig);
+  } else {
+    log_error(recursosConsola->logger, "No se pudo Encontrar el Archivo de configuracion");
+    liberarRecursos();
+    exit(-1);
+  }
 }
 
 void cargarPseudoCodigo(char* pathPseudoCodigo) {
-  if (pathPseudoCodigo == NULL) {
-    log_error(recursosConsola->logger, "No se pudo abrir el archivo.");
+  FILE* archivoPseudoCodigo = fopen(pathPseudoCodigo, "r");
+  if (!archivoPseudoCodigo) {
+    log_error(recursosConsola->logger, "No se pudo encontrar el archivo con pseudocodigo.");
     liberarRecursos();
     exit(-2);
   }
-  recursosConsola->pathPseudoCodigo = pathPseudoCodigo;
+
+  recursosConsola->archivoPseudoCodigo = archivoPseudoCodigo;
 }
 
 void liberarRecursos() {
@@ -49,7 +61,11 @@ void liberarRecursos() {
   if (recursosConsola->socketKernel > 0) {
       log_info(recursosConsola->logger, "Cerrando conexion con el Servidor Kernel...");
       close(recursosConsola->socketKernel);
-    }
+  }
+
+  if (!recursosConsola->archivoPseudoCodigo) {
+    fclose(recursosConsola->archivoPseudoCodigo);
+  }
 
   if (recursosConsola->logger != NULL) {
     log_destroy(recursosConsola->logger);

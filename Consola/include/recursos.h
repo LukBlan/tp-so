@@ -13,13 +13,14 @@
   typedef struct {
     t_configuracion* configuracion;
     t_log* logger;
-    char* pathPseudoCodigo;
+    FILE* archivoPseudoCodigo;
     int socketKernel;
   } t_recursos;
 
   extern t_recursos* recursosConsola;
 
   void inicializarRecursos(char* pathLogger, char* pathConfiguracion, char* pathPseudoCodigo);
+  void crearRecursosConsola();
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarPseudoCodigo(char* pathPseudoCodigo);
