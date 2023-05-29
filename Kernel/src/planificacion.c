@@ -68,7 +68,7 @@ void comenzarPlanificador() {
   pthread_detach(hilo_largo_plazo);
 
   if (strcmp(CONFIG_KERNEL->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
-    pthread_create(&hiloCortoPlazo, NULL, planificador_corto_plazo_fifo, NULL);
+    pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
     pthread_detach(hiloCortoPlazo);
   }
   /*
@@ -97,22 +97,7 @@ void planificador_largo_plazo() {
   }
 }
 
-void planificador_corto_plazo_fifo() {
-    // log_info(loggerPlanificacion, "INICIO PLANIFICACION FIFO");
-    while (1) {
-        sem_wait(&semProcesoReady);
-        sem_wait(&semaforoCantidadProcesosExec);
-
-        PCB* procesoEjecutar = queue_pop(colaReady);
-
-        cambiarEstado(EXEC, procesoEjecutar);
-
-        ejecutar(procesoEjecutar);
-    }
-}
-
-
-void ejecutar(PCB *proceso) {
+void ejecutar(PCB* proceso) {
   //serializar la pcb
   //enviarla a cpu
   // se queda esperando el codOperacion
@@ -143,6 +128,23 @@ void ejecutar(PCB *proceso) {
     }
     */
 }
+
+void planificador_corto_plazo_fifo() {
+    // log_info(loggerPlanificacion, "INICIO PLANIFICACION FIFO");
+    while (1) {
+        sem_wait(&semProcesoReady);
+        sem_wait(&semaforoCantidadProcesosExec);
+
+        PCB* procesoEjecutar = queue_pop(colaReady);
+
+        cambiarEstado(EXEC, procesoEjecutar);
+
+        ejecutar(procesoEjecutar);
+    }
+}
+
+
+
 
 
 void agregarAListo(PCB* proceso) {
