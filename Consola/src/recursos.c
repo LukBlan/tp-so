@@ -1,15 +1,20 @@
 #include <recursos.h>
+#include <stdlib.h>
 
 t_recursos* recursosConsola;
 
-t_recursos* generarLogger(char* pathLogger) {
-  t_recursos* recursosConsola = malloc(sizeof(t_recursos));
-  t_log *logger = log_create(pathLogger, "Consola", true, LOG_LEVEL_INFO);
-  recursosConsola->logger = logger;
-  return recursosConsola;
+void inicializarRecursos(char* pathLoger, char* pathConfiguracion, char* pathPseudoCodigo) {
+  recursosConsola = malloc(sizeof(t_recursos));
+  cargarLogger(pathLoger);
+  cargarConfiguracion(pathConfiguracion);
+  cargarPseudoCodigo(pathPseudoCodigo);
 }
 
-void obtenerConfiguracion(t_recursos* recursosConsola, char* pathConfiguracion) {
+void cargarLogger(char* pathLogger) {
+  recursosConsola->logger = log_create(pathLogger, "Consola", true, LOG_LEVEL_INFO);
+}
+
+void cargarConfiguracion(char* pathConfiguracion) {
   t_config *archivoConfig = config_create(pathConfiguracion);
   t_configuracion* config = malloc(sizeof(t_configuracion));
   config->IP_KERNEL = string_duplicate(config_get_string_value(archivoConfig, "IP_KERNEL"));
@@ -18,7 +23,7 @@ void obtenerConfiguracion(t_recursos* recursosConsola, char* pathConfiguracion) 
   config_destroy(archivoConfig);
 }
 
-void obtenerPseudoCodigo(t_recursos* recursosConsola, char* pathPseudoCodigo) {
+void cargarPseudoCodigo(char* pathPseudoCodigo) {
   recursosConsola->pathPseudoCodigo = pathPseudoCodigo;
 }
 

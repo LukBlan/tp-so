@@ -3,7 +3,7 @@
 void checkearArgumentosMain(t_log* logger, int cantidadArgumentos) {
   if (cantidadArgumentos != 3) {
     log_error(logger,"No se ingreso la cantidad de argumentos necesaria");
-    exit(EXIT_FAILURE);
+    exit(-1);
   }
 }
 

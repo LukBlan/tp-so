@@ -1,17 +1,20 @@
 #include <utils.h>
+#include <recursos.h>
+#include <conexiones.h>
+#include <consola_conexiones.h>
+#include <instrucciones/lista_instrucciones.h>
 
 int main(int argc, char *argv[]) {
+  //checkearArgumentosMain(argc);
+
   int socketKernel;
   t_paquete* paquete;
   t_list *instrucciones = list_create();
 
-  recursosConsola = generarLogger("consola.log");
-  checkearArgumentosMain(recursosConsola->logger, argc);
-  obtenerConfiguracion(recursosConsola, argv[1]);
-  obtenerPseudoCodigo(recursosConsola, argv[2]);
+  inicializarRecursos("consola.log", argv[1], argv[2]);
 
-  socketKernel = generarConexionConKernel(recursosConsola);
-  generarListaDeInstrucciones(recursosConsola, instrucciones);
+  socketKernel = generarConexionConKernel();
+  generarListaDeInstrucciones(instrucciones);
   paquete = enpaquetarInstrucciones(instrucciones);
   enviar_paquete(paquete, socketKernel);
 
@@ -25,6 +28,6 @@ int main(int argc, char *argv[]) {
   //liberarInstrucciones(instrucciones);
   liberarPaquete(paquete);
   liberarRecursos(recursosConsola);
-  close(socketKernel);
+  cerrarConexion(socketKernel);
 }
 

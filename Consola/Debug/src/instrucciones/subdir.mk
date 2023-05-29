@@ -4,26 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/consola_conexiones.c \
-../src/main.c \
-../src/recursos.c \
-../src/utils.c 
+../src/instrucciones/instruccion.c \
+../src/instrucciones/lista_instrucciones.c 
 
 C_DEPS += \
-./src/consola_conexiones.d \
-./src/main.d \
-./src/recursos.d \
-./src/utils.d 
+./src/instrucciones/instruccion.d \
+./src/instrucciones/lista_instrucciones.d 
 
 OBJS += \
-./src/consola_conexiones.o \
-./src/main.o \
-./src/recursos.o \
-./src/utils.o 
+./src/instrucciones/instruccion.o \
+./src/instrucciones/lista_instrucciones.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.c src/subdir.mk
+src/instrucciones/%.o: ../src/instrucciones/%.c src/instrucciones/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -I"/home/utnso/Desktop/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include" -I"/home/utnso/Desktop/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/shared/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
@@ -31,10 +25,10 @@ src/%.o: ../src/%.c src/subdir.mk
 	@echo ' '
 
 
-clean: clean-src
+clean: clean-src-2f-instrucciones
 
-clean-src:
-	-$(RM) ./src/consola_conexiones.d ./src/consola_conexiones.o ./src/main.d ./src/main.o ./src/recursos.d ./src/recursos.o ./src/utils.d ./src/utils.o
+clean-src-2f-instrucciones:
+	-$(RM) ./src/instrucciones/instruccion.d ./src/instrucciones/instruccion.o ./src/instrucciones/lista_instrucciones.d ./src/instrucciones/lista_instrucciones.o
 
-.PHONY: clean-src
+.PHONY: clean-src-2f-instrucciones
 

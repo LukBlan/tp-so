@@ -18,10 +18,11 @@
 
   extern t_recursos* recursosConsola;
 
-  t_recursos* generarLogger(char*);
-  void obtenerConfiguracion(t_recursos*, char*);
-  void obtenerPseudoCodigo(t_recursos*, char*);
-  void configuracion_consola(t_config *config);
+  void inicializarRecursos(char* pathLogger, char* pathConfiguracion, char* pathPseudoCodigo);
+  void cargarLogger(char* pathLogger);
+  void cargaronfiguracion(char* pathConfiguracion);
+  void cargarPseudoCodigo(char* pathPseudoCodigo);
+  void configuracion_consola(t_config* config);
   void liberarRecursos(t_recursos* recursosConsola);
 
 #endif

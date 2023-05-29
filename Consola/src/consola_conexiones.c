@@ -1,7 +1,8 @@
-#include <cpu_conexiones.h>
 #include <conexiones.h>
+#include <consola_conexiones.h>
+#include <recursos.h>
 
-int generarConexionConKernel(t_recursos* recursosConsola) {
+int generarConexionConKernel() {
   t_configuracion* configuracion = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
 
