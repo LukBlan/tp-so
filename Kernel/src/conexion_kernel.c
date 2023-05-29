@@ -1,7 +1,6 @@
 #include <commons/string.h>
 #include <conexion_kernel.h>
-#include <socket/servidor.h>
-#include <socket/cliente.h>
+#include <conexiones.h>
 #include <estructuras.h>
 #include <planificacion.h>
 
@@ -26,9 +25,9 @@ void agregarANew(PCB* pcb) {
 }
 
 void montar_servidor(configuracion* config) {
-  int socketServidor = iniciar_servidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
+  int socketServidor = iniciarServidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
   while (1) {
-    int socketCliente = esperar_cliente(socketServidor);
+    int socketCliente = esperarCliente(socketServidor);
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
     mostrar(instrucciones);
@@ -55,9 +54,9 @@ PCB* crear_pcb(t_list* listaInstrucciones) {
 
 t_buffer* obtenerBuffer(int socketCliente) {
   int tamanioBuffer;
-  recv(socketCliente, &tamanioBuffer, sizeof(int), MSG_WAITALL);
+  recv(socketCliente, &tamanioBuffer, sizeof(int), 0);
   void* stream = malloc(tamanioBuffer);
-  recv(socketCliente, stream, tamanioBuffer, MSG_WAITALL);
+  recv(socketCliente, stream, tamanioBuffer, 0);
   t_buffer* buffer = malloc(tamanioBuffer + sizeof(int));
   buffer->stream = stream;
   buffer->size = tamanioBuffer;
@@ -117,12 +116,12 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
 
 void conectar_con_memoria(configuracion* config) {
-  int socketCliente = crear_conexion_servidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
+  int socketCliente = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketCliente);
 }
 
 void conectar_con_cpu(configuracion* config) {
-	int socketClienteConCpu = crear_conexion_servidor(config->IP_CPU, config->PUERTO_CPU);
+	int socketClienteConCpu = crearConexionServidor(config->IP_CPU, config->PUERTO_CPU);
 	close(socketClienteConCpu);
 }
 

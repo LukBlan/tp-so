@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <kernel_config.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <pthread.h>
-#include <commons/string.h>
-#include <socket/servidor.h>
 #include <conexion_kernel.h>
 
 int main(void) {
