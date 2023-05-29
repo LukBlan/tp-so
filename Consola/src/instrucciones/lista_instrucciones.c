@@ -2,7 +2,8 @@
 #include <instrucciones/instruccion.h>
 #include <stdlib.h>
 
-void generarListaDeInstrucciones(t_list* instrucciones) {
+t_list* generarListaDeInstrucciones() {
+  t_list* instrucciones = list_create();
   char* pathPseudoCodigo = recursosConsola->pathPseudoCodigo;
   FILE* archivoDeInstrucciones = fopen(pathPseudoCodigo, "r");
 
@@ -12,6 +13,7 @@ void generarListaDeInstrucciones(t_list* instrucciones) {
   }
 
   generar_lista_instrucciones(instrucciones, archivoDeInstrucciones);
+  return instrucciones;
 }
 
 void generar_lista_instrucciones (t_list *lista, FILE *archivo) {

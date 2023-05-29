@@ -6,16 +6,14 @@
 #include <instrucciones/lista_instrucciones.h>
 
 int main(int argc, char *argv[]) {
-  validarCantidadArgumentosMain(argc, 3);
-
   int socketKernel;
   t_paquete* paquete;
-  t_list *instrucciones = list_create();
+  t_list* instrucciones;
 
+  validarCantidadArgumentosMain(argc, 3);
   inicializarRecursos("consola.log", argv[1], argv[2]);
-
   socketKernel = generarConexionConKernel();
-  generarListaDeInstrucciones(instrucciones);
+  instrucciones = generarListaDeInstrucciones();
   paquete = enpaquetarInstrucciones(instrucciones);
   enviar_paquete(paquete, socketKernel);
 
