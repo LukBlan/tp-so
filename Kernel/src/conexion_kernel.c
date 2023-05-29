@@ -117,20 +117,12 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 
 
 void conectar_con_memoria(configuracion* config) {
-  int* socket = malloc(sizeof(int));
-  int socketMemoria;
-  int estadoConexion = crearConexionServidor(socket, config->IP_MEMORIA, config->PUERTO_MEMORIA);
-  socketMemoria = *socket;
-  free(socket);
+  int socketMemoria = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketMemoria);
 }
 
 void conectar_con_cpu(configuracion* config) {
-  int* socket = malloc(sizeof(int));;
-  int socketCpu;
-  int estadoConexion = crearConexionServidor(socket, config->IP_MEMORIA, config->PUERTO_MEMORIA);
-  socketCpu = *socket;
-  free(socket);
+  int socketCpu = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketCpu);
 }
 
