@@ -135,7 +135,40 @@ void ejecutar(PCB* proceso) {
     }
     */
 }
+PCB* sacarBloqueado(){
+ PCB *pcbSaliente;
 
+    pthread_mutex_lock(&mutexColaBlock);
+
+    pcbSaliente = queue_pop(colaBlock);
+    log_info(loggerPlanificacion, "Proceso: [%d] salío de BLOQUEADO.", pcbSaliente->pid);
+
+    pthread_mutex_unlock(&mutexColaBlock);
+
+    return pcbSaliente
+}
+void *io()
+{
+    while (1)
+    {
+
+        sem_wait(&contadorBloqueados);
+
+        PCB* proceso = queue_peek(colaBloqueados); // Aun sigue en la cola de bloqueado.
+        //TODO campo PCB
+        //int tiempoBloqueo = proceso->tiempoBloqueadoIO;
+        //log_info(loggerPlanificacion, "----------[DISP I/O] Proceso: [%d] ,se bloqueara %d segundos.----------", proceso->pid, tiempoBloqueo / 1000);
+        // Bloqueo el proceso.
+        int tiempoBloqueoEnMicrosegundos = tiempoBloqueo * 1000;
+        usleep(tiempoBloqueoEnMicrosegundos);
+        //log_info(loggerPlanificacion, "----------[DISP I/O] Proceso: [%d] ,termino I/O %d segundos.----------", proceso->pid, tiempoBloqueo / 1000);.
+        
+        proceso = sacarBloqueado();
+
+
+        agregarAListo(proceso);
+    }
+}
 void planificador_corto_plazo_fifo() {
     // log_info(loggerPlanificacion, "INICIO PLANIFICACION FIFO");
     while (1) {
@@ -215,7 +248,7 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado)
     pthread_mutex_lock(&mutexColaBloqueados);
 
     queue_push(colaBloqueados, procesoBloqueado);
-    log_info(loggerPlanificacion, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+    //log_info(loggerPlanificacion, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
 
     pthread_mutex_unlock(&mutexColaBloqueados);
 
