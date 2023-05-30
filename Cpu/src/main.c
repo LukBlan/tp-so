@@ -1,16 +1,20 @@
 #include <pthread.h>
 #include <cpu_conexion.h>
+#include <utils.h>
 
-int main(void) {
-  recursos* recursosModulo = obtenerRecursosModulo("cpu.config", "cpu.log");
-  pthread_t hiloServer;
-  pthread_create(&hiloServer, NULL, (void*)montar_servidor, recursosModulo);
-  pthread_t hiloCliente;
-  pthread_create(&hiloCliente, NULL, (void*)conectar_con_memoria, recursosModulo);
+int main(int argc, char* argv[]) {
+  pthread_t hiloClienteMemoria;
+  pthread_t hiloServerCpu;
 
-  pthread_join(hiloCliente, NULL);
-  pthread_join(hiloServer, NULL);
+  validarCantidadArgumentosMain(argc, 2);
+  inicializarRecursos("cpu.log", argv[1]);
 
-  liberarRecursos(recursosModulo);
+  pthread_create(&hiloClienteMemoria, NULL, (void*)conectarConMemoria, NULL);
+  pthread_create(&hiloServerCpu, NULL, (void*)montarServidor, NULL);
+
+  pthread_join(hiloClienteMemoria, NULL);
+  pthread_join(hiloServerCpu, NULL);
+
+  liberarRecursos();
   return 0;
 }
