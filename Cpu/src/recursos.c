@@ -41,6 +41,14 @@ void liberarRecursos() {
     free(recursosCpu->configuracion);
   }
 
+  if (recursosCpu->conexiones->socketCpu > 0) {
+    close(recursosCpu->conexiones->socketCpu);
+  }
+
+  if (recursosCpu->conexiones->socketMemoria > 0) {
+     close(recursosCpu->conexiones->socketMemoria);
+   }
+
   if (recursosCpu->logger != NULL) {
     log_destroy(recursosCpu->logger);
   }
