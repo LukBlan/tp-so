@@ -3,10 +3,11 @@
 #include <recursos.h>
 #include <stdlib.h>
 #include <commons/config.h>
+#include <unistd.h>
 
 t_recursos* recursosCpu;
 
-void crearRecursosCpu(char* pathLogger, char* pathConfiguracion) {
+void crearRecursosCpu() {
   recursosCpu = malloc(sizeof(t_recursos));
   recursosCpu->conexiones = malloc(sizeof(t_conexiones));
   recursosCpu->configuracion = NULL;
