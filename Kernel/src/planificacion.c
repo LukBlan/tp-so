@@ -68,8 +68,8 @@ void comenzarPlanificador() {
   pthread_detach(hilo_largo_plazo);
 
   if (strcmp(CONFIG_KERNEL->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
-    pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
-    pthread_detach(hiloCortoPlazo);
+    //pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
+    //pthread_detach(hiloCortoPlazo);
   }
   /*
   else
@@ -88,13 +88,15 @@ void planificador_largo_plazo() {
   while (1) {
     sem_wait(&largoPlazo);
     // log_info(loggerPlanificacion, "[LARGO-PLAZO] Procesos en MEMORIA: %d", cantidadProcesosEnMemoria);
-
+/*
     if (sePuedeAgregarMasProcesos()) {
       PCB *procesoSaliente = queue_pop(colaNew);
       cambiarEstado(READY, procesoSaliente);
       agregarAListo(procesoSaliente);
     }
+   */
   }
+
 }
 
 void ejecutar(PCB* proceso) {
@@ -135,6 +137,9 @@ void ejecutar(PCB* proceso) {
     }
     */
 }
+
+/*
+
 PCB* sacarBloqueado(){
  PCB *pcbSaliente;
 
@@ -278,8 +283,10 @@ bool esProcesoNuevo(Pcb *proceso)
     return proceso->escenario->estado == NUEVO;
 }
 
-bool sePuedeAgregarMasProcesos()
-{
+
+
+bool sePuedeAgregarMasProcesos() {
     return (cantidad_procesos_memoria() < KERNEL_CONFIG.GRADO_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNuevos, &mutexColaNuevos) > 0 || lectura_cola_mutex(colaSuspendidoListo, &mutexColaSuspendidoListo) > 0);
 }
+
 */

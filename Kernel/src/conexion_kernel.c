@@ -21,7 +21,7 @@ void mostrar(t_list* instrucciones) {
 void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
   sem_post(&largoPlazo);
-  cambiarEstado(NEW, pcb);
+  //cambiarEstado(NEW, pcb);
   //looger de instruccion
 }
 

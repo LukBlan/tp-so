@@ -5,20 +5,13 @@
 
 t_recursos* recursosConsola;
 
-void inicializarRecursos(char* pathLoger, char* pathConfiguracion, char* pathPseudoCodigo) {
-  crearRecursosConsola();
-  cargarLogger(pathLoger);
-  cargarConfiguracion(pathConfiguracion);
-  cargarPseudoCodigo(pathPseudoCodigo);
-  generarConexionConKernel();
-}
-
 void crearRecursosConsola() {
   recursosConsola = malloc(sizeof(t_recursos));
+  recursosConsola->conexiones = malloc(sizeof(t_conexiones));
   recursosConsola->configuracion = NULL;
   recursosConsola->logger = NULL;
   recursosConsola->archivoPseudoCodigo = NULL;
-  recursosConsola->socketKernel = -1;
+  recursosConsola->conexiones->socketKernel = -1;
 }
 
 void cargarLogger(char* pathLogger) {
@@ -59,7 +52,7 @@ void liberarRecursos() {
     free(recursosConsola->configuracion);
   }
 
-  if (recursosConsola->socketKernel > 0) {
+  if (recursosConsola->conexiones->socketKernel > 0) {
       log_info(recursosConsola->logger, "Cerrando conexion con el Servidor Kernel...");
       close(recursosConsola->socketKernel);
   }

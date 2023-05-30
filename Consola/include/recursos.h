@@ -11,7 +11,12 @@
   } t_configuracion;
 
   typedef struct {
+    int socketKernel;
+  } t_conexiones;
+
+  typedef struct {
     t_configuracion* configuracion;
+    t_conexiones* conexiones;
     t_log* logger;
     FILE* archivoPseudoCodigo;
     int socketKernel;

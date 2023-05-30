@@ -2,7 +2,7 @@
 #include <consola_conexiones.h>
 #include <recursos.h>
 
-void generarConexionConKernel() {
+void cargarConexionConKernel() {
   t_configuracion* config = recursosConsola->configuracion;
   t_log* logger = recursosConsola->logger;
   int socketKernel;
@@ -17,5 +17,5 @@ void generarConexionConKernel() {
   }
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
-  recursosConsola->socketKernel = socketKernel;
+  recursosConsola->conexiones->socketKernel = socketKernel;
 }

@@ -6,13 +6,19 @@
 
 int main(int argc, char* argv[]) {
   t_paquete* paquete;
-  t_list* instrucciones;
+    t_list* instrucciones;
 
   validarCantidadArgumentosMain(argc, 3);
-  inicializarRecursos("consola.log", argv[1], argv[2]);
+
+  crearRecursosConsola();
+  cargarLogger("consola.log");
+  cargarConfiguracion(argv[1]);
+  cargarPseudoCodigo(argv[2]);
+  cargarConexionConKernel();
+
   instrucciones = generarListaDeInstrucciones();
   paquete = enpaquetarInstrucciones(instrucciones);
-  enviar_paquete(paquete, recursosConsola->socketKernel);
+  enviar_paquete(paquete, recursosConsola->conexiones->socketKernel);
 
   log_info(recursosConsola->logger, "Enviando lista de instrucciones al servidor Kernel.");
   //funcion para comprobar el handshake con Kernel
