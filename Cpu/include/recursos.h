@@ -13,15 +13,18 @@
   } t_configuracion;
 
   typedef struct {
-    t_configuracion* configuracion;
-    t_log* logger;
     int socketCpu;
     int socketMemoria;
+  } t_conexiones;
+
+  typedef struct {
+    t_configuracion* configuracion;
+    t_conexiones* conexiones;
+    t_log* logger;
   } t_recursos;
 
   extern t_recursos* recursosCpu;
 
-  void inicializarRecursos(char* pathLogger, char* pathConfiguracion);
   void crearRecursosCpu();
   void cargarConfiguracion(char* pathConfiguracin);
   void cargarLogger(char* pathLogger);

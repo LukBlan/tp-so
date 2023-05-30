@@ -6,20 +6,13 @@
 
 t_recursos* recursosCpu;
 
-void inicializarRecursos(char* pathLogger, char* pathConfiguracion) {
-  crearRecursosCpu();
-  t_log* logger = log_create(pathLogger, "CPU", 1, LOG_LEVEL_INFO);
-  cargarConfiguracion(pathConfiguracion);
-  cargarLogger(pathLogger);
-  recursosCpu->logger = logger;
-}
-
-void crearRecursosCpu() {
+void crearRecursosCpu(char* pathLogger, char* pathConfiguracion) {
   recursosCpu = malloc(sizeof(t_recursos));
+  recursosCpu->conexiones = malloc(sizeof(t_conexiones));
   recursosCpu->configuracion = NULL;
   recursosCpu->logger = NULL;
-  recursosCpu->socketCpu = -1;
-  recursosCpu->socketMemoria = -1;
+  recursosCpu->conexiones->socketCpu = -1;
+  recursosCpu->conexiones->socketMemoria = -1;
 }
 
 void cargarConfiguracion(char* pathConfiguracin) {
@@ -40,11 +33,18 @@ void cargarLogger(char* pathLogger) {
 }
 
 void liberarRecursos() {
-  free(recursosCpu->configuracion->PUERTO_ESCUCHA);
-  free(recursosCpu->configuracion->PUERTO_MEMORIA);
-  free(recursosCpu->configuracion->IP_ESCUCHA);
-  free(recursosCpu->configuracion->IP_MEMORIA);
-  free(recursosCpu->configuracion);
-  log_destroy(recursosCpu->logger);
+  if (recursosCpu != NULL) {
+    free(recursosCpu->configuracion->PUERTO_ESCUCHA);
+    free(recursosCpu->configuracion->PUERTO_MEMORIA);
+    free(recursosCpu->configuracion->IP_ESCUCHA);
+    free(recursosCpu->configuracion->IP_MEMORIA);
+    free(recursosCpu->configuracion);
+  }
+
+  if (recursosCpu->logger != NULL) {
+    log_destroy(recursosCpu->logger);
+  }
+
+  free(recursosCpu->conexiones);
   free(recursosCpu);
 }
