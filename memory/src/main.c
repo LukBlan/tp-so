@@ -4,8 +4,14 @@
 
 int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
-  inicializarRecursos("memory.log", argv[1]);
+
+  crearRecursos();
+  cargarLogger("memory.log");
+  cargarConfiguracion(argv[1]);
+  cargarConexiones();
+
   montarServidor();
+
   liberarRecursos();
   return 0;
 }

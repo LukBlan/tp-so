@@ -6,17 +6,12 @@
 
 t_recursos* recursosMemoria;
 
-void inicializarRecursos(char* pathLogger, char* pathConfiguracion) {
-  crearRecursosMemoria();
-  cargarLogger(pathLogger);
-  cargarConfiguracion(pathConfiguracion);
-}
-
-void crearRecursosMemoria() {
+void crearRecursos() {
   recursosMemoria = malloc(sizeof(t_recursos));
+  recursosMemoria->conexiones = malloc(sizeof(t_conexiones));
   recursosMemoria->configuracion = NULL;
   recursosMemoria->logger = NULL;
-  recursosMemoria->socketServidor = -1;
+  recursosMemoria->conexiones->socketMemoria = -1;
 }
 
 void cargarLogger(char* pathLogger) {
@@ -46,12 +41,16 @@ void liberarRecursos() {
     free(recursosMemoria->configuracion);
   }
 
-  if (recursosMemoria->socketServidor > 0) {
+  if (recursosMemoria->conexiones->socketMemoria > 0) {
     log_info(recursosMemoria->logger, "Cerrando Servidor Memoria...");
-    close(recursosMemoria->socketServidor);
+    close(recursosMemoria->conexiones->socketMemoria);
   }
+
 
   if (recursosMemoria->logger != NULL) {
     log_destroy(recursosMemoria->logger);
   }
+
+  free(recursosMemoria->conexiones);
+  free(recursosMemoria);
 }
