@@ -58,3 +58,6 @@
 [INFO] 15:31:30:922 Memoria/(16041:16041): Servidor Memoria se Encuentra Escuchando.
 [INFO] 15:31:30:924 Memoria/(16041:16041): Recibi un cliente
 [INFO] 15:31:30:931 Memoria/(16041:16041): Cerrando Servidor Memoria...
+[INFO] 15:50:09:287 Memoria/(16620:16620): Creando Socket del Servidor Memoria...
+[INFO] 15:50:09:292 Memoria/(16620:16620): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 15:50:09:294 Memoria/(16620:16620): Servidor Memoria se Encuentra Escuchando.

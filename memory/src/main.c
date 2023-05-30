@@ -5,7 +5,7 @@
 int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
 
-  crearRecursos();
+  crearRecursosMemoria();
   cargarLogger("memory.log");
   cargarConfiguracion(argv[1]);
   cargarConexiones();

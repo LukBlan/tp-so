@@ -6,7 +6,7 @@
 
 t_recursos* recursosMemoria;
 
-void crearRecursos() {
+void crearRecursosMemoria() {
   recursosMemoria = malloc(sizeof(t_recursos));
   recursosMemoria->conexiones = malloc(sizeof(t_conexiones));
   recursosMemoria->configuracion = NULL;
@@ -45,7 +45,6 @@ void liberarRecursos() {
     log_info(recursosMemoria->logger, "Cerrando Servidor Memoria...");
     close(recursosMemoria->conexiones->socketMemoria);
   }
-
 
   if (recursosMemoria->logger != NULL) {
     log_destroy(recursosMemoria->logger);
