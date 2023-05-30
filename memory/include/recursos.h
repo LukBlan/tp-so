@@ -1,7 +1,7 @@
-#ifndef CONFIGURACION_H_
-#define CONFIGURACION_H_
+#ifndef RECURSOS_H_
+#define RECURSOS_H_
 
-#include <commons/log.h>
+  #include <commons/log.h>
 
   typedef struct {
     char* PUERTO_ESCUCHA;
@@ -31,4 +31,4 @@
   void cargarConfiguracion(char* pathArchivoConfiguracion);
   void liberarRecursos();
 
-#endif /* CONFIGURACION_H_ */
+#endif
