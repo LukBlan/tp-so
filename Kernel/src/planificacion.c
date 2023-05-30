@@ -3,7 +3,7 @@
 #include <kernel_config.h>
 
 t_queue* colaNew;
-t_queue* colaReady;
+t_list* colaReady;
 t_queue* colaExec;
 t_queue* colaBlock;
 t_queue* colaEnd;
@@ -34,7 +34,7 @@ sem_t comunicacionMemoria;
 
 void iniciarColas() {
   colaNew = queue_create();
-  colaReady = queue_create();
+  colaReady = list_create();
   colaExec = queue_create();
   colaBlock = queue_create();
   colaEnd = queue_create();
@@ -110,13 +110,20 @@ void ejecutar(PCB* proceso) {
     op_code codOperacion = obtener_codigo_operacion(socketCPU);
 
     Pcb *procesoRecibido;
-
+    procesoRecibido = deserializar_pcb(socketCPU);
     switch (codOperacion) {
-    case PCB:
-        procesoRecibido = deserializar_pcb(socketCPU);
-        log_info(logger, "Recibi proceso con PID: %d de CPU-Dispatch.", proceso->pid);
-        manejar_proceso_recibido(procesoRecibido, socketCPU);
-        break;
+    case BLOQUEADOIO:
+        agregar_proceso_bloqueado(procesoRecibido);
+    case EXIT:
+        agregarFinalizado()
+        pid = procesoRecibido->pid;
+        paquete = crear_paquete(FINALIZAR);
+        agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+        semwait(&comunicacionMemoria);
+        enviar_paquete_a_servidor(paquete, socketMemoria);
+        log_info(logger, "Se envio el proceso %d a la memoria para finalizar", pid);
+        //confirmar que llego a memoria
+        sem_post(&comunicacionMemoria);
 
     case DESCONEXION:
         log_info(logger, "Se desconectó el CPU-Dispatch. %d", codOperacion);
@@ -135,7 +142,8 @@ void planificador_corto_plazo_fifo() {
         sem_wait(&semProcesoReady);
         sem_wait(&semaforoCantidadProcesosExec);
 
-        PCB* procesoEjecutar = queue_pop(colaReady);
+        PCB* procesoEjecutar = list_remove(colaReady,0);
+
 
         cambiarEstado(EXEC, procesoEjecutar);
 
@@ -143,26 +151,81 @@ void planificador_corto_plazo_fifo() {
     }
 }
 
+void planificador_corto_plazo_HRRN() {
+    // log_info(loggerPlanificacion, "INICIO PLANIFICACION FIFO");
+    while (1) {
+        sem_wait(&semProcesoReady);
+        sem_wait(&semaforoCantidadProcesosExec);
 
+        PCB* procesoEjecutar = sacarProcesoMayorHRRN();
 
+        cambiarEstado(EXEC, procesoEjecutar);
 
+        ejecutar(procesoEjecutar);
+    }
+}
 
+PCB* sacarProcesoMayorHRRN(){
+  PCB* procesoAEjecutar;
+  pthread_mutex_lock(&mutexColaListos);
+  list_sort(colaReady, &ordenarSegunCalculoHRRN);
+  procesoAEjecutar = list_remove (colaReady,0);
+  pthread_mutex_unlock(&mutexColaListos);
+  return procesoAEjecutar
+}
+bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2){
+  return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
+}
+float calcularResponseRatio (PCB proceso){
+  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
+}
+float estimacion(PCB proceso){
+  float alfa = CONFIG_KERNEL->HRRN_ALFA;
+  float estimacionAnterior = proceso->estimadoRafaga;
+  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
+  float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
+  return resultado;
+}
+int tiempoAhora(){
+  return time(NULL);
+}
+int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
+{
+    return tiempoAhora() - proceso->llegadaReady;
+}
 void agregarAListo(PCB* proceso) {
   pthread_mutex_lock(&mutexColaReady);
-  queue_push(colaReady, proceso);
+  list_add(colaReady, proceso);
   //looger
   pthread_mutex_unlock(&mutexColaReady);
 }
 
 int sePuedeAgregarMasProcesos() {
-  return (CONFIG_KERNEL->GRADO_MAX_MULTIPROGRAMACION > queue_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
+  return (CONFIG_KERNEL->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
 }
 
 void cambiarEstado(estadoProceso estado, PCB* proceso) {
   proceso->estado = estado;
   printf("%d\n", proceso->estado);
 }
+void agregar_proceso_bloqueado(PCB *procesoBloqueado)
+{
+    procesoBloqueado->estimacionRafaga = estimacion(procesoBloqueado);
+    procesoBloqueado->tiempoRafagaRealAnterior = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+    pthread_mutex_lock(&mutexColaBloqueados);
 
+    queue_push(colaBloqueados, procesoBloqueado);
+    log_info(loggerPlanificacion, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+
+    pthread_mutex_unlock(&mutexColaBloqueados);
+
+    // Despierto dispositivo I/O
+    sem_post(&contadorBloqueados);
+
+    // Despierto al planificador de largo plazo
+
+    sem_post(&despertarPlanificadorLargoPlazo);
+}
 /*
 
 void enviar_pcb(PCB *proceso, int socketDispatch)
