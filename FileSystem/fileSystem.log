@@ -18,3 +18,14 @@
 [INFO] 18:42:16:635 FileSystem/(9323:9323): Socket del Servidor FileSystem Creado Exitosamente.
 [INFO] 18:42:16:635 FileSystem/(9323:9323): Servidor FileSystem se Encuentra Escuchando.
 [INFO] 18:49:20:155 FileSystem/(9323:9323): Recibi un cliente
+[INFO] 19:01:46:396 FileSystem/(9323:9323): Recibi un cliente
+[INFO] 19:02:24:759 FileSystem/(9323:9323): Recibi un cliente
+[INFO] 19:12:11:504 FileSystem/(9323:9323): Recibi un cliente
+[ERROR] 19:17:43:070 FileSystem/(12624:12624): No se pudo Encontrar el Archivo de configuracion
+[INFO] 19:18:11:473 FileSystem/(12652:12652): Conectando con el Servidor Memoria...
+[ERROR] 19:18:11:477 FileSystem/(12652:12652): Conexión rechazada. El Servidor Memoria no se encuentra disponible en este momento.
+[INFO] 19:18:31:508 FileSystem/(12681:12681): Conectando con el Servidor Memoria...
+[INFO] 19:18:31:518 FileSystem/(12681:12681): Conexión exitosa. Iniciando cliente...
+[INFO] 19:18:31:518 FileSystem/(12681:12681): Creando Socket del Servidor FileSystem...
+[INFO] 19:18:31:518 FileSystem/(12681:12681): Socket del Servidor FileSystem Creado Exitosamente.
+[INFO] 19:18:31:518 FileSystem/(12681:12681): Servidor FileSystem se Encuentra Escuchando.
