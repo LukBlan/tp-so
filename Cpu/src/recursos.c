@@ -17,14 +17,23 @@ void crearRecursosCpu() {
 }
 
 void cargarConfiguracion(char* pathConfiguracin) {
-  t_configuracion* config = malloc(sizeof(t_configuracion));
+  t_configuracion* config;
   t_config* fileConfig = config_create(pathConfiguracin);
-  config->IP_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "IP_MEMORIA"));
-  config->IP_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "IP_ESCUCHA"));
-  config->TAM_MAX_SEGMENTO = config_get_int_value(fileConfig, "TAM_MAX_SEGMENTO");
-  config->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_ESCUCHA"));
-  config->PUERTO_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_MEMORIA"));
-  config->RETARDO_INSTRUCCION = config_get_int_value(fileConfig, "RETARDO_INSTRUCCION");
+
+  if (fileConfig != NULL) {
+    config = malloc(sizeof(t_configuracion));
+    config->IP_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "IP_MEMORIA"));
+    config->IP_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "IP_ESCUCHA"));
+    config->TAM_MAX_SEGMENTO = config_get_int_value(fileConfig, "TAM_MAX_SEGMENTO");
+    config->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_ESCUCHA"));
+    config->PUERTO_MEMORIA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_MEMORIA"));
+    config->RETARDO_INSTRUCCION = config_get_int_value(fileConfig, "RETARDO_INSTRUCCION");
+  } else {
+    log_error(recursosCpu->logger, "No se pudo Encontrar el Archivo de configuracion");
+    liberarRecursos();
+    exit(-1);
+  }
+
   config_destroy(fileConfig);
   recursosCpu->configuracion = config;
 }
