@@ -38,13 +38,20 @@ typedef struct {
 typedef enum {
 	DESCONEXION = -1,
 	LINEAS_INSTRUCCION,
-	Pcb
+	Pcb,
+	SIGNAL,
+	WAIT,
+	EXIT,
+	BLOQUEADOIO
 } op_code;
 
 typedef enum {
 	DESCONOCIDA = -1,
 	SET,
 	YIELD,
+	WAIT,
+	SIGNAL,
+	IO,
 	EXIT
 } TipoInstruccion;
 

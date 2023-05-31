@@ -22,7 +22,7 @@ pthread_mutex_t mutexcantidadProcesosMemoria;
 
 sem_t semProcesoNew;
 sem_t semProcesoReady;
-sem_t semaProcesoExec;
+sem_t semProcesoExec;
 
 sem_t blockCounter;
 
@@ -113,6 +113,7 @@ void ejecutar(PCB* proceso) {
 
     Pcb *procesoRecibido;
     procesoRecibido = deserializar_pcb(socketCPU);
+    sacarDeEjecutando(procesoRecibido);
     switch (codOperacion) {
     case BLOQUEADOIO:
         agregar_proceso_bloqueado(procesoRecibido);
@@ -139,7 +140,14 @@ void ejecutar(PCB* proceso) {
 }
 
 /*
-
+void sacarDeEjecutando(PCB* proceso){
+  pthread_mutex_lock(&mutexColaEjecutando);
+  queue_pop(colaExec);
+  log_info(loggerPlanificacion, "Proceso: [%d] salío de EJECUTANDO.", proceso->pid);
+  
+  pthread_mutex_unlock(&mutexColaExec);
+  sem_post(&semCantidadProcesosExec);
+}
 PCB* sacarBloqueado(){
  PCB *pcbSaliente;
 
@@ -288,5 +296,36 @@ bool esProcesoNuevo(Pcb *proceso)
 bool sePuedeAgregarMasProcesos() {
     return (cantidad_procesos_memoria() < KERNEL_CONFIG.GRADO_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNuevos, &mutexColaNuevos) > 0 || lectura_cola_mutex(colaSuspendidoListo, &mutexColaSuspendidoListo) > 0);
 }
+void liberar_semaforos()
+{
+    pthread_mutex_destroy(&mutexNumeroProceso);
+    pthread_mutex_destroy(&mutexProcesoListo);
+    pthread_mutex_destroy(&mutexColaNew);
+    pthread_mutex_destroy(&mutexColaReady);
+    pthread_mutex_destroy(&mutexColaBlock);
+    pthread_mutex_destroy(&mutexColaExec);
+    pthread_mutex_destroy(&mutexColaEnd);
+    pthread_mutex_destroy(&mutex_cola);
+    pthread_mutex_destroy(&mutexcantidadProcesosMemoria);
 
+    sem_destroy(&semProcesoNew);
+    sem_destroy(&semProcesoReady);
+    sem_destroy(&semProcesoExec);
+    sem_destroy(&blockCounter);
+    sem_destroy(&largoPlazo);
+    sem_destroy(&semaforoCantidadProcesosExec);
+}
+void liberar_estructuras()
+{
+
+    list_destroy(colaReady);
+
+    queue_destroy(colaNew);
+
+    queue_destroy(colaBlock);
+
+    queue_destroy(colaExec);
+
+    queue_destroy(colaEnd);
+}
 */
