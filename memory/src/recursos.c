@@ -19,24 +19,27 @@ void cargarLogger(char* pathLogger) {
 }
 
 void cargarConfiguracion(char* pathArchivoConfiguracion) {
-  t_configuracion* configuracion = malloc(sizeof(t_configuracion));
+  t_configuracion* configuracion;
   t_config* archivoConfiguracion = config_create(pathArchivoConfiguracion);
+
   if (archivoConfiguracion != NULL) {
+    configuracion = malloc(sizeof(t_configuracion));
     configuracion->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(archivoConfiguracion, "PUERTO_ESCUCHA"));
-      configuracion->IP_ESCUCHA = string_duplicate(config_get_string_value(archivoConfiguracion, "IP_ESCUCHA"));
-      configuracion->TAM_MEMORIA = config_get_int_value(archivoConfiguracion, "TAM_MEMORIA");
-      configuracion->TAM_SEGMENTO_0 = config_get_int_value(archivoConfiguracion, "TAM_SEGMENTO_0");
-      configuracion->CANT_SEGMENTOS = config_get_int_value(archivoConfiguracion, "CANT_SEGMENTOS");
-      configuracion->RETARDO_MEMORIA= config_get_int_value(archivoConfiguracion, "RETARDO_MEMORIA");
-      configuracion->RETARDO_COMPACTACION = config_get_int_value(archivoConfiguracion, "RETARDO_COMPACTACION");
-      configuracion->ALGOTIRMO_ASIGNACION = string_duplicate(config_get_string_value(archivoConfiguracion, "ALGORITMO_ASIGNACION"));
-      config_destroy(archivoConfiguracion);
-      recursosMemoria->configuracion = configuracion;
+    configuracion->IP_ESCUCHA = string_duplicate(config_get_string_value(archivoConfiguracion, "IP_ESCUCHA"));
+    configuracion->TAM_MEMORIA = config_get_int_value(archivoConfiguracion, "TAM_MEMORIA");
+    configuracion->TAM_SEGMENTO_0 = config_get_int_value(archivoConfiguracion, "TAM_SEGMENTO_0");
+    configuracion->CANT_SEGMENTOS = config_get_int_value(archivoConfiguracion, "CANT_SEGMENTOS");
+    configuracion->RETARDO_MEMORIA= config_get_int_value(archivoConfiguracion, "RETARDO_MEMORIA");
+    configuracion->RETARDO_COMPACTACION = config_get_int_value(archivoConfiguracion, "RETARDO_COMPACTACION");
+    configuracion->ALGOTIRMO_ASIGNACION = string_duplicate(config_get_string_value(archivoConfiguracion, "ALGORITMO_ASIGNACION"));
   } else {
     log_error(recursosMemoria->logger, "No se pudo Encontrar el Archivo de configuracion");
     liberarRecursos();
     exit(-1);
   }
+
+  config_destroy(archivoConfiguracion);
+  recursosMemoria->configuracion = configuracion;
 }
 
 void liberarRecursos() {
