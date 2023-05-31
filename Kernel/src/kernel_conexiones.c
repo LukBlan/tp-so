@@ -25,11 +25,30 @@ void agregarANew(PCB* pcb) {
   //looger de instruccion
 }
 
-void montar_servidor() {
+void crearSocketKernel() {
   t_configuracion* config = recursosKernel->configuracion;
+  t_log* logger = recursosKernel->logger;
   int socketServidor = iniciarServidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
+
+  log_info(logger, "Creando Socket del Servidor Kernel...");
+  if (socketServidor < 0) {
+    log_error(logger, "Error al Crear el Socket del Servidor Kernel.");
+    //liberarRecursos();
+    exit(-1);
+   }
+
+  log_info(logger, "Socket del Servidor Kernel Creado Exitosamente.");
+  recursosKernel->conexiones->socketKernel = socketServidor;
+}
+
+void montarServidor() {
+  t_log* logger = recursosKernel->logger;
+  int socketServidor = recursosKernel->conexiones->socketKernel;
+
+  log_info(logger, "Servidor Kernel se Encuentra Escuchando.");
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
+    log_info(logger, "Recibi un Cliente.");
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
     mostrar(instrucciones);
@@ -37,7 +56,6 @@ void montar_servidor() {
     agregarANew(pcb);
     close(socketCliente);
   }
-  close(socketServidor);
 }
 
 //TODO agregar tabla de segmentos
@@ -116,17 +134,22 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
   return instrucciones;
 }
 
+void cargarConexiones() {
+  conectar_con_memoria();
+  conectar_con_cpu();
+  crearSocketKernel();
+}
 
 void conectar_con_memoria() {
   t_configuracion* config = recursosKernel->configuracion;
   int socketMemoria = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
-  close(socketMemoria);
+  recursosKernel->conexiones->socketMemoria = socketMemoria;
 }
 
 void conectar_con_cpu() {
   t_configuracion* config = recursosKernel->configuracion;
   int socketCpu = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
-  close(socketCpu);
+  recursosKernel->conexiones->socketCpu = socketCpu;
 }
 
 

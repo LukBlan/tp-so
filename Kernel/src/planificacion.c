@@ -60,7 +60,7 @@ void iniciarSemaforos() {
 
 }
 
-void comenzarPlanificador() {
+void comenzarPlanificadores() {
   pthread_t hilo_largo_plazo;
   pthread_t hiloCortoPlazo;
 

@@ -47,7 +47,7 @@ extern sem_t comunicacionMemoria;
 void iniciarColas();
 void iniciarSemaforos();
 
-void comenzarPlanificador();
+void comenzarPlanificadores();
 
 void planificador_corto_plazo_fifo();
 void planificador_largo_plazo();

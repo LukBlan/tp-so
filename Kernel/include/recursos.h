@@ -21,6 +21,7 @@
   } t_configuracion;
 
   typedef struct {
+    int socketKernel;
     int socketFileSystem;
     int socketMemoria;
     int socketCpu;
