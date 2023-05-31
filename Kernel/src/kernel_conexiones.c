@@ -1,7 +1,7 @@
 #include <commons/string.h>
-#include <conexion_kernel.h>
 #include <conexiones.h>
 #include <estructuras.h>
+#include <kernel_conexiones.h>
 #include <planificacion.h>
 #include <netdb.h>
 
@@ -25,7 +25,8 @@ void agregarANew(PCB* pcb) {
   //looger de instruccion
 }
 
-void montar_servidor(configuracion* config) {
+void montar_servidor() {
+  t_configuracion* config = recursosKernel->configuracion;
   int socketServidor = iniciarServidor(config->IP_ESCUCHA, config->PUERTO_ESCUCHA);
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
@@ -46,7 +47,7 @@ PCB* crear_pcb(t_list* listaInstrucciones) {
   pcb->pid = idProceso++;
   pthread_mutex_unlock(&mutexNumeroProceso);
   pcb->programCounter = 0;
-  pcb->estimadoRafaga = CONFIG_KERNEL->ESTIMACION_INICIAL;
+  pcb->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
   pcb->instrucciones = list_duplicate(listaInstrucciones);
   pcb->llegadaReady = 0;
   list_destroy(listaInstrucciones);
@@ -116,12 +117,14 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 }
 
 
-void conectar_con_memoria(configuracion* config) {
+void conectar_con_memoria() {
+  t_configuracion* config = recursosKernel->configuracion;
   int socketMemoria = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketMemoria);
 }
 
-void conectar_con_cpu(configuracion* config) {
+void conectar_con_cpu() {
+  t_configuracion* config = recursosKernel->configuracion;
   int socketCpu = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
   close(socketCpu);
 }

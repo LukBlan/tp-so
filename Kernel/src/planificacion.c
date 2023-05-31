@@ -1,6 +1,6 @@
 #include <planificacion.h>
 #include <estructuras.h>
-#include <kernel_config.h>
+#include <recursos.h>
 
 t_queue* colaNew;
 t_list* colaReady;
@@ -67,7 +67,7 @@ void comenzarPlanificador() {
   pthread_create(&hilo_largo_plazo, NULL, (void*) planificador_largo_plazo, NULL);
   pthread_detach(hilo_largo_plazo);
 
-  if (strcmp(CONFIG_KERNEL->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
+  if (strcmp(recursosKernel->configuracion->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
     //pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
     //pthread_detach(hiloCortoPlazo);
   }
