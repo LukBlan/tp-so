@@ -38,5 +38,6 @@
   void crearRecursos();
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarLogger(char* pathLogger);
+  void liberarRecursos();
 
 #endif

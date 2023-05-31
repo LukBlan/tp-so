@@ -8,8 +8,8 @@ int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
 
   crearRecursos();
-  cargarConfiguracion(argv[1]);
   cargarLogger("kernel.log");
+  cargarConfiguracion(argv[1]);
   cargarConexiones();
   iniciarColas();
   iniciarSemaforos();
@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
   montarServidor();
 
-  free(recursosKernel);
+  liberarRecursos();
   return EXIT_SUCCESS;
 }
 

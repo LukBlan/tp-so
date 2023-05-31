@@ -150,7 +150,7 @@ void conectar_con_memoria() {
 
   if (socketMemoria < 0) {
     log_error(logger, "Conexión rechazada. El Servidor Memoria no se encuentra disponible en este momento.");
-    //liberarRecursos();
+    liberarRecursos();
     exit(-1);
   }
 
@@ -167,7 +167,7 @@ void conectar_con_cpu() {
 
   if (socketCpu < 0) {
     log_error(logger, "Conexión rechazada. El Servidor Cpu no se encuentra disponible en este momento.");
-    //liberarRecursos();
+    liberarRecursos();
     exit(-1);
   }
 
@@ -179,12 +179,12 @@ void conectar_con_fileSystem() {
   t_configuracion* config = recursosKernel->configuracion;
   t_log* logger = recursosKernel->logger;
 
-  log_info(logger, "Conectando con el Servidor Cpu...");
+  log_info(logger, "Conectando con el Servidor FileSystem...");
   int socketFileSystem = crearConexionServidor(config->IP_FILESYSTEM, config->PUERTO_FILESYSTEM);
 
   if (socketFileSystem < 0) {
-    log_error(logger, "Conexión rechazada. El Servidor Cpu no se encuentra disponible en este momento.");
-    //liberarRecursos();
+    log_error(logger, "Conexión rechazada. El Servidor FileSystem no se encuentra disponible en este momento.");
+    liberarRecursos();
     exit(-1);
   }
 
