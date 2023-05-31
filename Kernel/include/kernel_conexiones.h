@@ -11,5 +11,6 @@
   void conectar_con_cpu();
   t_list* generarListaDeInstrucciones(int socketCliente);
   PCB* crear_pcb(t_list* listaInstrucciones);
+  void conectar_con_fileSystem();
 
 #endif

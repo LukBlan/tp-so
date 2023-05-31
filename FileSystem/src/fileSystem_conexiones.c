@@ -2,7 +2,6 @@
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
-#include <recursos.h>
 
 void cargarConexiones() {
   conectarConMemoria();

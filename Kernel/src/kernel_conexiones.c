@@ -137,19 +137,59 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
 void cargarConexiones() {
   conectar_con_memoria();
   conectar_con_cpu();
+  conectar_con_fileSystem();
   crearSocketKernel();
 }
 
 void conectar_con_memoria() {
   t_configuracion* config = recursosKernel->configuracion;
+  t_log* logger = recursosKernel->logger;
+
+  log_info(logger, "Conectando con el Servidor Memoria...");
   int socketMemoria = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
+
+  if (socketMemoria < 0) {
+    log_error(logger, "Conexión rechazada. El Servidor Memoria no se encuentra disponible en este momento.");
+    //liberarRecursos();
+    exit(-1);
+  }
+
+  log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketMemoria = socketMemoria;
 }
 
 void conectar_con_cpu() {
   t_configuracion* config = recursosKernel->configuracion;
-  int socketCpu = crearConexionServidor(config->IP_MEMORIA, config->PUERTO_MEMORIA);
+  t_log* logger = recursosKernel->logger;
+
+  log_info(logger, "Conectando con el Servidor Cpu...");
+  int socketCpu = crearConexionServidor(config->IP_CPU, config->PUERTO_CPU);
+
+  if (socketCpu < 0) {
+    log_error(logger, "Conexión rechazada. El Servidor Cpu no se encuentra disponible en este momento.");
+    //liberarRecursos();
+    exit(-1);
+  }
+
+  log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketCpu = socketCpu;
+}
+
+void conectar_con_fileSystem() {
+  t_configuracion* config = recursosKernel->configuracion;
+  t_log* logger = recursosKernel->logger;
+
+  log_info(logger, "Conectando con el Servidor Cpu...");
+  int socketFileSystem = crearConexionServidor(config->IP_FILESYSTEM, config->PUERTO_FILESYSTEM);
+
+  if (socketFileSystem < 0) {
+    log_error(logger, "Conexión rechazada. El Servidor Cpu no se encuentra disponible en este momento.");
+    //liberarRecursos();
+    exit(-1);
+  }
+
+  log_info(logger, "Conexión exitosa. Iniciando cliente...");
+  recursosKernel->conexiones->socketFileSystem = socketFileSystem;
 }
 
 

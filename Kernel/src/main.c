@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
   iniciarColas();
   iniciarSemaforos();
   comenzarPlanificadores();
+
   montarServidor();
 
   free(recursosKernel);
