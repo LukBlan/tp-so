@@ -78,3 +78,57 @@ void enviar_paquete(t_paquete* paquete, int socketCliente) {
 	send(socketCliente, a_enviar, bytes, 0);
 	free(a_enviar);
 }
+/*
+char *obtener_mensaje_del_servidor(int socketServidor)
+{
+  t_list* listaMensaje;
+  char* mensaje;
+
+  switch (obtener_codigo_operacion(socketServidor))
+  {
+  case MENSAJE:
+    listaMensaje = obtenerLista(socketServidor);
+    mensaje = string_duplicate((char *)list_get(listaMensaje, 0));
+    list_destroy_and_destroy_elements(listaMensaje, &free);
+    break;
+
+  default:
+    break;
+  }
+
+  return mensaje;
+}
+t_list* obtenerLista(int socketCliente)
+{
+  int tamanioBuffer;
+  int tamanioContenido;
+  int desplazamiento = 0;
+
+  t_list *contenido = list_create();
+  void *buffer = obtenerBuffer(&tamanioBuffer, socketCliente);
+
+  while (desplazamiento < tamanioBuffer)
+  {
+    memcpy(&tamanioContenido, buffer + desplazamiento, sizeof(int));
+    desplazamiento += sizeof(int);
+
+    void *valor = malloc(tamanioContenido);
+    memcpy(valor, buffer + desplazamiento, tamanioContenido);
+    desplazamiento += tamanioContenido;
+
+    list_add(contenido, valor);
+  }
+
+  free(buffer);
+  return contenido;
+}
+void *obtenerBuffer(int *tamanio, int socketCliente)
+{
+  void *buffer;
+
+  recv(socketCliente, tamanio, sizeof(int), MSG_WAITALL);
+  buffer = malloc(*tamanio);
+  recv(socketCliente, buffer, *tamanio, MSG_WAITALL);
+
+  return buffer;
+}*/
