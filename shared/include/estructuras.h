@@ -12,7 +12,7 @@ typedef union {
 
 typedef struct {
   char nombre[20];
- Valor valor;
+  Valor valor;
 } Registro;
 
 typedef enum {
@@ -23,17 +23,19 @@ typedef enum {
 } estadoProceso;
 
 typedef struct {
-	unsigned int pid;
-	t_list* instrucciones;
-	unsigned int programCounter;
-	Registro registros;
-	//struct tablaSegmentos;
-	float estimadoRafaga;
-	int tiempoBloqueadoIO;
-	unsigned int rafagaRealPrevia;
-	unsigned int llegadaReady;
-	t_list* archivosAbiertos;
+  t_list* instrucciones;
+  int programCounter;
+  //Registro registros;
+  //struct tablaSegmentos;
+  float estimadoRafaga;
+  int llegadaReady;
+  t_list* archivosAbiertos;
+} contextoEjecucion;
+
+typedef struct {
+	int pid;
 	estadoProceso estado;
+	contextoEjecucion contexto;
 } PCB;
 
 typedef enum {

@@ -4,19 +4,9 @@
 #include <kernel_conexiones.h>
 #include <planificacion.h>
 #include <netdb.h>
+#include <utils.h>
 
 int idProceso = 0;
-
-void mostrar(t_list* instrucciones) {
-  int tamaño = list_size(instrucciones);
-  for (int i = 0; i < tamaño; i++) {
-    t_instruccion* instruccion = list_get(instrucciones, i);
-    printf("%s", instruccion->identificador);
-    printf(" %s", instruccion->parametros[0]);
-    printf(" %s", instruccion->parametros[1]);
-    printf(" %s\n", instruccion->parametros[2]);
-  }
-}
 
 void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
@@ -51,7 +41,7 @@ void montarServidor() {
     log_info(logger, "Recibi un Cliente.");
     obtener_codigo_operacion(socketCliente);
     t_list* instrucciones = generarListaDeInstrucciones(socketCliente);
-    mostrar(instrucciones);
+    mostrarInstrucciones(instrucciones);
     PCB* pcb = crear_pcb(instrucciones);
     agregarANew(pcb);
     close(socketCliente);
@@ -64,10 +54,10 @@ PCB* crear_pcb(t_list* listaInstrucciones) {
   pthread_mutex_lock(&mutexNumeroProceso);
   pcb->pid = idProceso++;
   pthread_mutex_unlock(&mutexNumeroProceso);
-  pcb->programCounter = 0;
-  pcb->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
-  pcb->instrucciones = list_duplicate(listaInstrucciones);
-  pcb->llegadaReady = 0;
+  pcb->contexto.programCounter = 0;
+  pcb->contexto.estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
+  pcb->contexto.instrucciones = list_duplicate(listaInstrucciones);
+  pcb->contexto.llegadaReady = 0;
   list_destroy(listaInstrucciones);
   return pcb;
 }

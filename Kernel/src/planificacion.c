@@ -3,7 +3,7 @@
 #include <recursos.h>
 
 t_queue* colaNew;
-t_list* colaReady;
+t_queue* colaReady;
 t_queue* colaExec;
 t_queue* colaBlock;
 t_queue* colaEnd;
@@ -34,7 +34,7 @@ sem_t comunicacionMemoria;
 
 void iniciarColas() {
   colaNew = queue_create();
-  colaReady = list_create();
+  colaReady = queue_create();
   colaExec = queue_create();
   colaBlock = queue_create();
   colaEnd = queue_create();
@@ -42,7 +42,6 @@ void iniciarColas() {
 
 void iniciarSemaforos() {
   pthread_mutex_init(&mutexNumeroProceso, NULL);
-
   pthread_mutex_init(&mutexColaNew, NULL);
   pthread_mutex_init(&mutexColaReady, NULL);
   pthread_mutex_init(&mutexColaExec, NULL);
@@ -51,20 +50,16 @@ void iniciarSemaforos() {
 
   sem_init(&semProcesoNew, 0, 0);
   sem_init(&semProcesoReady, 0, 0);
-
   sem_init(&blockCounter, 0, 0);
-
   sem_init(&semaforoCantidadProcesosExec, 0, 1);
-
   sem_init(&largoPlazo, 0, 0);
-
 }
 
 void comenzarPlanificadores() {
   pthread_t hilo_largo_plazo;
   pthread_t hiloCortoPlazo;
 
-  pthread_create(&hilo_largo_plazo, NULL, (void*) planificador_largo_plazo, NULL);
+  pthread_create(&hilo_largo_plazo, NULL, (void*)planificador_largo_plazo, NULL);
   pthread_detach(hilo_largo_plazo);
 
   if (strcmp(recursosKernel->configuracion->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
@@ -84,19 +79,35 @@ void comenzarPlanificadores() {
 }
 
 void planificador_largo_plazo() {
-  //log_info(loggerPlanificacion, "Inicio planificacion LARGO PLAZO en [%s]", KERNEL_CONFIG.ALGORITMO_PLANIFICACION);
+  t_log* logger = recursosKernel->logger;
+  t_configuracion* config = recursosKernel->configuracion;
+
+  log_info(logger, "Inicio PLanificador LARGO PLAZO en [%s]\n", config->ALGORITMO_PLANIFICACION);
   while (1) {
     sem_wait(&largoPlazo);
-    // log_info(loggerPlanificacion, "[LARGO-PLAZO] Procesos en MEMORIA: %d", cantidadProcesosEnMemoria);
-/*
     if (sePuedeAgregarMasProcesos()) {
       PCB *procesoSaliente = queue_pop(colaNew);
       cambiarEstado(READY, procesoSaliente);
       agregarAListo(procesoSaliente);
     }
-   */
+    log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d\n", queue_size(colaReady));
   }
+}
 
+int sePuedeAgregarMasProcesos() {
+  t_configuracion* config = recursosKernel->configuracion;
+  return (config->GRADO_MAX_MULTIPROGRAMACION > queue_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
+}
+
+void cambiarEstado(estadoProceso estado, PCB* proceso) {
+  proceso->estado = estado;
+}
+
+void agregarAListo(PCB* proceso) {
+  pthread_mutex_lock(&mutexColaReady);
+  queue_push(colaReady, proceso);
+  //looger
+  pthread_mutex_unlock(&mutexColaReady);
 }
 
 void ejecutar(PCB* proceso) {
@@ -273,21 +284,7 @@ int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
 {
     return tiempoAhora() - proceso->llegadaReady;
 }
-void agregarAListo(PCB* proceso) {
-  pthread_mutex_lock(&mutexColaReady);
-  list_add(colaReady, proceso);
-  //looger
-  pthread_mutex_unlock(&mutexColaReady);
-}
 
-int sePuedeAgregarMasProcesos() {
-  return (CONFIG_KERNEL->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
-}
-
-void cambiarEstado(estadoProceso estado, PCB* proceso) {
-  proceso->estado = estado;
-  printf("%d\n", proceso->estado);
-}
 void agregar_proceso_bloqueado(PCB *procesoBloqueado)
 {
     procesoBloqueado->estimacionRafaga = estimacion(procesoBloqueado);
@@ -306,7 +303,7 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado)
 
     sem_post(&despertarPlanificadorLargoPlazo);
 }
-/*
+
 
 void enviar_pcb(PCB *proceso, int socketDispatch)
 {
