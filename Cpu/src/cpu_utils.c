@@ -177,7 +177,6 @@ void ejecutar_EXIT(Pcb *pcb, int socketKernel)
 }
 void ejecutar_signal() {
 	t_paquete* paquete = crear_paquete(SIGNAL);
-  serializar_pcb(paquete, pcb);
 	agregar_a_paquete (paquete,&recurso,sizeof(char));
   enviar_paquete(paquete, socketKernel);
   char* valor = obtenerMensaje(socketKernel);
@@ -186,7 +185,6 @@ void ejecutar_signal() {
 }
 void ejecutar_wait() {
 t_paquete* paquete = crear_paquete(WAIT);
-serializar_pcb(paquete, pcb);
 agregar_a_paquete (paquete,&recurso,sizeof(char));
 enviar_paquete(paquete, socketKernel);
  char* valor = obtenerMensaje(socketKernel);

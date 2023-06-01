@@ -113,13 +113,35 @@ void ejecutar(PCB* proceso) {
 
     Pcb *procesoRecibido;
     procesoRecibido = deserializar_pcb(socketCPU);
-    sacarDeEjecutando(procesoRecibido);
     switch (codOperacion) {
     case BLOQUEADOIO:
+    sacarDeEjecutando(procesoRecibido);
         agregar_proceso_bloqueado(procesoRecibido);
-        
+        break;
+    case SIGNAL:
+        char* recurso = obtenerRecursoDePaquete(socketCPU);
+        if(kernelTieneRecurso(recurso)){
+          aumentarRecurso(recurso);
+          enviarMensaje("Signal ejecutado correctamente", socket CPU)
+        }
+        else{
+          enviarMensaje("Error, recurso no encontrado", socket CPU)
+        }
+        break;
+    case WAIT:
+        char* recurso = obtenerRecursoDePaquete(socketCPU);
+        if(kernelTieneRecurso(recurso) && hayRecursoDisponible(recurso)){
+          disminuirRecurso(recurso);
+          enviarMensaje("Wait ejecutado correctamente", socket CPU)
+        }
+        else{
+          enviarMensaje("Error", socket CPU)
+        }
+        break;
+
     case EXIT:
-        agregarFinalizado()
+    sacarDeEjecutando(procesoRecibido);
+        agregarFinalizado(procesoRecibido)
         pid = procesoRecibido->pid;
         paquete = crear_paquete(FINALIZAR);
         agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
@@ -128,7 +150,7 @@ void ejecutar(PCB* proceso) {
         log_info(logger, "Se envio el proceso %d a la memoria para finalizar", pid);
         //confirmar que llego a memoria
         sem_post(&comunicacionMemoria);
-
+        break;
     case DESCONEXION:
         log_info(logger, "Se desconectó el CPU-Dispatch. %d", codOperacion);
         break;
@@ -141,6 +163,17 @@ void ejecutar(PCB* proceso) {
 }
 
 /*
+void agregarFinalizado(PCB* proceso){
+    pthread_mutex_lock(&mutexColaEnd);
+
+    queue_push(colaEnd, proceso);
+    log_info(loggerPlanificacion, "Proceso: [%d] se encuentra FINALIZADO.", proceso->pid);
+
+    pthread_mutex_unlock(&mutexColaEnd);
+
+    // Despierto al planificador de mediano plazo.
+    sem_post(&largoPlazo);
+}
 void sacarDeEjecutando(PCB* proceso){
   pthread_mutex_lock(&mutexColaEjecutando);
   queue_pop(colaExec);
