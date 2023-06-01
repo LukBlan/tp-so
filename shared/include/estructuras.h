@@ -39,10 +39,11 @@ typedef struct {
 typedef enum {
 	DESCONEXION = -1,
 	LINEAS_INSTRUCCION,
+	HANDSHAKE,
 	Pcb,
-	SIGNAL,
-	WAIT,
-	EXIT,
+	SIGNALCODE,
+	WAITCODE,
+	EXITCODE,
 	BLOQUEADOIO
 } op_code;
 

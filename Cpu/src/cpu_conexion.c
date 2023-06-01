@@ -2,7 +2,8 @@
 #include <conexiones.h>
 #include <cpu_conexion.h>
 #include <recursos.h>
-#include <recursos.h>
+#include <estructuras.h>
+#include <netdb.h>
 
 void cargarConexiones() {
   conectarConMemoria();
@@ -52,7 +53,15 @@ void montarServidor() {
     log_info(logger, "Recibi un cliente");
     close(socketCliente);
   }
-  close(socketServidor);
 }
 
+void realizarHandshakeMemoria() {
+  t_log* logger = recursosCpu->logger;
+  int socketMemoria = recursosCpu->conexiones->socketMemoria;
 
+  log_info(logger, "Realizando Handshake con Memoria");
+  if (realizarHandshake(logger, socketMemoria) < 0) {
+    liberarRecursos();
+    exit(-1);
+  }
+}

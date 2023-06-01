@@ -1,37 +1,13 @@
-[INFO] 20:25:17:367 Memoria/(3097:3097): Recibi un cliente
-[INFO] 18:34:41:493 Memoria/(8381:8381): Creando Socket del Servidor Memoria...
-[INFO] 18:34:41:498 Memoria/(8381:8381): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 18:34:41:498 Memoria/(8381:8381): Servidor Memoria se Encuentra Escuchando.
-[INFO] 18:34:56:033 Memoria/(8381:8381): Recibi un cliente
-[INFO] 18:41:49:485 Memoria/(9282:9282): Creando Socket del Servidor Memoria...
-[INFO] 18:41:49:492 Memoria/(9282:9282): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 18:41:49:492 Memoria/(9282:9282): Servidor Memoria se Encuentra Escuchando.
-[INFO] 18:41:58:608 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:42:16:634 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:42:30:202 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:42:30:205 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:43:03:040 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:46:00:490 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:46:00:491 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:46:36:368 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:48:07:933 Memoria/(9282:9282): Recibi un cliente
-[INFO] 18:49:20:154 Memoria/(9282:9282): Recibi un cliente
-[INFO] 19:01:46:391 Memoria/(9282:9282): Recibi un cliente
-[INFO] 19:02:24:756 Memoria/(9282:9282): Recibi un cliente
-[ERROR] 19:06:14:733 Memoria/(11472:11472): No se pudo Encontrar el Archivo de configuracion
-[INFO] 19:06:25:143 Memoria/(11488:11488): Creando Socket del Servidor Memoria...
-[INFO] 19:06:25:148 Memoria/(11488:11488): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 19:06:25:149 Memoria/(11488:11488): Servidor Memoria se Encuentra Escuchando.
-[INFO] 19:10:21:498 Memoria/(11894:11894): Creando Socket del Servidor Memoria...
-[INFO] 19:10:21:501 Memoria/(11894:11894): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 19:10:21:503 Memoria/(11894:11894): Servidor Memoria se Encuentra Escuchando.
-[INFO] 19:12:06:389 Memoria/(12152:12152): Creando Socket del Servidor Memoria...
-[INFO] 19:12:06:392 Memoria/(12152:12152): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 19:12:06:394 Memoria/(12152:12152): Servidor Memoria se Encuentra Escuchando.
-[INFO] 19:12:11:500 Memoria/(12152:12152): Recibi un cliente
-[INFO] 19:14:45:016 Memoria/(12440:12440): Creando Socket del Servidor Memoria...
-[INFO] 19:14:45:023 Memoria/(12440:12440): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 19:14:45:026 Memoria/(12440:12440): Servidor Memoria se Encuentra Escuchando.
-[INFO] 19:14:53:798 Memoria/(12455:12455): Creando Socket del Servidor Memoria...
-[INFO] 19:14:53:801 Memoria/(12455:12455): Socket del Servidor Memoria Creado Exitosamente.
-[INFO] 19:14:53:804 Memoria/(12455:12455): Servidor Memoria se Encuentra Escuchando.
+[INFO] 18:53:16:095 Memoria/(7281:7281): Creando Socket del Servidor Memoria...
+[INFO] 18:53:16:105 Memoria/(7281:7281): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 18:53:16:105 Memoria/(7281:7281): Servidor Memoria se Encuentra Escuchando.
+[INFO] 18:53:28:906 Memoria/(7281:7281): Recibi un cliente
+[INFO] 18:53:28:913 Memoria/(7281:7324): Recibido Pedido de Handshake, Respondiendo
+[INFO] 18:57:33:037 Memoria/(7668:7668): Creando Socket del Servidor Memoria...
+[INFO] 18:57:33:043 Memoria/(7668:7668): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 18:57:33:043 Memoria/(7668:7668): Servidor Memoria se Encuentra Escuchando.
+[INFO] 18:57:51:078 Memoria/(7668:7668): Recibi un cliente
+[INFO] 18:57:51:079 Memoria/(7668:7687): Recibido Pedido de Handshake, Respondiendo
+[INFO] 18:58:19:978 Memoria/(7668:7668): Recibi un cliente
+[INFO] 18:58:19:980 Memoria/(7668:7702): Recibido Pedido de Handshake, Respondiendo
+[INFO] 18:58:52:229 Memoria/(7668:7668): Recibi un cliente

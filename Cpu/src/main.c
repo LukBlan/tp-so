@@ -11,6 +11,7 @@ int main(int argc, char* argv[]) {
   cargarConfiguracion(argv[1]);
   cargarConexiones();
 
+  realizarHandshakeMemoria();
   montarServidor();
 
   liberarRecursos();

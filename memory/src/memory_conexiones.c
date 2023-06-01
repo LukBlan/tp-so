@@ -2,6 +2,9 @@
 #include <conexiones.h>
 #include <memory_conexiones.h>
 #include <recursos.h>
+#include <pthread.h>
+#include <netdb.h>
+#include <estructuras.h>
 
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
@@ -28,6 +31,39 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un cliente");
-    close(socketCliente);
+    manejarConexion(socketCliente);
+  }
+}
+
+void procesarOperacion(op_code codigoOperacion, int socketCliente) {
+  switch (codigoOperacion) {
+    case HANDSHAKE:
+      int valorRecibido = 0;
+      log_info(recursosMemoria->logger, "Recibido Pedido de Handshake, Respondiendo");
+      recv(socketCliente, &valorRecibido, sizeof(int), 0);
+      send(socketCliente, &valorRecibido, sizeof(int), 0);
+      break;
+    default:
+      close(socketCliente);
+      break;
+  }
+}
+
+void manejarConexion(int socketCliente) {
+  pthread_t hilo;
+  pthread_create(&hilo, NULL, (void*)procesarOperacionRecibida, (void*)socketCliente);
+  pthread_detach(hilo);
+}
+
+void procesarOperacionRecibida(int socketCliente) {
+  int conexionActiva = 1;
+  while(conexionActiva) {
+    int codigoOperacion;
+    if (recv(socketCliente, &codigoOperacion, sizeof(int), 0) <= 0) {
+      conexionActiva = 0;
+      close(socketCliente);
+    } else {
+      procesarOperacion(codigoOperacion, socketCliente);
+    }
   }
 }

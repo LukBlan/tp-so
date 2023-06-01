@@ -3,6 +3,8 @@
 
   void cargarConexiones();
   void montarServidor();
+  void manejarConexion(int socketCliente);
+  void procesarOperacionRecibida(int socketCliente);
 
 #endif
 

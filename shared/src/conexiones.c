@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <commons/log.h>
 
 int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
@@ -56,3 +57,22 @@ void cerrarConexion(int socketServidor) {
   close(socketServidor);
 }
 
+int realizarHandshake(t_log* logger, int socketCliente) {
+  int informacionEnviada = 4;
+  int informacionRecivida = 0;
+  op_code codigoOperacion = HANDSHAKE;
+  int resultadoHanshake = 0;
+
+  send(socketCliente, &codigoOperacion, sizeof(op_code), 0);
+  send(socketCliente, &informacionEnviada, sizeof(op_code), 0);
+  recv(socketCliente, &informacionRecivida, sizeof(int), 0);
+
+  if (informacionEnviada == informacionRecivida) {
+    log_info(logger, "El Handshake fue exitoso");
+    resultadoHanshake = 1;
+  } else {
+    log_error(logger, "Error el Handshake no fue exitoso");
+    resultadoHanshake = -1;
+  }
+  return resultadoHanshake;
+}

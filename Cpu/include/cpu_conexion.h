@@ -5,5 +5,6 @@
   void conectarConMemoria();
   void generarServidorCpu();
   void montarServidor();
+  void realizarHandshakeMemoria();
 
 #endif

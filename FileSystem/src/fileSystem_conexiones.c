@@ -54,4 +54,15 @@ void montarServidor() {
   close(socketServidor);
 }
 
+void realizarHandshakeMemoria() {
+  t_log* logger = recursosFileSystem->logger;
+  int socketMemoria = recursosFileSystem->conexiones->socketMemoria;
+
+  log_info(logger, "Realizando Handshake con Memoria");
+  if (realizarHandshake(logger, socketMemoria) < 0) {
+    liberarRecursos();
+    exit(-1);
+  }
+}
+
 
