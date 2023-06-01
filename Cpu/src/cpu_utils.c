@@ -177,10 +177,24 @@ void ejecutar_EXIT(Pcb *pcb, int socketKernel)
 }
 void ejecutar_signal() {
 	t_paquete* paquete = crear_paquete(SIGNAL);
-	agregar_a_paquete
+  serializar_pcb(paquete, pcb);
+	agregar_a_paquete (paquete,&recurso,sizeof());
+  enviar_paquete(paquete, socketKernel);
 }
 void ejecutar_wait() {
 t_paquete* paquete = crear_paquete(WAIT);
-	agregar_a_paquete
+serializar_pcb(paquete, pcb);
+agregar_a_paquete (paquete,&recurso,sizeof());
+enviar_paquete(paquete, socketKernel);
+}
+void ejecutar_io(PCB *pcb, int tiempoBloqueadoIO, int socketKernel)
+{
+  pcb->tiempoBloqueadoIO = tiempoBloqueadoIO;
+
+  Paquete *paquete = crear_paquete(BLOQUEADOIO);
+  serializar_pcb(paquete, pcb);
+
+  enviar_paquete(paquete, socketKernel);
+  eliminar_paquete(paquete);
 }
 */

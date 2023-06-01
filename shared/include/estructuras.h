@@ -29,6 +29,7 @@ typedef struct {
 	Registro registros;
 	//struct tablaSegmentos;
 	float estimadoRafaga;
+	int tiempoBloqueadoIO;
 	unsigned int rafagaRealPrevia;
 	unsigned int llegadaReady;
 	t_list* archivosAbiertos;

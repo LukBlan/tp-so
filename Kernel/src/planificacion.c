@@ -117,6 +117,7 @@ void ejecutar(PCB* proceso) {
     switch (codOperacion) {
     case BLOQUEADOIO:
         agregar_proceso_bloqueado(procesoRecibido);
+        
     case EXIT:
         agregarFinalizado()
         pid = procesoRecibido->pid;
