@@ -46,6 +46,12 @@
 *.mod*
 *.cmd
 .tmp_versions/
+Consola/.settings
+Cpu/.settings
+FileSystem.settings
+Kernel.settings
+memory.settings
+shared.settings
 modules.order
 Module.symvers
 Mkfile.old
