@@ -50,7 +50,7 @@ Consola/.settings
 Cpu/.settings
 FileSystem/.settings
 Kernel/.settings
-memory/.settings
+Memoria/.settings
 shared/.settings
 modules.order
 Module.symvers
