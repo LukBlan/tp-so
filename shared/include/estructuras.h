@@ -25,6 +25,7 @@ typedef enum {
 typedef struct {
   t_list* instrucciones;
   int programCounter;
+  int rafagaRealPrevia;
   //Registro registros;
   //struct tablaSegmentos;
   float estimadoRafaga;
