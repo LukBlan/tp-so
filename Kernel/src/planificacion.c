@@ -246,7 +246,18 @@ void planificador_corto_plazo_fifo() {
         ejecutar(procesoEjecutar);
     }
 }
+bool kernelTieneRecurso(char* recurso){
 
+}
+bool hayRecursoDisponible(char* recurso){
+
+}
+void aumentarRecurso(char* recurso){
+
+}
+void disminuirRecurso(char* recurso){
+  
+}
 void planificador_corto_plazo_HRRN() {
     // log_info(loggerPlanificacion, "INICIO PLANIFICACION FIFO");
     while (1) {
