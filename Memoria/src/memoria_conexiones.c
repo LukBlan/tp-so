@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <conexiones.h>
-#include <memory_conexiones.h>
+#include <memoria_conexiones.h>
 #include <recursos.h>
 #include <pthread.h>
 #include <netdb.h>
