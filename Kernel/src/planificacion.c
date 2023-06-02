@@ -108,6 +108,7 @@ void agregarAListo(PCB* proceso) {
   queue_push(colaReady, proceso);
   //looger
   pthread_mutex_unlock(&mutexColaReady);
+  sem_post(&semaforoProcesoListo);
 }
 
 void ejecutar(PCB* proceso) {
@@ -131,7 +132,7 @@ void ejecutar(PCB* proceso) {
         break;
     case YIELD:
         sacarDeEjecutando(procesoRecibido);
-        finDeColaReady(procesoRecibido);
+        agregarAListo(procesoRecibido)
         break;
     case SIGNAL:
         char* recurso = obtenerRecursoDePaquete(socketCPU);
@@ -196,10 +197,6 @@ void sacarDeEjecutando(PCB* proceso){
   
   pthread_mutex_unlock(&mutexColaExec);
   sem_post(&semCantidadProcesosExec);
-}
-void finDeColaReady(PCB proceso){
-  pthread_mutex_lock(&mutexColaReady);
-  
 }
 PCB* sacarBloqueado(){
  PCB *pcbSaliente;
@@ -309,7 +306,7 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado)
 
     // Despierto al planificador de largo plazo
 
-    sem_post(&despertarPlanificadorLargoPlazo);
+    sem_post(&largoPlazo);
 }
 
 
