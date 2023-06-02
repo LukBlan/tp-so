@@ -129,6 +129,10 @@ void ejecutar(PCB* proceso) {
     sacarDeEjecutando(procesoRecibido);
         agregar_proceso_bloqueado(procesoRecibido);
         break;
+    case YIELD:
+        sacarDeEjecutando(procesoRecibido);
+        finDeColaReady(procesoRecibido);
+        break;
     case SIGNAL:
         char* recurso = obtenerRecursoDePaquete(socketCPU);
         if(kernelTieneRecurso(recurso)){
@@ -192,6 +196,10 @@ void sacarDeEjecutando(PCB* proceso){
   
   pthread_mutex_unlock(&mutexColaExec);
   sem_post(&semCantidadProcesosExec);
+}
+void finDeColaReady(PCB proceso){
+  pthread_mutex_lock(&mutexColaReady);
+  
 }
 PCB* sacarBloqueado(){
  PCB *pcbSaliente;

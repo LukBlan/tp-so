@@ -173,7 +173,10 @@ void ejecutar_EXIT(Pcb *pcb, int socketKernel)
 }
 */
 /*void ejecutar_yield() {
-
+  t_paquete* paquete = crear_paquete(YIELD);
+  //serializar_pcb(paquete, pcb);
+  enviar_paquete(paquete, socketKernel);
+  eliminar_paquete(paquete);
 }
 void ejecutar_signal() {
 	t_paquete* paquete = crear_paquete(SIGNAL);
@@ -184,10 +187,10 @@ void ejecutar_signal() {
   eliminar_paquete(paquete);
 }
 void ejecutar_wait() {
-t_paquete* paquete = crear_paquete(WAIT);
-agregar_a_paquete (paquete,&recurso,sizeof(char));
-enviar_paquete(paquete, socketKernel);
- char* valor = obtenerMensaje(socketKernel);
+  t_paquete* paquete = crear_paquete(WAIT);
+  agregar_a_paquete (paquete,&recurso,sizeof(char));
+  enviar_paquete(paquete, socketKernel);
+  char* valor = obtenerMensaje(socketKernel);
   log_info(logger, "Se recibio el mensaje de KERNEL %d", valor);
   eliminar_paquete(paquete);
 }
