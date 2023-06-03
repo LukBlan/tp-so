@@ -1,8 +1,9 @@
 #include <netdb.h>
-#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <commons/log.h>
+#include <string.h>
+#include <serializacion/paquete.h>
 
 int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
@@ -75,4 +76,33 @@ int realizarHandshake(t_log* logger, int socketCliente) {
     resultadoHanshake = -1;
   }
   return resultadoHanshake;
+}
+
+t_buffer* obtenerBuffer(int socketCliente) {
+  int tamanioBuffer;
+  recv(socketCliente, &tamanioBuffer, sizeof(int), 0);
+  void* stream = malloc(tamanioBuffer);
+  recv(socketCliente, stream, tamanioBuffer, 0);
+  t_buffer* buffer = malloc(tamanioBuffer + sizeof(int));
+  buffer->stream = stream;
+  buffer->size = tamanioBuffer;
+  return buffer;
+}
+
+op_code obtenerCodigoOperacion(int socketCliente) {
+  op_code codigoOperacion;
+  if (recv(socketCliente, &codigoOperacion, sizeof(int), MSG_WAITALL) > 0) {
+    return codigoOperacion;
+  } else {
+    puts("DESCONEXION");
+    close(socketCliente);
+    return DESCONEXION;
+  }
+}
+
+void enviar_paquete(t_paquete* paquete, int socketCliente) {
+  int bytes = paquete->buffer->size + 2 * sizeof(int);
+  void* a_enviar = serializar_paquete(paquete, bytes);
+  send(socketCliente, a_enviar, bytes, 0);
+  free(a_enviar);
 }

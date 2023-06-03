@@ -1,5 +1,5 @@
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef UTILS_H
+#define UTILS_H
 
   #include <commons/collections/list.h>
   void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenosEsperados);
