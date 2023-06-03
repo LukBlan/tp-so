@@ -3,7 +3,8 @@
 
   #include <estructuras.h>
 
-  void serializarListaInstrucciones(t_buffer* buffer, t_list* instrucciones, int cantDeInstrucciones);
-  t_list* generarListaDeInstrucciones(int socketCliente);
+  int tamanioBytesInstrucciones(t_list* instrucciones);
+  void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones);
+  t_list* deserializarInstrucciones(int socketCliente);
 
 #endif

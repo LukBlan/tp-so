@@ -59,3 +59,12 @@
 [INFO] 19:40:28:033 FileSystem/(9007:9007): Recibi un cliente
 [INFO] 19:42:15:242 FileSystem/(9007:9007): Recibi un cliente
 [INFO] 19:43:34:628 FileSystem/(9007:9007): Recibi un cliente
+[INFO] 22:58:45:711 FileSystem/(3600:3600): Conectando con el Servidor Memoria...
+[INFO] 22:58:45:745 FileSystem/(3600:3600): Conexión exitosa. Iniciando cliente...
+[INFO] 22:58:45:746 FileSystem/(3600:3600): Creando Socket del Servidor FileSystem...
+[INFO] 22:58:45:746 FileSystem/(3600:3600): Socket del Servidor FileSystem Creado Exitosamente.
+[INFO] 22:58:45:746 FileSystem/(3600:3600): Realizando Handshake con Memoria
+[INFO] 22:58:45:750 FileSystem/(3600:3600): El Handshake fue exitoso
+[INFO] 22:58:45:750 FileSystem/(3600:3600): Servidor FileSystem se Encuentra Escuchando.
+[INFO] 23:02:10:708 FileSystem/(3600:3600): Recibi un cliente
+[INFO] 23:05:25:350 FileSystem/(3600:3600): Recibi un cliente

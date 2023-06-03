@@ -1,3 +1,8 @@
+#include <serializacion/paquete.h>
+#include <serializacion/buffer.h>
+#include <serializacion/instrucciones.h>
+#include <serializacion/paquete.h>
+#include <estructuras.h>
 #include <conexiones.h>
 #include <consola_conexiones.h>
 #include <recursos.h>
@@ -18,4 +23,13 @@ void cargarConexionConKernel() {
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosConsola->conexiones->socketKernel = socketKernel;
+}
+
+void enviarInstrucciones(t_list* instrucciones) {
+  int tamanioBytesBuffer = tamanioBytesInstrucciones(instrucciones);
+  t_buffer* buffer = generarBuffer(tamanioBytesBuffer);
+  serializarInstrucciones(buffer, instrucciones);
+  t_paquete* paquete = crearPaquete(buffer, LINEAS_INSTRUCCION);
+	enviar_paquete(paquete, recursosConsola->conexiones->socketKernel);
+	liberarPaquete(paquete);
 }

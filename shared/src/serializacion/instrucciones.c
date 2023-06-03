@@ -2,13 +2,14 @@
 #include <conexiones.h>
 #include <string.h>
 
-
-void serializarListaInstrucciones(t_buffer* buffer, t_list* instrucciones, int cantDeInstrucciones) {
+void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones) {
+  int cantidadInstrucciones = list_size(instrucciones);
   int posicion = 0;
-  memcpy(buffer->stream, &(cantDeInstrucciones), sizeof(int));
+
+  memcpy(buffer->stream, &(cantidadInstrucciones), sizeof(int));
   posicion += sizeof(int);
 
-  for(int i = 0; i < cantDeInstrucciones; i++) {
+  for(int i = 0; i < cantidadInstrucciones; i++) {
     // Nombre Instruccion
     t_instruccion *linea = list_get(instrucciones, i);
     memcpy(buffer->stream + posicion, &(linea->longitudIdentificador), sizeof(int));
@@ -36,7 +37,7 @@ void serializarListaInstrucciones(t_buffer* buffer, t_list* instrucciones, int c
   }
 }
 
-t_list* generarListaDeInstrucciones(int socketCliente) {
+t_list* deserializarInstrucciones(int socketCliente) {
   t_list* instrucciones = list_create();
   t_buffer* buffer = obtenerBuffer(socketCliente);
   int posicion = 0;
@@ -84,5 +85,21 @@ t_list* generarListaDeInstrucciones(int socketCliente) {
     instruccion->parametros[2] = nombreTercerParametro;
     list_add(instrucciones, instruccion);
   }
+
   return instrucciones;
+}
+
+int tamanioBytesInstrucciones(t_list* instrucciones) {
+  int cantidadInstrucciones = list_size(instrucciones);
+  int tamanioTotal = sizeof(int);
+
+  for (int i = 0; i < cantidadInstrucciones; i++) {
+    t_instruccion* instruccion = list_get(instrucciones, i);
+    tamanioTotal += instruccion->longitudIdentificador;
+    tamanioTotal += instruccion->longitudParametros[0];
+    tamanioTotal += instruccion->longitudParametros[1];
+    tamanioTotal += instruccion->longitudParametros[2];
+    tamanioTotal += sizeof(int) * 4;
+  }
+  return tamanioTotal;
 }

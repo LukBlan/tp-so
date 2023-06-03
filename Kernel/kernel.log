@@ -202,3 +202,50 @@
 [INFO] 19:43:49:405 Kernel/(10965:10965): Recibi un Cliente.
 [INFO] 19:43:49:408 Kernel/(10965:10972): [LARGO-PLAZO] Procesos en Memoria: 1
 
+[INFO] 23:02:10:698 Kernel/(3672:3672): Conectando con el Servidor Memoria...
+[INFO] 23:02:10:705 Kernel/(3672:3672): Conexión exitosa. Iniciando cliente...
+[INFO] 23:02:10:705 Kernel/(3672:3672): Conectando con el Servidor Cpu...
+[INFO] 23:02:10:706 Kernel/(3672:3672): Conexión exitosa. Iniciando cliente...
+[INFO] 23:02:10:707 Kernel/(3672:3672): Conectando con el Servidor FileSystem...
+[INFO] 23:02:10:708 Kernel/(3672:3672): Conexión exitosa. Iniciando cliente...
+[INFO] 23:02:10:708 Kernel/(3672:3672): Creando Socket del Servidor Kernel...
+[INFO] 23:02:10:708 Kernel/(3672:3672): Socket del Servidor Kernel Creado Exitosamente.
+[INFO] 23:02:10:709 Kernel/(3672:3672): Servidor Kernel se Encuentra Escuchando.
+[INFO] 23:02:10:712 Kernel/(3672:3678): Inicio PLanificador LARGO PLAZO en [FIFO]
+
+[INFO] 23:02:22:296 Kernel/(3672:3672): Recibi un Cliente.
+[INFO] 23:02:22:302 Kernel/(3672:3678): Proceso [0] se movio a listo 
+
+[INFO] 23:02:22:302 Kernel/(3672:3678): [LARGO-PLAZO] Procesos en Memoria: 1
+
+[INFO] 23:03:02:780 Kernel/(3672:3672): Recibi un Cliente.
+[INFO] 23:03:04:180 Kernel/(3672:3678): Proceso [1] se movio a listo 
+
+[INFO] 23:03:04:180 Kernel/(3672:3678): [LARGO-PLAZO] Procesos en Memoria: 2
+
+[INFO] 23:05:25:342 Kernel/(3830:3830): Conectando con el Servidor Memoria...
+[INFO] 23:05:25:349 Kernel/(3830:3830): Conexión exitosa. Iniciando cliente...
+[INFO] 23:05:25:349 Kernel/(3830:3830): Conectando con el Servidor Cpu...
+[INFO] 23:05:25:350 Kernel/(3830:3830): Conexión exitosa. Iniciando cliente...
+[INFO] 23:05:25:350 Kernel/(3830:3830): Conectando con el Servidor FileSystem...
+[INFO] 23:05:25:350 Kernel/(3830:3830): Conexión exitosa. Iniciando cliente...
+[INFO] 23:05:25:351 Kernel/(3830:3830): Creando Socket del Servidor Kernel...
+[INFO] 23:05:25:351 Kernel/(3830:3830): Socket del Servidor Kernel Creado Exitosamente.
+[INFO] 23:05:25:352 Kernel/(3830:3830): Servidor Kernel se Encuentra Escuchando.
+[INFO] 23:05:25:354 Kernel/(3830:3837): Inicio PLanificador LARGO PLAZO en [FIFO]
+
+[INFO] 23:05:34:338 Kernel/(3830:3830): Recibi un Cliente.
+[INFO] 23:06:04:370 Kernel/(3830:3837): Proceso [0] se movio a listo 
+
+[INFO] 23:06:04:370 Kernel/(3830:3837): [LARGO-PLAZO] Procesos en Memoria: 1
+
+[INFO] 23:06:58:710 Kernel/(3830:3830): Recibi un Cliente.
+[INFO] 23:06:58:713 Kernel/(3830:3837): Proceso [1] se movio a listo 
+
+[INFO] 23:06:58:713 Kernel/(3830:3837): [LARGO-PLAZO] Procesos en Memoria: 2
+
+[INFO] 23:07:15:251 Kernel/(3830:3830): Recibi un Cliente.
+[INFO] 23:07:15:256 Kernel/(3830:3837): Proceso [2] se movio a listo 
+
+[INFO] 23:07:15:256 Kernel/(3830:3837): [LARGO-PLAZO] Procesos en Memoria: 3
+

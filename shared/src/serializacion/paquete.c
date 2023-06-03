@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-t_paquete* generarPaquete(t_buffer* buffer, op_code codigoOperacion) {
+t_paquete* crearPaquete(t_buffer* buffer, op_code codigoOperacion) {
   t_paquete* paquete = malloc(buffer->size + sizeof(int) * 2);
   paquete->buffer = buffer;
   paquete->codigo_operacion = codigoOperacion;
@@ -14,13 +14,6 @@ void liberarPaquete(t_paquete* paquete) {
   free(paquete->buffer->stream);
   free(paquete->buffer);
   free(paquete);
-}
-
-t_paquete* crear_paquete(op_code codigoOperacion){
-	t_paquete* paquete = malloc(sizeof(paquete));
-	paquete->codigo_operacion = codigoOperacion;
-	iniciar_buffer(paquete);
-	return paquete ;
 }
 
 void* serializar_paquete(t_paquete* paquete, int bytes) {
