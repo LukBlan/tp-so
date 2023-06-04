@@ -251,17 +251,35 @@ void planificador_corto_plazo_fifo() {
     }
 }
 /*
+int findElementPosition(char array[], int size, char* target) {
+    for (int i = 0; i < size; i++) {
+        if (array[i] == target) {
+            return i;
+        }
+    }
+    return -1;  // Return -1 if the element is not found
+}
 bool kernelTieneRecurso(char* recurso){
-
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS) 
+  return position != -1
 }
 bool hayRecursoDisponible(char* recurso){
-
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
+  int cantidad = recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
+  return cantidad > 0
 }
 void aumentarRecurso(char* recurso){
-
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
+  ++recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
 }
 void disminuirRecurso(char* recurso){
-  
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
+  --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
 }
 */
 /*

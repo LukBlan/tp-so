@@ -33,8 +33,8 @@ void cargarConfiguracion(char* pathConfiguracion) {
     config->ESTIMACION_INICIAL = config_get_int_value(fileConfig,"ESTIMACION_INICIAL");
     config->HRRN_ALFA = config_get_int_value(fileConfig,"HRRN_ALFA");
     config->GRADO_MAX_MULTIPROGRAMACION = config_get_int_value(fileConfig,"GRADO_MAX_MULTIPROGRAMACION");
-    config->RECURSOS = config_get_int_value(fileConfig,"RECURSOS");//es una lista de char
-    config->INSTANCIAS_RECURSOS = config_get_int_value(fileConfig,"INSTANCIAS_RECURSOS");// es una lista de int
+    config->RECURSOS = config_get_array_value(fileConfig,"RECURSOS");//es una lista de char
+    config->INSTANCIAS_RECURSOS = config_get_array_value(fileConfig,"INSTANCIAS_RECURSOS");// es una lista de int
   } else {
     log_error(recursosKernel->logger, "No se pudo Encontrar el Archivo de configuracion");
     liberarRecursos();
