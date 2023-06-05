@@ -40,9 +40,9 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un Cliente.");
-    //obtenerCodigoOperacion(socketCliente);
-    //t_list* instrucciones = deserializarInstrucciones(socketCliente);
-    //mostrarInstrucciones(instrucciones);
+    obtenerCodigoOperacion(socketCliente);
+    t_list* instrucciones = deserializarInstrucciones(socketCliente);
+    mostrarInstrucciones(instrucciones);
     //PCB* pcb = crear_pcb(instrucciones);
     //agregarANew(pcb);
     close(socketCliente);

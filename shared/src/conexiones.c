@@ -92,6 +92,7 @@ t_buffer* obtenerBuffer(int socketCliente) {
 op_code obtenerCodigoOperacion(int socketCliente) {
   op_code codigoOperacion;
   if (recv(socketCliente, &codigoOperacion, sizeof(int), MSG_WAITALL) > 0) {
+    printf("codigo de Operacion: %d\n", codigoOperacion);
     return codigoOperacion;
   } else {
     puts("DESCONEXION");
