@@ -2,6 +2,7 @@
 #include <conexiones.h>
 #include <string.h>
 
+/*
 void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones) {
   int cantidadInstrucciones = list_size(instrucciones);
   int posicion = 0;
@@ -103,3 +104,5 @@ int tamanioBytesInstrucciones(t_list* instrucciones) {
   }
   return tamanioTotal;
 }
+
+*/

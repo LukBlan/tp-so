@@ -4,7 +4,7 @@
 #include <instrucciones/lista_instrucciones.h>
 
 int main(int argc, char* argv[]) {
-  t_list* instrucciones;
+  t_list* instrucciones = list_create();
 
   validarCantidadArgumentosMain(argc, 3);
 
@@ -12,15 +12,11 @@ int main(int argc, char* argv[]) {
   cargarLogger("consola.log");
   cargarConfiguracion(argv[1]);
   cargarPseudoCodigo(argv[2]);
-  cargarConexionConKernel();
+  //cargarConexionConKernel();
 
-  instrucciones = generarListaDeInstrucciones();
-  enviarInstrucciones(instrucciones);
-
-  log_info(recursosConsola->logger, "Enviando lista de instrucciones al servidor Kernel.");
-  //funcion para comprobar el handshake con Kernel
-  //Liberar las instrucciones?
-  //list_destroy(instrucciones);
+  generarListaDeInstrucciones(instrucciones);
+  mostrarInstrucciones(instrucciones);
+  //enviarInstrucciones(instrucciones);
   //liberarInstrucciones(instrucciones);
   liberarRecursos();
 }

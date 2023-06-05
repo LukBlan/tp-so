@@ -61,10 +61,8 @@
   } TipoInstruccion;
 
   typedef struct {
-    char *identificador;
-    int longitudIdentificador;
-    char* parametros[3];
-    int longitudParametros[3];
+    t_list* strings;
+    t_list* sizeStrings;
   } t_instruccion;
 
   typedef struct {
