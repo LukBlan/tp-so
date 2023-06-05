@@ -43,7 +43,7 @@ void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, 
       }
       nuevoString[end - start] = '\0';
       list_add(instruccion->strings, nuevoString);
-      list_add(instruccion->sizeStrings, &cantidadDeChars);
+      list_add(instruccion->sizeStrings, cantidadDeChars);
 
       cantidadEspacios++;
       start = end+1;

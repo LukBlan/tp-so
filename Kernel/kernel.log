@@ -249,3 +249,48 @@
 
 [INFO] 23:07:15:256 Kernel/(3830:3837): [LARGO-PLAZO] Procesos en Memoria: 3
 
+[INFO] 21:18:03:352 Kernel/(5353:5353): Conectando con el Servidor Memoria...
+[INFO] 21:18:03:359 Kernel/(5353:5353): Conexión exitosa. Iniciando cliente...
+[INFO] 21:18:03:359 Kernel/(5353:5353): Conectando con el Servidor Cpu...
+[INFO] 21:18:03:360 Kernel/(5353:5353): Conexión exitosa. Iniciando cliente...
+[INFO] 21:18:03:360 Kernel/(5353:5353): Conectando con el Servidor FileSystem...
+[INFO] 21:18:03:360 Kernel/(5353:5353): Conexión exitosa. Iniciando cliente...
+[INFO] 21:18:03:360 Kernel/(5353:5353): Creando Socket del Servidor Kernel...
+[INFO] 21:18:03:361 Kernel/(5353:5353): Socket del Servidor Kernel Creado Exitosamente.
+[INFO] 21:18:03:361 Kernel/(5353:5353): Servidor Kernel se Encuentra Escuchando.
+[INFO] 21:18:03:363 Kernel/(5353:5360): Inicio PLanificador LARGO PLAZO en [FIFO]
+
+[INFO] 21:18:10:757 Kernel/(5353:5353): Recibi un Cliente.
+[INFO] 21:18:10:768 Kernel/(5353:5360): Proceso [0] se movio a listo 
+
+[INFO] 21:18:10:768 Kernel/(5353:5360): [LARGO-PLAZO] Procesos en Memoria: 1
+
+[INFO] 21:18:19:861 Kernel/(5353:5353): Recibi un Cliente.
+[INFO] 21:18:19:868 Kernel/(5353:5360): Proceso [1] se movio a listo 
+
+[INFO] 21:18:19:868 Kernel/(5353:5360): [LARGO-PLAZO] Procesos en Memoria: 2
+
+[INFO] 21:18:32:519 Kernel/(5353:5353): Recibi un Cliente.
+[INFO] 21:18:32:532 Kernel/(5353:5360): Proceso [2] se movio a listo 
+
+[INFO] 21:18:32:532 Kernel/(5353:5360): [LARGO-PLAZO] Procesos en Memoria: 3
+
+[INFO] 21:18:46:220 Kernel/(5353:5353): Recibi un Cliente.
+[INFO] 21:18:46:227 Kernel/(5353:5360): Proceso [3] se movio a listo 
+
+[INFO] 21:18:46:227 Kernel/(5353:5360): [LARGO-PLAZO] Procesos en Memoria: 4
+
+[INFO] 21:38:56:231 Kernel/(23716:23716): Conectando con el Servidor Memoria...
+[INFO] 21:38:56:232 Kernel/(23716:23716): Conexión exitosa. Iniciando cliente...
+[INFO] 21:38:56:233 Kernel/(23716:23716): Conectando con el Servidor Cpu...
+[INFO] 21:38:56:233 Kernel/(23716:23716): Conexión exitosa. Iniciando cliente...
+[INFO] 21:38:56:233 Kernel/(23716:23716): Conectando con el Servidor FileSystem...
+[INFO] 21:38:56:234 Kernel/(23716:23716): Conexión exitosa. Iniciando cliente...
+[INFO] 21:38:56:234 Kernel/(23716:23716): Creando Socket del Servidor Kernel...
+[INFO] 21:38:56:234 Kernel/(23716:23716): Socket del Servidor Kernel Creado Exitosamente.
+[INFO] 21:38:56:234 Kernel/(23716:23716): Servidor Kernel se Encuentra Escuchando.
+[INFO] 21:38:56:239 Kernel/(23716:23722): Inicio PLanificador LARGO PLAZO en [FIFO]
+
+[INFO] 21:39:05:465 Kernel/(23716:23716): Recibi un Cliente.
+[INFO] 21:39:54:980 Kernel/(23716:23716): Recibi un Cliente.
+[INFO] 21:40:23:736 Kernel/(23716:23716): Recibi un Cliente.

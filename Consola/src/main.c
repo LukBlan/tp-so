@@ -12,12 +12,12 @@ int main(int argc, char* argv[]) {
   cargarLogger("consola.log");
   cargarConfiguracion(argv[1]);
   cargarPseudoCodigo(argv[2]);
-  //cargarConexionConKernel();
+  cargarConexionConKernel();
 
   generarListaDeInstrucciones(instrucciones);
   mostrarInstrucciones(instrucciones);
-  //enviarInstrucciones(instrucciones);
-  //liberarInstrucciones(instrucciones);
+  enviarInstrucciones(instrucciones);
+  liberarInstrucciones(instrucciones);
   liberarRecursos();
 }
 

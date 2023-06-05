@@ -13,3 +13,19 @@
 [INFO] 23:01:55:702 Memoria/(3586:3662): Recibido Pedido de Handshake, Respondiendo
 [INFO] 23:02:10:703 Memoria/(3586:3586): Recibi un cliente
 [INFO] 23:05:25:349 Memoria/(3586:3586): Recibi un cliente
+[INFO] 21:17:46:234 Memoria/(5320:5320): Creando Socket del Servidor Memoria...
+[INFO] 21:17:46:243 Memoria/(5320:5320): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 21:17:46:244 Memoria/(5320:5320): Servidor Memoria se Encuentra Escuchando.
+[INFO] 21:17:51:666 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:17:51:673 Memoria/(5320:5335): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:17:58:205 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:17:58:208 Memoria/(5320:5347): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:18:03:359 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:38:12:798 Memoria/(23531:23531): Creando Socket del Servidor Memoria...
+[INFO] 21:38:12:802 Memoria/(23531:23531): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 21:38:12:802 Memoria/(23531:23531): Servidor Memoria se Encuentra Escuchando.
+[INFO] 21:38:19:932 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:38:19:934 Memoria/(23531:23566): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:38:25:393 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:38:25:397 Memoria/(23531:23607): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:38:56:232 Memoria/(23531:23531): Recibi un cliente
