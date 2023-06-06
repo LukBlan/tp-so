@@ -54,7 +54,7 @@ void liberarRecursos() {
 
   if (recursosConsola->conexiones->socketKernel > 0) {
       log_info(recursosConsola->logger, "Cerrando conexion con el Servidor Kernel...");
-      close(recursosConsola->socketKernel);
+      close(recursosConsola->conexiones->socketKernel);
   }
 
   if (!recursosConsola->archivoPseudoCodigo) {
@@ -65,5 +65,6 @@ void liberarRecursos() {
     log_destroy(recursosConsola->logger);
   }
 
+  free(recursosConsola->conexiones);
   free(recursosConsola);
 }

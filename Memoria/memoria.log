@@ -13,3 +13,64 @@
 [INFO] 23:01:55:702 Memoria/(3586:3662): Recibido Pedido de Handshake, Respondiendo
 [INFO] 23:02:10:703 Memoria/(3586:3586): Recibi un cliente
 [INFO] 23:05:25:349 Memoria/(3586:3586): Recibi un cliente
+[INFO] 21:17:46:234 Memoria/(5320:5320): Creando Socket del Servidor Memoria...
+[INFO] 21:17:46:243 Memoria/(5320:5320): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 21:17:46:244 Memoria/(5320:5320): Servidor Memoria se Encuentra Escuchando.
+[INFO] 21:17:51:666 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:17:51:673 Memoria/(5320:5335): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:17:58:205 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:17:58:208 Memoria/(5320:5347): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:18:03:359 Memoria/(5320:5320): Recibi un cliente
+[INFO] 21:38:12:798 Memoria/(23531:23531): Creando Socket del Servidor Memoria...
+[INFO] 21:38:12:802 Memoria/(23531:23531): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 21:38:12:802 Memoria/(23531:23531): Servidor Memoria se Encuentra Escuchando.
+[INFO] 21:38:19:932 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:38:19:934 Memoria/(23531:23566): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:38:25:393 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:38:25:397 Memoria/(23531:23607): Recibido Pedido de Handshake, Respondiendo
+[INFO] 21:38:56:232 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:43:34:589 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:49:22:202 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:51:07:668 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:51:20:025 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:52:36:461 Memoria/(23531:23531): Recibi un cliente
+[INFO] 21:57:20:590 Memoria/(23531:23531): Recibi un cliente
+[INFO] 22:03:09:325 Memoria/(23531:23531): Recibi un cliente
+[INFO] 22:03:41:221 Memoria/(23531:23531): Recibi un cliente
+[INFO] 22:04:08:172 Memoria/(23531:23531): Recibi un cliente
+[INFO] 22:05:22:284 Memoria/(23531:23531): Recibi un cliente
+[INFO] 22:05:52:652 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:06:15:594 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:07:24:872 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:07:47:710 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:08:45:886 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:11:23:397 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:13:34:209 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:13:48:905 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:14:00:381 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:14:10:629 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:14:10:634 Memoria/(23531:27196): Recibido Pedido de Handshake, Respondiendo
+[INFO] 00:14:13:706 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:16:02:320 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:16:53:356 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:17:31:909 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:23:45:883 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:24:42:753 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:27:18:565 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:27:44:442 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:28:43:540 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:30:53:671 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:31:14:480 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:32:14:634 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:32:30:570 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:32:45:313 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:33:05:405 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:33:15:999 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:34:26:741 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:34:51:586 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:34:51:594 Memoria/(23531:28760): Recibido Pedido de Handshake, Respondiendo
+[INFO] 00:35:09:417 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:35:45:622 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:37:13:692 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:38:54:681 Memoria/(23531:23531): Recibi un cliente
+[INFO] 00:39:37:294 Memoria/(23531:23531): Recibi un cliente

@@ -101,3 +101,60 @@
 [INFO] 23:01:55:704 CPU/(3657:3657): Servidor Cpu se Encuentra Escuchando.
 [INFO] 23:02:10:706 CPU/(3657:3657): Recibi un cliente
 [INFO] 23:05:25:349 CPU/(3657:3657): Recibi un cliente
+[INFO] 21:17:58:201 CPU/(5341:5341): Conectando con el Servidor Memoria...
+[INFO] 21:17:58:205 CPU/(5341:5341): Conexión exitosa. Iniciando cliente...
+[INFO] 21:17:58:205 CPU/(5341:5341): Creando Socket del Servidor Cpu...
+[INFO] 21:17:58:206 CPU/(5341:5341): Socket del Servidor Cpu Creado Exitosamente.
+[INFO] 21:17:58:206 CPU/(5341:5341): Realizando Handshake con Memoria
+[INFO] 21:17:58:209 CPU/(5341:5341): El Handshake fue exitoso
+[INFO] 21:17:58:209 CPU/(5341:5341): Servidor Cpu se Encuentra Escuchando.
+[INFO] 21:18:03:359 CPU/(5341:5341): Recibi un cliente
+[INFO] 21:38:25:386 CPU/(23602:23602): Conectando con el Servidor Memoria...
+[INFO] 21:38:25:392 CPU/(23602:23602): Conexión exitosa. Iniciando cliente...
+[INFO] 21:38:25:393 CPU/(23602:23602): Creando Socket del Servidor Cpu...
+[INFO] 21:38:25:393 CPU/(23602:23602): Socket del Servidor Cpu Creado Exitosamente.
+[INFO] 21:38:25:393 CPU/(23602:23602): Realizando Handshake con Memoria
+[INFO] 21:38:25:397 CPU/(23602:23602): El Handshake fue exitoso
+[INFO] 21:38:25:397 CPU/(23602:23602): Servidor Cpu se Encuentra Escuchando.
+[INFO] 21:38:56:233 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:43:34:590 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:49:22:204 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:51:07:668 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:51:20:027 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:52:36:464 CPU/(23602:23602): Recibi un cliente
+[INFO] 21:57:20:593 CPU/(23602:23602): Recibi un cliente
+[INFO] 22:03:09:328 CPU/(23602:23602): Recibi un cliente
+[INFO] 22:03:41:223 CPU/(23602:23602): Recibi un cliente
+[INFO] 22:04:08:174 CPU/(23602:23602): Recibi un cliente
+[INFO] 22:05:22:284 CPU/(23602:23602): Recibi un cliente
+[INFO] 22:05:52:652 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:06:15:595 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:07:24:875 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:07:47:711 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:08:45:887 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:11:23:397 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:13:34:212 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:13:48:905 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:14:00:385 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:14:13:707 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:16:02:321 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:16:53:356 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:17:31:911 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:23:45:886 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:24:42:754 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:27:18:571 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:27:44:445 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:28:43:549 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:30:53:682 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:31:14:486 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:32:14:637 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:32:30:586 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:32:45:321 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:33:05:419 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:33:16:013 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:34:26:742 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:35:09:430 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:35:45:635 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:37:13:704 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:38:54:696 CPU/(23602:23602): Recibi un cliente
+[INFO] 00:39:37:294 CPU/(23602:23602): Recibi un cliente

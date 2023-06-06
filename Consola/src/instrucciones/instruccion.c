@@ -1,79 +1,59 @@
 #include <instrucciones/instruccion.h>
 #include <stdlib.h>
+#include <commons/string.h>
+#include <commons/collections/list.h>
 
-void asignar_params(t_instruccion* instruccion, char **params) {
-  instruccion->identificador = params[0];
-  instruccion->longitudIdentificador = string_length(instruccion->identificador) + 1;
+int cantidadDeLineas(char* instrucciones) {
+  int cantidadDeLetras = string_length(instrucciones);
+  int cantidadDeLineas = 1;
 
-  instruccion->parametros[0] = params[1];
-  instruccion->longitudParametros[0] = string_length(instruccion->parametros[0]) + 1;
-
-  instruccion->parametros[1] = params[2];
-  instruccion->longitudParametros[1] = string_length(instruccion->parametros[1]) + 1;
-
-  instruccion->parametros[2] = params[3];
-  instruccion->longitudParametros[2] = string_length(instruccion->parametros[2]) + 1;
-  free(params);
-}
-
-void agregar_instruccion (t_instruccion *instruc , t_list *lista) {
-  list_add(lista,instruc);
-}
-
-void eliminar_salto_linea(char *linea) {
-  if (linea[string_length(linea) - 1] == '\n') {
-    linea[string_length(linea) - 1] = '\0';
-  }
-}
-
-t_instruccion* leer_instruccion(FILE* arch){
-  char* linea = leer_linea(arch);
-  char** params = obtener_params(linea);
-
-  t_instruccion* instruc = malloc(sizeof(t_instruccion));
-  asignar_params(instruc, params);
-  free(linea);
-  return instruc;
-}
-
-char* leer_linea(FILE* arch) {
-  char* linea = NULL;
-  int buffersize = 0;
-
-  getline(&linea, &buffersize, arch);
-  eliminar_salto_linea(linea);
-  return linea;
-}
-
-char** obtener_params (char* linea){
-  int cantidadDeParametros = cant_params(linea);
-
-  char** params = string_n_split(linea, cantidadDeParametros + 1, " ");
-  rellenar_espacios_vacios(cantidadDeParametros, params);
-  return params;
-}
-
-void rellenar_espacios_vacios(int cantidadParametros, char** params) {
-  if (cantidadParametros < 3) {
-    params[3] = "-1";
-  }
-
-  if (cantidadParametros < 2) {
-    params[2] = "-1";
-  }
-
-  if (cantidadParametros < 1) {
-    params[1] = "-1";
-  }
-}
-
-int cant_params (char *linea) {
-  int veces = 0;
-
-  for (int i = 0; i < string_length(linea); i++) {
-    if (linea[i] == ' ' ) {
-      veces++;
+  for (int i = 0; i < cantidadDeLetras; i++) {
+    if (instrucciones[i] == '\n') {
+      cantidadDeLineas++;
     }
   }
-  return veces;
+  return cantidadDeLineas;
+}
+
+int calcularCantidadParametros(char* lineaInstruccion) {
+  int cantidadLetras = string_length(lineaInstruccion);
+  int cantidadParametros = 0;
+
+  for (int i = 0; i <= cantidadLetras; i++) {
+    if (lineaInstruccion[i] == ' ') {
+      cantidadParametros++;
+    }
+  }
+  return cantidadParametros;
+}
+
+void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, int cantidadParametros) {
+  int cantidadLetras = string_length(lineaInstruccion);
+  int cantidadEspacios = 0;
+  int start = 0;
+  int end = 0;
+  int cantidadDeChars = 0;
+
+  for (int i = 0; i <= cantidadLetras; i++) {
+    cantidadDeChars++;
+    if (lineaInstruccion[i] == ' ' || lineaInstruccion[i] == '\0') {
+      char* nuevoString = malloc(cantidadDeChars);
+      for (int j = start; j < end; j++) {
+        nuevoString[j - start] = lineaInstruccion[j];
+      }
+      nuevoString[end - start] = '\0';
+      list_add(instruccion->strings, nuevoString);
+      list_add(instruccion->sizeStrings, cantidadDeChars);
+
+      cantidadEspacios++;
+      start = end+1;
+      cantidadDeChars = 0;
+    }
+    end++;
+  }
+}
+
+void generarInstrucciones(char* lineaInstruccion, t_instruccion* instruccion) {
+  int cantidadParametros = calcularCantidadParametros(lineaInstruccion);
+  inicializarInstruccion(instruccion, lineaInstruccion, cantidadParametros);
 }

@@ -8,13 +8,14 @@ void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenos
    }
  }
 
-void mostrarInstrucciones(t_list* instrucciones) {
-  int tamaño = list_size(instrucciones);
-  for (int i = 0; i < tamaño; i++) {
-    t_instruccion* instruccion = list_get(instrucciones, i);
-    printf("%s", instruccion->identificador);
-    printf(" %s", instruccion->parametros[0]);
-    printf(" %s", instruccion->parametros[1]);
-    printf(" %s\n", instruccion->parametros[2]);
+void mostrarInstrucciones(t_list* listaInstrucciones) {
+  int numeroInstrucciones = list_size(listaInstrucciones);
+  for (int i = 0; i < numeroInstrucciones; i++) {
+    t_instruccion* instruccion = list_get(listaInstrucciones, i);
+    for (int i = 0; i < list_size(instruccion->strings); i++) {
+      printf("%s ", list_get(instruccion->strings, i), list_get(instruccion->sizeStrings, i));
+    }
+    puts("");
   }
 }
+
