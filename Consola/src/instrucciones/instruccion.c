@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <commons/string.h>
 #include <commons/collections/list.h>
+#include <stdio.h>
+#include <recursos.h>
 
 int cantidadDeLineas(char* instrucciones) {
   int cantidadDeLetras = string_length(instrucciones);
@@ -53,7 +55,44 @@ void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, 
   }
 }
 
-void generarInstrucciones(char* lineaInstruccion, t_instruccion* instruccion) {
+void getListStrings(char* example, t_list* listaStrings) {
+  int start = 0;
+  int end = 0;
+  int numeroLetras = string_length(example);
+
+  for (int i = 0; i <= numeroLetras; i++) {
+    if (example[i] == '\0'  || example[i] == '\n') {
+      int tamanioInstruccion = end + 1 - start;
+      char* newString = string_substring(example, start, tamanioInstruccion);
+      newString[tamanioInstruccion-1] = '\0';
+      start = end+1;
+      list_add(listaStrings, newString);
+    }
+    end++;
+  }
+}
+
+char* getFileAsString() {
+  FILE* archivo = recursosConsola->archivoPseudoCodigo;
+  char* instrucciones;
+  char c;
+  long f_size = 0;
+
+  fseek(archivo, 0, SEEK_END);
+  f_size = ftell(archivo);
+  fseek(archivo, 0, SEEK_SET);
+  instrucciones = malloc(f_size * sizeof(char) + 1);
+
+  for (int i = 0; i < f_size; i++) {
+   c = fgetc(archivo);
+   instrucciones[i] = c;
+  }
+
+  instrucciones[f_size] = '\0';
+  return instrucciones;
+}
+
+void generarInstruccion(char* lineaInstruccion, t_instruccion* instruccion) {
   int cantidadParametros = calcularCantidadParametros(lineaInstruccion);
   inicializarInstruccion(instruccion, lineaInstruccion, cantidadParametros);
 }

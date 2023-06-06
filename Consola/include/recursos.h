@@ -24,7 +24,6 @@
 
   extern t_recursos* recursosConsola;
 
-  void inicializarRecursos(char* pathLogger, char* pathConfiguracion, char* pathPseudoCodigo);
   void crearRecursosConsola();
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathConfiguracion);

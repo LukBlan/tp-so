@@ -41,7 +41,6 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones) {
   int cantidadInstrucciones = list_size(instrucciones);
   int posicion = 0;
 
-  printf("cantidad de instrucciones %d\n", cantidadInstrucciones);
   memcpy(buffer->stream, &(cantidadInstrucciones), sizeof(int));
   posicion += sizeof(int);
 
@@ -49,17 +48,14 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones) {
     t_instruccion* instruccion = list_get(instrucciones, i);
     int cantidadParametros = list_size(instruccion->strings);
 
-    printf("cantidad de Parametros %d\n", cantidadParametros);
     memcpy(buffer->stream + posicion, &(cantidadParametros), sizeof(int));
     posicion += sizeof(int);
 
     for (int j = 0; j < cantidadParametros; j++) {
       int tamanioParametro = list_get(instruccion->sizeStrings, j);
-      printf("tamanio Parametro %d\n", tamanioParametro);
       memcpy(buffer->stream + posicion, &(tamanioParametro), sizeof(int));
       posicion += sizeof(int);
 
-      printf("parametro %s\n", list_get(instruccion->strings, j));
       memcpy(buffer->stream + posicion, list_get(instruccion->strings, j), tamanioParametro);
       posicion += tamanioParametro;
     }

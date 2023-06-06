@@ -75,4 +75,7 @@
     t_buffer* buffer;
   } t_paquete;
 
+  void crearInstruccion(t_instruccion* instruccion);
+  void liberarInstrucciones(t_list* instrucciones);
+
 #endif
