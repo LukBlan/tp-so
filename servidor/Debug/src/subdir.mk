@@ -4,26 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/consola_conexiones.c \
-../src/main.c \
-../src/recursos.c 
+../src/servidor.c 
 
 C_DEPS += \
-./src/consola_conexiones.d \
-./src/main.d \
-./src/recursos.d 
+./src/servidor.d 
 
 OBJS += \
-./src/consola_conexiones.o \
-./src/main.o \
-./src/recursos.o 
+./src/servidor.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.c src/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/Consola/include" -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/shared/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	gcc -I"/home/utnso/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/shared/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
@@ -31,7 +25,7 @@ src/%.o: ../src/%.c src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/consola_conexiones.d ./src/consola_conexiones.o ./src/main.d ./src/main.o ./src/recursos.d ./src/recursos.o
+	-$(RM) ./src/servidor.d ./src/servidor.o
 
 .PHONY: clean-src
 

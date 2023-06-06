@@ -250,7 +250,7 @@ void planificador_corto_plazo_fifo() {
         ejecutar(procesoEjecutar);
     }
 }
-/*
+
 int findElementPosition(char array[], int size, char* target) {
     for (int i = 0; i < size; i++) {
         if (array[i] == target) {
@@ -259,30 +259,33 @@ int findElementPosition(char array[], int size, char* target) {
     }
     return -1;  // Return -1 if the element is not found
 }
+
 bool kernelTieneRecurso(char* recurso){
-  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
-  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
-  int position = findElementPosition(recursosKernel->configuracion->RECURSOS) 
-  return position != -1
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS) ;
+  return position != -1;
 }
+
 bool hayRecursoDisponible(char* recurso){
-  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
-  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
-  int cantidad = recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
-  return cantidad > 0
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
+  int cantidad = recursosKernel->configuracion->INSTANCIAS_RECURSOS[position] ;
+  return cantidad > 0;
 }
+
 void aumentarRecurso(char* recurso){
-  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
-  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
-  ++recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
+  ++recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
 void disminuirRecurso(char* recurso){
-  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS)
-  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso)
-  --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position]
+  int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
+  int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
+  --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
-*/
-/*
+
+
 void planificador_corto_plazo_HRRN() {
     t_log* logger = recursosKernel->logger;
     log_info(logger, "INICIO PLANIFICACION FIFO");
@@ -297,7 +300,7 @@ void planificador_corto_plazo_HRRN() {
         ejecutar(procesoEjecutar);
     }
 }
-/*
+
 PCB* sacarProcesoMayorHRRN(){
   PCB* procesoAEjecutar;
   pthread_mutex_lock(&mutexColaReady);
@@ -323,33 +326,33 @@ float estimacion(PCB* proceso){
 int tiempoAhora(){
   return time(NULL);
 }
-*/
-/*
+
+
 int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
 {
-    return tiempoAhora() - proceso->llegadaReady;
+    return tiempoAhora() - proceso->contexto->llegadaReady;
 }
 
 void agregar_proceso_bloqueado(PCB *procesoBloqueado)
 {
-    procesoBloqueado->estimacionRafaga = estimacion(procesoBloqueado);
-    procesoBloqueado->tiempoRafagaRealAnterior = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
-    pthread_mutex_lock(&mutexColaBloqueados);
+    procesoBloqueado->contexto->estimadoRafaga = estimacion(procesoBloqueado);
+    procesoBloqueado->contexto->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+    pthread_mutex_lock(&mutexColaBlock);
 
-    queue_push(colaBloqueados, procesoBloqueado);
-    //log_info(loggerPlanificacion, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+    queue_push(colaBlock, procesoBloqueado);
+    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
 
-    pthread_mutex_unlock(&mutexColaBloqueados);
+    pthread_mutex_unlock(&mutexColaBlock);
 
     // Despierto dispositivo I/O
-    sem_post(&contadorBloqueados);
+    sem_post(&blockCounter);
 
     // Despierto al planificador de largo plazo
 
     sem_post(&largoPlazo);
 }
 
-
+/*
 void enviar_pcb(PCB *proceso, int socketDispatch)
 {
     paquete *paquete = crear_paquete(Pcb);
@@ -361,17 +364,18 @@ void enviar_pcb(PCB *proceso, int socketDispatch)
     eliminar_paquete(paquete);
 }
 
-
-bool esProcesoNuevo(Pcb *proceso)
+*/
+bool esProcesoNuevo(PCB *proceso)
 {
-    return proceso->escenario->estado == NUEVO;
+    return proceso->estado == NEW;
 }
 
 
 
 bool sePuedeAgregarMasProcesos() {
-    return (cantidad_procesos_memoria() < KERNEL_CONFIG.GRADO_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNuevos, &mutexColaNuevos) > 0 || lectura_cola_mutex(colaSuspendidoListo, &mutexColaSuspendidoListo) > 0);
+    return (cantidad_procesos_memoria() < recursosKernel->configuracion->GRADO_MAX_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNew, &mutexColaNew) > 0 );
 }
+/*
 void liberar_semaforos()
 {
     pthread_mutex_destroy(&mutexNumeroProceso);
