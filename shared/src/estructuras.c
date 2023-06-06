@@ -4,6 +4,13 @@
 #include <unistd.h>
 #include <string.h>
 
+void crearInstruccion(t_instruccion* instruccion) {
+  t_list* listaStrings = list_create();
+  t_list* stringsSize = list_create();
+  instruccion->sizeStrings = stringsSize;
+  instruccion->strings = listaStrings;
+}
+
 void liberarInstrucciones(t_list* instrucciones) {
   int numeroInstrucciones = list_size(instrucciones);
 

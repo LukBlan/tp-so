@@ -10,30 +10,30 @@ t_list* deserializarInstrucciones(int socketCliente) {
   int cantidadDeInstrucciones;
 
   memcpy(&cantidadDeInstrucciones, buffer->stream, sizeof(int));
-  printf("cantidadInstrucciones %d\n", cantidadDeInstrucciones);
   posicion += sizeof(int);
 
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
     t_instruccion* instruccion = malloc(sizeof(t_instruccion));
+    crearInstruccion(instruccion);
     int cantidadParametros;
     memcpy(&cantidadParametros, buffer->stream + posicion, sizeof(int));
     posicion += sizeof(int);
-    printf("cantidad parametros %d\n", cantidadParametros);
 
     for (int j = 0; j < cantidadParametros; j++) {
       int tamanioString;
       memcpy(&tamanioString, buffer->stream + posicion, sizeof(int));
       posicion += sizeof(int);
 
-      char* string = string_new();
+      char* string = malloc(tamanioString);
       memcpy(string, buffer->stream + posicion, tamanioString);
       posicion += tamanioString;
       list_add(instruccion->strings, string);
       list_add(instruccion->sizeStrings, tamanioString);
-      list_add(instrucciones, instruccion);
     }
+    list_add(instrucciones, instruccion);
   }
-
+  free(buffer->stream);
+  free(buffer);
   return instrucciones;
 }
 
@@ -49,16 +49,17 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones) {
     t_instruccion* instruccion = list_get(instrucciones, i);
     int cantidadParametros = list_size(instruccion->strings);
 
-    printf("\ncantidad de Parametros %d\n", cantidadParametros);
+    printf("cantidad de Parametros %d\n", cantidadParametros);
     memcpy(buffer->stream + posicion, &(cantidadParametros), sizeof(int));
     posicion += sizeof(int);
 
     for (int j = 0; j < cantidadParametros; j++) {
       int tamanioParametro = list_get(instruccion->sizeStrings, j);
-      printf("%d\n", tamanioParametro);
+      printf("tamanio Parametro %d\n", tamanioParametro);
       memcpy(buffer->stream + posicion, &(tamanioParametro), sizeof(int));
       posicion += sizeof(int);
 
+      printf("parametro %s\n", list_get(instruccion->strings, j));
       memcpy(buffer->stream + posicion, list_get(instruccion->strings, j), tamanioParametro);
       posicion += tamanioParametro;
     }

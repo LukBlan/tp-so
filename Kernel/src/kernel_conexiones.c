@@ -43,6 +43,7 @@ void montarServidor() {
     obtenerCodigoOperacion(socketCliente);
     t_list* instrucciones = deserializarInstrucciones(socketCliente);
     mostrarInstrucciones(instrucciones);
+    liberarInstrucciones(instrucciones);
     //PCB* pcb = crear_pcb(instrucciones);
     //agregarANew(pcb);
     close(socketCliente);

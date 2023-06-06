@@ -53,13 +53,6 @@ void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, 
   }
 }
 
-void crearInstruccion(t_instruccion* instruccion) {
-  t_list* listaStrings = list_create();
-  t_list* stringsSize = list_create();
-  instruccion->sizeStrings = stringsSize;
-  instruccion->strings = listaStrings;
-}
-
 void generarInstrucciones(char* lineaInstruccion, t_instruccion* instruccion) {
   int cantidadParametros = calcularCantidadParametros(lineaInstruccion);
   inicializarInstruccion(instruccion, lineaInstruccion, cantidadParametros);
