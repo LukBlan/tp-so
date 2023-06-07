@@ -74,3 +74,19 @@
 [INFO] 00:37:13:692 Memoria/(23531:23531): Recibi un cliente
 [INFO] 00:38:54:681 Memoria/(23531:23531): Recibi un cliente
 [INFO] 00:39:37:294 Memoria/(23531:23531): Recibi un cliente
+[INFO] 18:26:32:498 Memoria/(2019:2019): Creando Socket del Servidor Memoria...
+[INFO] 18:26:32:554 Memoria/(2019:2019): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 18:26:32:554 Memoria/(2019:2019): Servidor Memoria se Encuentra Escuchando.
+[INFO] 18:26:33:262 Memoria/(2029:2029): Creando Socket del Servidor Memoria...
+[INFO] 18:26:33:274 Memoria/(2029:2029): Socket del Servidor Memoria Creado Exitosamente.
+[INFO] 18:26:33:274 Memoria/(2029:2029): Servidor Memoria se Encuentra Escuchando.
+[INFO] 18:26:41:654 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:26:41:658 Memoria/(2019:2064): Recibido Pedido de Handshake, Respondiendo
+[INFO] 18:26:49:706 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:26:49:708 Memoria/(2019:2105): Recibido Pedido de Handshake, Respondiendo
+[INFO] 18:27:48:139 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:29:20:329 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:31:18:825 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:32:25:773 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:33:47:489 Memoria/(2019:2019): Recibi un cliente
+[INFO] 18:36:45:786 Memoria/(2019:2019): Recibi un cliente

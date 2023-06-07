@@ -158,3 +158,16 @@
 [INFO] 00:37:13:704 CPU/(23602:23602): Recibi un cliente
 [INFO] 00:38:54:696 CPU/(23602:23602): Recibi un cliente
 [INFO] 00:39:37:294 CPU/(23602:23602): Recibi un cliente
+[INFO] 18:26:49:681 CPU/(2100:2100): Conectando con el Servidor Memoria...
+[INFO] 18:26:49:707 CPU/(2100:2100): Conexión exitosa. Iniciando cliente...
+[INFO] 18:26:49:707 CPU/(2100:2100): Creando Socket del Servidor Cpu...
+[INFO] 18:26:49:707 CPU/(2100:2100): Socket del Servidor Cpu Creado Exitosamente.
+[INFO] 18:26:49:707 CPU/(2100:2100): Realizando Handshake con Memoria
+[INFO] 18:26:49:708 CPU/(2100:2100): El Handshake fue exitoso
+[INFO] 18:26:49:708 CPU/(2100:2100): Servidor Cpu se Encuentra Escuchando.
+[INFO] 18:27:48:140 CPU/(2100:2100): Recibi un cliente
+[INFO] 18:29:20:330 CPU/(2100:2100): Recibi un cliente
+[INFO] 18:31:18:827 CPU/(2100:2100): Recibi un cliente
+[INFO] 18:32:25:775 CPU/(2100:2100): Recibi un cliente
+[INFO] 18:33:47:492 CPU/(2100:2100): Recibi un cliente
+[INFO] 18:36:45:795 CPU/(2100:2100): Recibi un cliente

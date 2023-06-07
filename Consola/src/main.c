@@ -2,6 +2,7 @@
 #include <consola_conexiones.h>
 #include <utils.h>
 #include <instrucciones/lista_instrucciones.h>
+#include <estructuras.h>
 
 int main(int argc, char* argv[]) {
   t_list* instrucciones = list_create();

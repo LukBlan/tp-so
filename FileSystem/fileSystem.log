@@ -127,3 +127,16 @@
 [INFO] 00:37:13:710 FileSystem/(28755:28755): Recibi un cliente
 [INFO] 00:38:54:697 FileSystem/(28755:28755): Recibi un cliente
 [INFO] 00:39:37:294 FileSystem/(28755:28755): Recibi un cliente
+[INFO] 18:26:41:646 FileSystem/(2059:2059): Conectando con el Servidor Memoria...
+[INFO] 18:26:41:655 FileSystem/(2059:2059): Conexión exitosa. Iniciando cliente...
+[INFO] 18:26:41:655 FileSystem/(2059:2059): Creando Socket del Servidor FileSystem...
+[INFO] 18:26:41:655 FileSystem/(2059:2059): Socket del Servidor FileSystem Creado Exitosamente.
+[INFO] 18:26:41:656 FileSystem/(2059:2059): Realizando Handshake con Memoria
+[INFO] 18:26:41:658 FileSystem/(2059:2059): El Handshake fue exitoso
+[INFO] 18:26:41:658 FileSystem/(2059:2059): Servidor FileSystem se Encuentra Escuchando.
+[INFO] 18:27:48:141 FileSystem/(2059:2059): Recibi un cliente
+[INFO] 18:29:20:330 FileSystem/(2059:2059): Recibi un cliente
+[INFO] 18:31:18:828 FileSystem/(2059:2059): Recibi un cliente
+[INFO] 18:32:25:776 FileSystem/(2059:2059): Recibi un cliente
+[INFO] 18:33:47:493 FileSystem/(2059:2059): Recibi un cliente
+[INFO] 18:36:45:798 FileSystem/(2059:2059): Recibi un cliente

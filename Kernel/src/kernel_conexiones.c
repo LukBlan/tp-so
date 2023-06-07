@@ -6,6 +6,7 @@
 #include <planificacion.h>
 #include <netdb.h>
 #include <utils.h>
+#include <pthread.h>
 
 int idProceso = 0;
 
@@ -33,37 +34,37 @@ void crearSocketKernel() {
 }
 
 void montarServidor() {
+  t_list* instrucciones;
+  PCB* pcb;
   t_log* logger = recursosKernel->logger;
   int socketServidor = recursosKernel->conexiones->socketKernel;
 
   log_info(logger, "Servidor Kernel se Encuentra Escuchando.");
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
-    log_info(logger, "Recibi un Cliente.");
     obtenerCodigoOperacion(socketCliente);
-    t_list* instrucciones = deserializarInstrucciones(socketCliente);
+    instrucciones = deserializarInstrucciones(socketCliente);
     mostrarInstrucciones(instrucciones);
-    liberarInstrucciones(instrucciones);
-    //PCB* pcb = crear_pcb(instrucciones);
-    //agregarANew(pcb);
+    pcb = crearPcb(instrucciones);
+    agregarANew(pcb);
     close(socketCliente);
   }
 }
 
-//TODO agregar tabla de segmentos
-PCB* crear_pcb(t_list* listaInstrucciones) {
+PCB* crearPcb(t_list* listaInstrucciones) {
   PCB* pcb = malloc(sizeof(PCB));
+  pcb->contexto = malloc(sizeof(contextoEjecucion));
   pthread_mutex_lock(&mutexNumeroProceso);
   pcb->pid = idProceso++;
   pthread_mutex_unlock(&mutexNumeroProceso);
-  pcb->contexto.programCounter = 0;
-  pcb->contexto.estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
-  pcb->contexto.instrucciones = list_duplicate(listaInstrucciones);
-  pcb->contexto.llegadaReady = 0;
-  list_destroy(listaInstrucciones);
+  pcb->contexto->programCounter = 0;
+  pcb->contexto->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
+  pcb->contexto->instrucciones = listaInstrucciones;
+  pcb->contexto->llegadaReady = 0;
   return pcb;
 }
 
+//TODO agregar tabla de segmentos
 void cargarConexiones() {
   conectar_con_memoria();
   conectar_con_cpu();
@@ -121,5 +122,3 @@ void conectar_con_fileSystem() {
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketFileSystem = socketFileSystem;
 }
-
-

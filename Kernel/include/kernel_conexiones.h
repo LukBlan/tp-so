@@ -10,7 +10,7 @@
   void conectar_con_memoria();
   void conectar_con_cpu();
   t_list* generarListaDeInstrucciones(int socketCliente);
-  PCB* crear_pcb(t_list* listaInstrucciones);
+  PCB* crearPcb(t_list* listaInstrucciones);
   void conectar_con_fileSystem();
 
 #endif

@@ -36,7 +36,7 @@
   typedef struct {
     int pid;
     estadoProceso estado;
-    contextoEjecucion contexto;
+    contextoEjecucion* contexto;
   } PCB;
 
   typedef enum {

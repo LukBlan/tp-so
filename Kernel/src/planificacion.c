@@ -112,9 +112,16 @@ void agregarAListo(PCB* proceso) {
   sem_post(&semProcesoReady);
 }
 
+void enviarContexto(PCB* proceso) {
+  contextoEjecucion* contexto = proceso->contexto;
+  //estructura -> buffer;
+  //buffer* buffer =
+}
+
 void ejecutar(PCB* proceso) {
   //serializar la pcb
   //enviarla a cpu
+  enviarContexto(proceso);
   // se queda esperando el codOperacion
   // con ese codigo hace algo
 
@@ -235,7 +242,7 @@ void *io()
 
         agregarAListo(proceso);
     }
-}*/
+}
 void planificador_corto_plazo_fifo() {
     t_log* logger = recursosKernel->logger;
     log_info(logger, "INICIO PLANIFICACION FIFO");
@@ -352,7 +359,6 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado)
     sem_post(&largoPlazo);
 }
 
-/*
 void enviar_pcb(PCB *proceso, int socketDispatch)
 {
     paquete *paquete = crear_paquete(Pcb);
@@ -364,7 +370,6 @@ void enviar_pcb(PCB *proceso, int socketDispatch)
     eliminar_paquete(paquete);
 }
 
-*/
 bool esProcesoNuevo(PCB *proceso)
 {
     return proceso->estado == NEW;
@@ -375,7 +380,7 @@ bool esProcesoNuevo(PCB *proceso)
 bool sePuedeAgregarMasProcesos() {
     return (cantidad_procesos_memoria() < recursosKernel->configuracion->GRADO_MAX_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNew, &mutexColaNew) > 0 );
 }
-/*
+
 void liberar_semaforos()
 {
     pthread_mutex_destroy(&mutexNumeroProceso);
