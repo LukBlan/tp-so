@@ -3,6 +3,7 @@
 
   #include <stdint.h>
   #include <commons/collections/list.h>
+  #include <stdio.h>
 
   typedef union {
     uint32_t cuatro_bytes;
@@ -21,6 +22,11 @@
     EXEC,
     BLOCK
   } estadoProceso;
+
+  typedef struct {
+    char* nombre;
+    FILE* punteroArchivo;
+  } archivoAbierto;
 
   typedef struct {
     t_list* instrucciones;

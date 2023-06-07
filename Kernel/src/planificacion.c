@@ -4,7 +4,7 @@
 
 t_queue* colaNew;
 t_queue* colaReady;
-t_queue* colaExec;
+PCB* procesoEjecutandose;
 t_queue* colaBlock;
 t_queue* colaEnd;
 
@@ -35,7 +35,6 @@ sem_t comunicacionMemoria;
 void iniciarColas() {
   colaNew = queue_create();
   colaReady = queue_create();
-  colaExec = queue_create();
   colaBlock = queue_create();
   colaEnd = queue_create();
 }
@@ -115,7 +114,8 @@ void agregarAListo(PCB* proceso) {
 void enviarContexto(PCB* proceso) {
   contextoEjecucion* contexto = proceso->contexto;
   //estructura -> buffer;
-  //buffer* buffer =
+  int tamanioContexto = tamanioBytesContexto();
+  t_buffer* buffer = generarBuffer(tamanioContexto);
 }
 
 void ejecutar(PCB* proceso) {
@@ -201,7 +201,7 @@ void agregarFinalizado(PCB* proceso){
 void sacarDeEjecutando(PCB* proceso){
   pthread_mutex_lock(&mutexColaExec);
   t_log* logger = recursosKernel->logger;
-  queue_pop(colaExec);
+  procesoEjecutandose = NULL;
   log_info(logger, "Proceso: [%d] salío de EJECUTANDO.", proceso->pid);
   
   pthread_mutex_unlock(&mutexColaExec);

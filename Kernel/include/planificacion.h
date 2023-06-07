@@ -18,7 +18,7 @@
 extern t_queue* colaNew;
 extern t_queue* colaBlock;
 extern t_queue* colaReady;
-extern t_queue* colaExec;
+extern PCB* procesoEjecutandose;
 extern t_queue* colaEnd;
 
 extern pthread_mutex_t mutexNumeroProceso;
