@@ -1,6 +1,8 @@
 #include <planificacion.h>
 #include <estructuras.h>
 #include <recursos.h>
+#include <serializacion/contexto.h>
+#include <serializacion/buffer.h>
 
 t_queue* colaNew;
 t_queue* colaReady;
@@ -113,15 +115,19 @@ void agregarAListo(PCB* proceso) {
 
 void enviarContexto(PCB* proceso) {
   contextoEjecucion* contexto = proceso->contexto;
+  contextoEjecucion* contextoRecibido;
   //estructura -> buffer;
-  int tamanioContexto = tamanioBytesContexto();
+  int tamanioContexto = tamanioBytesContexto(contexto);
   t_buffer* buffer = generarBuffer(tamanioContexto);
+  serializarContexto(buffer, contexto);
+  contextoRecibido = deserializarContexto(buffer);
 }
 
 void ejecutar(PCB* proceso) {
   //serializar la pcb
   //enviarla a cpu
   enviarContexto(proceso);
+
   // se queda esperando el codOperacion
   // con ese codigo hace algo
 

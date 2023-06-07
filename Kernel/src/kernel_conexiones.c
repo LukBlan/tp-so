@@ -13,8 +13,8 @@ int idProceso = 0;
 void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
   sem_post(&largoPlazo);
-  //cambiarEstado(NEW, pcb);
-  //looger de instruccion
+  cambiarEstado(NEW, pcb);
+  log_info(recursosKernel->logger, "Proceso [%d] se movio a Nuevo \n", pcb->pid);
 }
 
 void crearSocketKernel() {
@@ -33,6 +33,20 @@ void crearSocketKernel() {
   recursosKernel->conexiones->socketKernel = socketServidor;
 }
 
+t_list* obtenerListaInstruciones(int socketCliente) {
+  t_list* listaInstrucciones;
+  int *posicion = malloc(sizeof(int));
+  *posicion = 0;
+
+  obtenerCodigoOperacion(socketCliente);
+  t_buffer* buffer = obtenerBuffer(socketCliente);
+  listaInstrucciones = deserializarInstrucciones(buffer, posicion);
+
+  liberarBuffer(buffer);
+  free(posicion);
+  return listaInstrucciones;
+}
+
 void montarServidor() {
   t_list* instrucciones;
   PCB* pcb;
@@ -42,11 +56,11 @@ void montarServidor() {
   log_info(logger, "Servidor Kernel se Encuentra Escuchando.");
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
-    obtenerCodigoOperacion(socketCliente);
-    instrucciones = deserializarInstrucciones(socketCliente);
+    instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
-    agregarANew(pcb);
+    //agregarANew(pcb);
+    enviarContexto(pcb);
     close(socketCliente);
   }
 }

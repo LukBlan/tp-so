@@ -8,3 +8,7 @@ t_buffer* generarBuffer(int tamanio) {
   return buffer;
 }
 
+void liberarBuffer(t_buffer* buffer) {
+  free(buffer->stream);
+  free(buffer);
+}
