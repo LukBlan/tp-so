@@ -60,7 +60,7 @@ void montarServidor() {
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
     //agregarANew(pcb);
-    enviarContexto(pcb);
+    enviarContexto(pcb, recursosKernel->conexiones->socketCpu);
     close(socketCliente);
   }
 }
@@ -68,13 +68,15 @@ void montarServidor() {
 PCB* crearPcb(t_list* listaInstrucciones) {
   PCB* pcb = malloc(sizeof(PCB));
   pcb->contexto = malloc(sizeof(contextoEjecucion));
+
   pthread_mutex_lock(&mutexNumeroProceso);
   pcb->pid = idProceso++;
   pthread_mutex_unlock(&mutexNumeroProceso);
+
+  pcb->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
+  pcb->llegadaReady = 0;
   pcb->contexto->programCounter = 0;
-  pcb->contexto->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
   pcb->contexto->instrucciones = listaInstrucciones;
-  pcb->contexto->llegadaReady = 0;
   return pcb;
 }
 

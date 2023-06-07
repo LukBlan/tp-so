@@ -3,6 +3,7 @@
 #include <recursos.h>
 #include <serializacion/contexto.h>
 #include <serializacion/buffer.h>
+#include <serializacion/paquete.h>
 
 t_queue* colaNew;
 t_queue* colaReady;
@@ -113,20 +114,21 @@ void agregarAListo(PCB* proceso) {
   sem_post(&semProcesoReady);
 }
 
-void enviarContexto(PCB* proceso) {
+void enviarContexto(PCB* proceso, int socketCpu) {
   contextoEjecucion* contexto = proceso->contexto;
-  contextoEjecucion* contextoRecibido;
-  //estructura -> buffer;
   int tamanioContexto = tamanioBytesContexto(contexto);
   t_buffer* buffer = generarBuffer(tamanioContexto);
+  void* aEnviar;
+
   serializarContexto(buffer, contexto);
-  contextoRecibido = deserializarContexto(buffer);
+  t_paquete* paquete = crearPaquete(buffer, Pcb);
+  enviar_paquete(paquete, socketCpu);
 }
 
 void ejecutar(PCB* proceso) {
   //serializar la pcb
   //enviarla a cpu
-  enviarContexto(proceso);
+  //enviarContexto(proceso);
 
   // se queda esperando el codOperacion
   // con ese codigo hace algo

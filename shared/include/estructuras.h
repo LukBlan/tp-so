@@ -31,17 +31,17 @@
   typedef struct {
     t_list* instrucciones;
     int programCounter;
-    int rafagaRealPrevia;
     //Registro registros;
     //struct tablaSegmentos;
-    float estimadoRafaga;
-    int llegadaReady;
     t_list* archivosAbiertos;
   } contextoEjecucion;
 
   typedef struct {
     int pid;
     estadoProceso estado;
+    float estimadoRafaga;
+    int llegadaReady;
+    int rafagaRealPrevia;
     contextoEjecucion* contexto;
   } PCB;
 

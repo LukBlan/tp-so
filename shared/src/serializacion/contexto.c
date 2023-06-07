@@ -38,6 +38,7 @@ contextoEjecucion* deserializarContexto(t_buffer* buffer) {
   contextoEjecucion* contexto = malloc(sizeof(contextoEjecucion));
   int* posicion = malloc(sizeof(int));
   *posicion = 0;
+
   contexto->instrucciones = deserializarInstrucciones(buffer, posicion);
   contexto->programCounter = deserializarProgramCounter(buffer, posicion);
   return contexto;

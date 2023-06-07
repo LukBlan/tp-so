@@ -7,6 +7,5 @@
   void liberarPaquete(t_paquete* paquete);
   void* serializar_paquete(t_paquete* paquete, int bytes);
   void enviar_paquete(t_paquete* paquete, int socketCliente);
-  void eliminar_paquete(t_paquete* paquete);
 
 #endif

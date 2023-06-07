@@ -28,13 +28,3 @@ void* serializar_paquete(t_paquete* paquete, int bytes) {
 	desplazamiento += paquete->buffer->size;
 	return magic;
 }
-
-void eliminar_paquete(t_paquete* paquete){
-	if (paquete != NULL){
-		if(paquete->buffer != NULL){
-			free(paquete->buffer->stream);
-			free(paquete->buffer);
-		}
-		free(paquete);
-	}
-}

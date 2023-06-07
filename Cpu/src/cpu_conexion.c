@@ -1,9 +1,11 @@
+#include <serializacion/contexto.h>
 #include <commons/string.h>
 #include <conexiones.h>
 #include <cpu_conexion.h>
 #include <recursos.h>
 #include <estructuras.h>
 #include <netdb.h>
+#include <utils.h>
 
 void cargarConexiones() {
   conectarConMemoria();
@@ -43,7 +45,16 @@ void generarServidorCpu() {
   recursosCpu->conexiones->socketCpu = socketServidor;
 }
 
+contextoEjecucion* recibirContexto(int socketCliente) {
+  contextoEjecucion* contexto;
+  obtenerCodigoOperacion(socketCliente);
+  t_buffer* buffer = obtenerBuffer(socketCliente);
+  contexto = deserializarContexto(buffer);
+  return contexto;
+}
+
 void montarServidor() {
+  contextoEjecucion* contexto;
   t_log* logger = recursosCpu->logger;
   int socketServidor = recursosCpu->conexiones->socketCpu;
 
@@ -51,6 +62,8 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un cliente");
+    contextoEjecucion* contexto = recibirContexto(socketCliente);
+    mostrarContexto(contexto);
     close(socketCliente);
   }
 }

@@ -19,3 +19,7 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
   }
 }
 
+void mostrarContexto(contextoEjecucion* contexto) {
+  printf("programCounter = %d\n", contexto->programCounter);
+  mostrarInstrucciones(contexto->instrucciones);
+}

@@ -1,6 +1,8 @@
 #ifndef CONTEXTO_H
 #define CONTEXTO_H
 
+  #include <estructuras.h>
+
   int tamanioBytesContexto(contextoEjecucion* contexto);
   void serializarProgramCounter(t_buffer* buffer, int programCounter, int* posicion);
   int deserializarProgramCounter(t_buffer* buffer, int* posicion);

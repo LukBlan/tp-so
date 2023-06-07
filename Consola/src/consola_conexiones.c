@@ -27,10 +27,14 @@ void cargarConexionConKernel() {
 
 
 void enviarInstrucciones(t_list* instrucciones) {
+  int* posicion = malloc(sizeof(int));
+  *posicion = 0;
   int tamanioBytesBuffer = tamanioBytesInstrucciones(instrucciones);
   t_buffer* buffer = generarBuffer(tamanioBytesBuffer);
-  serializarInstrucciones(buffer, instrucciones);
+
+  serializarInstrucciones(buffer, instrucciones, posicion);
   t_paquete* paquete = crearPaquete(buffer, LINEAS_INSTRUCCION);
+
   log_info(recursosConsola->logger, "Enviando lista de instrucciones al servidor Kernel.");
 	enviar_paquete(paquete, recursosConsola->conexiones->socketKernel);
 	liberarPaquete(paquete);
