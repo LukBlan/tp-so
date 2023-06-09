@@ -1,11 +1,12 @@
-#include <serializacion/contexto.h>
-#include <commons/string.h>
+#include <commons/log.h>
 #include <conexiones.h>
 #include <cpu_conexion.h>
-#include <recursos.h>
 #include <estructuras.h>
-#include <netdb.h>
-#include <utils.h>
+#include <pthread.h>
+#include <recursos.h>
+#include <serializacion/contexto.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void cargarConexiones() {
   conectarConMemoria();
@@ -46,11 +47,29 @@ void generarServidorCpu() {
 }
 
 contextoEjecucion* recibirContexto(int socketCliente) {
-  contextoEjecucion* contexto;
-  obtenerCodigoOperacion(socketCliente);
   t_buffer* buffer = obtenerBuffer(socketCliente);
-  contexto = deserializarContexto(buffer);
+  contextoEjecucion* contexto = deserializarContexto(buffer);
   return contexto;
+}
+
+void ejecutarProceso(int socketCliente) {
+  while(1) {
+    op_code codigoOperacion = obtenerCodigoOperacion(socketCliente);
+    switch(codigoOperacion) {
+      case Pcb:
+        contextoEjecucion* contexto = recibirContexto(socketCliente);
+        mostrarContexto(contexto);
+        break;
+      default:
+        puts("Como carajo llegue aca");
+    }
+  }
+}
+
+void manejarConexionConKernel(int socketCliente) {
+  pthread_t hiloKernel;
+  pthread_create(&hiloKernel, NULL, (void*)ejecutarProceso, (void*)socketCliente);
+  pthread_detach(hiloKernel);
 }
 
 void montarServidor() {
@@ -62,9 +81,7 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un cliente");
-    contextoEjecucion* contexto = recibirContexto(socketCliente);
-    mostrarContexto(contexto);
-    close(socketCliente);
+    manejarConexionConKernel(socketCliente);
   }
 }
 
