@@ -6,7 +6,7 @@
 #include <serializacion/paquete.h>
 
 t_queue* colaNew;
-t_queue* colaReady;
+t_list *colaReady;
 PCB* procesoEjecutandose;
 t_queue* colaBlock;
 t_queue* colaEnd;
@@ -37,7 +37,7 @@ sem_t comunicacionMemoria;
 
 void iniciarColas() {
   colaNew = queue_create();
-  colaReady = queue_create();
+  colaReady = list_create();
   colaBlock = queue_create();
   colaEnd = queue_create();
 }
@@ -57,6 +57,21 @@ void iniciarSemaforos() {
   sem_init(&largoPlazo, 0, 0);
 }
 
+void planificador_corto_plazo_fifo() {
+  t_log* logger = recursosKernel->logger;
+  log_info(logger, "INICIO PLANIFICACION CORTO PLAZO FIFO");
+  while (1) {
+    sem_wait(&semProcesoReady);
+    sem_wait(&semaforoCantidadProcesosExec);
+    //TODO ver lista
+    PCB* procesoEjecutar = list_remove(colaReady, 0);
+
+    cambiarEstado(EXEC, procesoEjecutar);
+    ejecutar(procesoEjecutar);
+  }
+}
+
+
 void comenzarPlanificadores() {
   pthread_t hilo_largo_plazo;
   pthread_t hiloCortoPlazo;
@@ -65,8 +80,8 @@ void comenzarPlanificadores() {
   pthread_detach(hilo_largo_plazo);
 
   if (strcmp(recursosKernel->configuracion->ALGORITMO_PLANIFICACION, "FIFO") == 0) {
-    //pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
-    //pthread_detach(hiloCortoPlazo);
+    pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
+    pthread_detach(hiloCortoPlazo);
   }
   /*
   else
@@ -98,7 +113,7 @@ void planificador_largo_plazo() {
 
 int sePuedeAgregarMasProcesos() {
   t_configuracion* config = recursosKernel->configuracion;
-  return (config->GRADO_MAX_MULTIPROGRAMACION > queue_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
+  return (config->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
 }
 
 void cambiarEstado(estadoProceso estado, PCB* proceso) {
@@ -108,7 +123,7 @@ void cambiarEstado(estadoProceso estado, PCB* proceso) {
 void agregarAListo(PCB* proceso) {
 	t_log* logger = recursosKernel->logger;
 	pthread_mutex_lock(&mutexColaReady);
-  queue_push(colaReady, proceso);
+  list_add(colaReady, proceso);
   log_info(logger, "Proceso [%d] se movio a listo \n", proceso->pid);
   pthread_mutex_unlock(&mutexColaReady);
   sem_post(&semProcesoReady);
@@ -126,12 +141,10 @@ void enviarContexto(PCB* proceso, int socketCpu) {
 }
 
 void ejecutar(PCB* proceso) {
-  //serializar la pcb
-  //enviarla a cpu
-  //enviarContexto(proceso);
+  int socketCpu = recursosKernel->conexiones->socketCpu;
+  enviarContexto(proceso, socketCpu);
+  op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
 
-  // se queda esperando el codOperacion
-  // con ese codigo hace algo
 
   /*
     enviar_pcb(proceso, socketCPU);
@@ -191,7 +204,7 @@ void ejecutar(PCB* proceso) {
         log_warning(logger, "Operación desconocida.");
         break;
     }
-    */
+  */
 }
 
 
@@ -249,20 +262,6 @@ void *io()
 
 
         agregarAListo(proceso);
-    }
-}
-void planificador_corto_plazo_fifo() {
-    t_log* logger = recursosKernel->logger;
-    log_info(logger, "INICIO PLANIFICACION FIFO");
-    while (1) {
-        sem_wait(&semProcesoReady);
-        sem_wait(&semaforoCantidadProcesosExec);
-        //TODO ver lista
-        PCB* procesoEjecutar = list_remove(colaReady,0);
-
-        cambiarEstado(EXEC, procesoEjecutar);
-
-        ejecutar(procesoEjecutar);
     }
 }
 

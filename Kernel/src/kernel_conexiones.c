@@ -59,8 +59,7 @@ void montarServidor() {
     instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
-    //agregarANew(pcb);
-    enviarContexto(pcb, recursosKernel->conexiones->socketCpu);
+    agregarANew(pcb);
     close(socketCliente);
   }
 }
