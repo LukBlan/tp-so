@@ -148,6 +148,38 @@ void actualizarContexto(contextoEjecucion* nuevoContexto){
   procesoEjecutandose->contexto = nuevoContexto;
 }
 
+int buscarSocket(int pidProceso) {
+  t_list* procesosConsola = recursosKernel->conexiones->procesosConsola;
+  int cantidadProcesosConsola = procesosConsola->elements_count;
+
+  for (int i = 0; i < cantidadProcesosConsola; i++) {
+    procesoConsola* proceso = list_get(procesosConsola, i);
+    if (proceso->pid == pidProceso) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void terminarConsola(procesoConsola* consolaFinalizada, int posicionProceso) {
+  list_remove(recursosKernel->conexiones->procesosConsola, posicionProceso);
+  close(consolaFinalizada->socketConsola);
+  free(consolaFinalizada);
+}
+
+void avisarConsola(PCB* procesoFinalizado) {
+  int pidProcesoFinalizado = procesoFinalizado->pid;
+  int posicionProceso = buscarSocket(pidProcesoFinalizado);
+  procesoConsola* consolaFinalizada = list_get(recursosKernel->conexiones->procesosConsola, posicionProceso);
+
+  t_buffer* buffer = generarBuffer(0);
+  t_paquete* paquete = crearPaquete(buffer, EXIT);
+  enviar_paquete(paquete, consolaFinalizada->socketConsola);
+
+  liberarPaquete(paquete);
+  terminarConsola(consolaFinalizada, posicionProceso);
+}
+
 void ejecutar(PCB* proceso) {
   int socketCpu = recursosKernel->conexiones->socketCpu;
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] por CPU-Dispatch.", proceso->pid);
@@ -161,12 +193,16 @@ void ejecutar(PCB* proceso) {
   switch (codigoOperacion) {
      case YIELD:
        puts("Kernel: Me llego un YIELD");
-       PCB* procesoTerminado = procesoEjecutandose;
+       PCB* procesoExpulsado = procesoEjecutandose;
        sacarDeEjecutando();
-       agregarAListo(procesoTerminado);
+       agregarAListo(procesoExpulsado);
        break;
      case EXIT:
        puts("Kernel: Me llego un Exit");
+       PCB* procesoTerminado = procesoEjecutandose;
+       sacarDeEjecutando();
+       avisarConsola(procesoTerminado);
+       //liberarPcb(procesoTerminado);
        break;
      default:
        puts("Entre por default");
