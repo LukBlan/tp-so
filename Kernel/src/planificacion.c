@@ -65,10 +65,10 @@ void planificador_corto_plazo_fifo() {
     sem_wait(&semProcesoReady);
     sem_wait(&semaforoCantidadProcesosExec);
     //TODO ver lista
-    PCB* procesoEjecutar = list_remove(colaReady, 0);
+    procesoEjecutandose = list_remove(colaReady, 0);
 
-    cambiarEstado(EXEC, procesoEjecutar);
-    ejecutar(procesoEjecutar);
+    cambiarEstado(EXEC, procesoEjecutandose);
+    ejecutar(procesoEjecutandose);
   }
 }
 
@@ -122,12 +122,29 @@ void cambiarEstado(estadoProceso estado, PCB* proceso) {
 }
 
 void agregarAListo(PCB* proceso) {
-	t_log* logger = recursosKernel->logger;
-	pthread_mutex_lock(&mutexColaReady);
+  t_log* logger = recursosKernel->logger;
+
+  pthread_mutex_lock(&mutexColaReady);
   list_add(colaReady, proceso);
   log_info(logger, "Proceso [%d] se movio a listo \n", proceso->pid);
   pthread_mutex_unlock(&mutexColaReady);
   sem_post(&semProcesoReady);
+}
+
+
+void sacarDeEjecutando(){
+  t_log* logger = recursosKernel->logger;
+
+  pthread_mutex_lock(&mutexColaExec);
+  log_info(logger, "Proceso: [%d] salío de EJECUTANDO.", procesoEjecutandose->pid);
+  procesoEjecutandose = NULL;
+  pthread_mutex_unlock(&mutexColaExec);
+  sem_post(&semaforoCantidadProcesosExec);
+}
+
+void actualizarContexto(contextoEjecucion* nuevoContexto){
+  //liberarCotexto(procesoEjecutandose->contexto);
+  procesoEjecutandose->contexto = nuevoContexto;
 }
 
 void ejecutar(PCB* proceso) {
@@ -136,13 +153,16 @@ void ejecutar(PCB* proceso) {
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
+  mostrarContexto(nuevoContexto);
+  actualizarContexto(nuevoContexto);
   puts("Recibi contexto de cpu");
 
   switch (codigoOperacion) {
      case YIELD:
        puts("Kernel: Me llego un YIELD");
-       //sacarDeEjecutando(procesoRecibido);
-       //agregarAListo(procesoRecibido)
+       PCB* procesoTerminado = procesoEjecutandose;
+       sacarDeEjecutando();
+       agregarAListo(procesoTerminado);
        break;
      case EXIT:
        puts("Kernel: Me llego un Exit");
@@ -228,16 +248,6 @@ void agregarFinalizado(PCB* proceso){
     pthread_mutex_unlock(&mutexColaEnd);
 
     sem_post(&largoPlazo);
-}
-
-void sacarDeEjecutando(PCB* proceso){
-  pthread_mutex_lock(&mutexColaExec);
-  t_log* logger = recursosKernel->logger;
-  procesoEjecutandose = NULL;
-  log_info(logger, "Proceso: [%d] salío de EJECUTANDO.", proceso->pid);
-  
-  pthread_mutex_unlock(&mutexColaExec);
-  sem_post(&semaforoCantidadProcesosExec);
 }
 
 /*
