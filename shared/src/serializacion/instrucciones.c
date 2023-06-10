@@ -11,7 +11,7 @@ t_list* deserializarInstrucciones(t_buffer* buffer, int* posicion) {
 
   for (int i = 0; i < cantidadDeInstrucciones; i++) {
     t_instruccion* instruccion = malloc(sizeof(t_instruccion));
-    crearInstruccion(instruccion);
+
     int cantidadParametros;
     memcpy(&cantidadParametros, buffer->stream + *posicion, sizeof(int));
     *posicion += sizeof(int);
@@ -24,9 +24,9 @@ t_list* deserializarInstrucciones(t_buffer* buffer, int* posicion) {
       char* string = malloc(tamanioString);
       memcpy(string, buffer->stream + *posicion, tamanioString);
       *posicion += tamanioString;
-      list_add(instruccion->strings, string);
-      list_add(instruccion->sizeStrings, tamanioString);
+      instruccion->strings[j] = string;
     }
+    instruccion->cantidadParametros = cantidadParametros;
     list_add(instrucciones, instruccion);
   }
   return instrucciones;
@@ -40,17 +40,17 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones, int* posic
 
   for(int i = 0; i < cantidadInstrucciones; i++) {
     t_instruccion* instruccion = list_get(instrucciones, i);
-    int cantidadParametros = list_size(instruccion->strings);
+    int cantidadParametros = instruccion->cantidadParametros;
 
     memcpy(buffer->stream + *posicion, &(cantidadParametros), sizeof(int));
     *posicion += sizeof(int);
 
     for (int j = 0; j < cantidadParametros; j++) {
-      int tamanioParametro = list_get(instruccion->sizeStrings, j);
+      int tamanioParametro = string_length(instruccion->strings[i]);
       memcpy(buffer->stream + *posicion, &(tamanioParametro), sizeof(int));
       *posicion += sizeof(int);
 
-      memcpy(buffer->stream + *posicion, list_get(instruccion->strings, j), tamanioParametro);
+      memcpy(buffer->stream + *posicion, instruccion->strings[i], tamanioParametro);
       *posicion += tamanioParametro;
     }
   }

@@ -32,7 +32,7 @@ void enviarInstrucciones(t_list* instrucciones) {
   int tamanioBytesBuffer = tamanioBytesInstrucciones(instrucciones);
   t_buffer* buffer = generarBuffer(tamanioBytesBuffer);
 
-  serializarInstrucciones(buffer, instrucciones, posicion);
+  //serializarInstrucciones(buffer, instrucciones, posicion);
   t_paquete* paquete = crearPaquete(buffer, LINEAS_INSTRUCCION);
 
   log_info(recursosConsola->logger, "Enviando lista de instrucciones al servidor Kernel.");

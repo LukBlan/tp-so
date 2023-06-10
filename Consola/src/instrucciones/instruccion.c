@@ -17,19 +17,7 @@ int cantidadDeLineas(char* instrucciones) {
   return cantidadDeLineas;
 }
 
-int calcularCantidadParametros(char* lineaInstruccion) {
-  int cantidadLetras = string_length(lineaInstruccion);
-  int cantidadParametros = 0;
-
-  for (int i = 0; i <= cantidadLetras; i++) {
-    if (lineaInstruccion[i] == ' ') {
-      cantidadParametros++;
-    }
-  }
-  return cantidadParametros;
-}
-
-void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, int cantidadParametros) {
+void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion) {
   int cantidadLetras = string_length(lineaInstruccion);
   int cantidadEspacios = 0;
   int start = 0;
@@ -44,13 +32,12 @@ void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, 
         nuevoString[j - start] = lineaInstruccion[j];
       }
       nuevoString[end - start] = '\0';
-      list_add(instruccion->strings, nuevoString);
-      list_add(instruccion->sizeStrings, cantidadDeChars);
-
+      instruccion->strings[cantidadEspacios] = nuevoString;
       cantidadEspacios++;
       start = end+1;
       cantidadDeChars = 0;
     }
+    instruccion->cantidadParametros = cantidadEspacios - 1;
     end++;
   }
 }
@@ -90,9 +77,4 @@ char* getFileAsString() {
 
   instrucciones[f_size] = '\0';
   return instrucciones;
-}
-
-void generarInstruccion(char* lineaInstruccion, t_instruccion* instruccion) {
-  int cantidadParametros = calcularCantidadParametros(lineaInstruccion);
-  inicializarInstruccion(instruccion, lineaInstruccion, cantidadParametros);
 }

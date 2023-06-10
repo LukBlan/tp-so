@@ -67,8 +67,8 @@
   } TipoInstruccion;
 
   typedef struct {
-    t_list* strings;
-    t_list* sizeStrings;
+    char* strings[4];
+	  int cantidadParametros;
   } t_instruccion;
 
   typedef struct {
@@ -81,7 +81,6 @@
     t_buffer* buffer;
   } t_paquete;
 
-  void crearInstruccion(t_instruccion* instruccion);
   void liberarInstrucciones(t_list* instrucciones);
 
 #endif

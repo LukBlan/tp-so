@@ -5,11 +5,9 @@
   #include <estructuras.h>
 
   int cantidadDeLineas(char* instrucciones);
-  int calcularCantidadParametros(char* lineaInstruccion);
-  void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion, int cantidadParametros);
+  void inicializarInstruccion(t_instruccion* instruccion, char* lineaInstruccion);
   void getListStrings(char* example, t_list* listaStrings);
   char* getFileAsString();
-  void generarInstruccion(char* lineaInstruccion, t_instruccion* instruccion);
 
 #endif
 

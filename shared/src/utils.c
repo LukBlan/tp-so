@@ -12,8 +12,10 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
   int numeroInstrucciones = list_size(listaInstrucciones);
   for (int i = 0; i < numeroInstrucciones; i++) {
     t_instruccion* instruccion = list_get(listaInstrucciones, i);
-    for (int i = 0; i < list_size(instruccion->strings); i++) {
-      printf("%s ", list_get(instruccion->strings, i));
+    int cantidadParametros = instruccion->cantidadParametros;
+
+    for (int i = 0; i <= cantidadParametros; i++) {
+      printf("%s ", instruccion->strings[i]);
     }
     puts("");
   }
