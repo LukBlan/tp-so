@@ -47,74 +47,15 @@ void generarServidorCpu() {
   recursosCpu->conexiones->socketCpu = socketServidor;
 }
 
-op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando) {
-  op_code codigoOperacion;
-  char* identificador = instruccion->strings[0];
+void realizarHandshakeMemoria() {
+  t_log* logger = recursosCpu->logger;
+  int socketMemoria = recursosCpu->conexiones->socketMemoria;
 
-  if (strcmp("YIELD", identificador) == 0) {
-    puts("Estoy ejecutando YIELD");
-    *continuarEjecutando = 0;
-    codigoOperacion = YIELD;
-  } else if (strcmp("EXIT", identificador) == 0) {
-    puts("Estoy ejecutando EXIT");
-    *continuarEjecutando = 0;
-    codigoOperacion = EXIT;
+  log_info(logger, "Realizando Handshake con Memoria");
+  if (realizarHandshake(logger, socketMemoria) < 0) {
+    liberarRecursos();
+    exit(-1);
   }
-  return codigoOperacion;
-}
-
-op_code ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando) {
-  op_code codigoPaquete;
-  switch (instruccion->cantidadParametros) {
-    case 0:
-      codigoPaquete = ejecutarCeroParametros(contexto, instruccion, continuarEjecutando);
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-  }
-  return codigoPaquete;
-}
-
-void ejecutarListaInstrucciones(contextoEjecucion* contexto) {
-  t_list* listaInstrucciones = contexto->instrucciones;
-  op_code codigoPaquete;
-  int* continuarEjecutando = malloc(sizeof(int));
-  *continuarEjecutando = 1;
-
-  while(*continuarEjecutando) {
-      t_instruccion* instruccion = list_get(listaInstrucciones, contexto->programCounter);
-      contexto->programCounter++;
-      codigoPaquete = ejecutarInstruccion(contexto, instruccion, continuarEjecutando);
-  }
-  puts("Estoy enviando al kernel instruccion");
-  enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoPaquete);
-  //liberarContexto(contexto);
-}
-
-void ejecutarProceso() {
-  int socketKernel = recursosCpu->conexiones->socketKernel;
-  while(1) {
-    op_code codigoOperacion = obtenerCodigoOperacion(socketKernel);
-    switch(codigoOperacion) {
-      case Pcb:
-        contextoEjecucion* contexto = recibirContexto(socketKernel);
-        mostrarContexto(contexto);
-        ejecutarListaInstrucciones(contexto);
-        break;
-      default:
-        puts("Como carajo llegue aca");
-    }
-  }
-}
-
-void manejarConexionConKernel() {
-  pthread_t hiloKernel;
-  pthread_create(&hiloKernel, NULL, (void*)ejecutarProceso, NULL);
-  pthread_detach(hiloKernel);
 }
 
 void montarServidor() {
@@ -131,13 +72,24 @@ void montarServidor() {
   }
 }
 
-void realizarHandshakeMemoria() {
-  t_log* logger = recursosCpu->logger;
-  int socketMemoria = recursosCpu->conexiones->socketMemoria;
+void manejarConexionConKernel() {
+  pthread_t hiloKernel;
+  pthread_create(&hiloKernel, NULL, (void*)recibirContextoAEjecutar, NULL);
+  pthread_detach(hiloKernel);
+}
 
-  log_info(logger, "Realizando Handshake con Memoria");
-  if (realizarHandshake(logger, socketMemoria) < 0) {
-    liberarRecursos();
-    exit(-1);
+void recibirContextoAEjecutar() {
+  int socketKernel = recursosCpu->conexiones->socketKernel;
+  while(1) {
+    op_code codigoOperacion = obtenerCodigoOperacion(socketKernel);
+    switch(codigoOperacion) {
+      case Pcb:
+        contextoEjecucion* contexto = recibirContexto(socketKernel);
+        mostrarContexto(contexto);
+        ejecutarContexto(contexto);
+        break;
+      default:
+        puts("Como carajo llegue aca");
+    }
   }
 }
