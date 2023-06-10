@@ -46,14 +46,24 @@
 *.mod*
 *.cmd
 .tmp_versions/
+
+# Settings de Eclipse
 Consola/.settings
 Cpu/.settings
 FileSystem/.settings
 Kernel/.settings
 Memoria/.settings
 shared/.settings
+
+Consola/consola.log
+Kernel/kernel.log
+Memoria/memoria.log
+FileSystem/fileSystem.log
+Cpu/cpu.log
+
 modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
 /.metadata/
