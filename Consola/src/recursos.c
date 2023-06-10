@@ -1,3 +1,4 @@
+#include <commons/log.h>
 #include <recursos.h>
 #include <stdlib.h>
 #include <consola_conexiones.h>

@@ -9,7 +9,8 @@ void liberarInstrucciones(t_list* instrucciones) {
 
   for (int i = 0; i < numeroInstrucciones; i++) {
     t_instruccion* instruccion = list_get(instrucciones, i);
-    for (int i = 0; i <= instruccion->cantidadParametros; i++) {
+    int cantidadStrings = instruccion->cantidadParametros + 1;
+    for (int i = 0; i < cantidadStrings; i++) {
       free(instruccion->strings[i]);
     }
     free(instruccion);

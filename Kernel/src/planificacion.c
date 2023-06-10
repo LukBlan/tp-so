@@ -107,7 +107,7 @@ void planificador_largo_plazo() {
       cambiarEstado(READY, procesoSaliente);
       agregarAListo(procesoSaliente);
     }
-    log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d\n", queue_size(colaReady));
+    log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d\n", list_size(colaReady));
   }
 }
 

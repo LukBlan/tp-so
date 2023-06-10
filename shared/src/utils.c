@@ -10,11 +10,12 @@ void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenos
 
 void mostrarInstrucciones(t_list* listaInstrucciones) {
   int numeroInstrucciones = list_size(listaInstrucciones);
+
   for (int i = 0; i < numeroInstrucciones; i++) {
     t_instruccion* instruccion = list_get(listaInstrucciones, i);
-    int cantidadParametros = instruccion->cantidadParametros;
+    int cantidadStrings = instruccion->cantidadParametros + 1;
 
-    for (int i = 0; i <= cantidadParametros; i++) {
+    for (int i = 0; i < cantidadStrings; i++) {
       printf("%s ", instruccion->strings[i]);
     }
     puts("");

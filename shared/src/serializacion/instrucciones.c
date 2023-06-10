@@ -16,7 +16,8 @@ t_list* deserializarInstrucciones(t_buffer* buffer, int* posicion) {
     memcpy(&cantidadParametros, buffer->stream + *posicion, sizeof(int));
     *posicion += sizeof(int);
 
-    for (int j = 0; j < cantidadParametros; j++) {
+    int cantidadPalabras = cantidadParametros + 1;
+    for (int j = 0; j < cantidadPalabras; j++) {
       int tamanioString;
       memcpy(&tamanioString, buffer->stream + *posicion, sizeof(int));
       *posicion += sizeof(int);
@@ -45,12 +46,13 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones, int* posic
     memcpy(buffer->stream + *posicion, &(cantidadParametros), sizeof(int));
     *posicion += sizeof(int);
 
-    for (int j = 0; j < cantidadParametros; j++) {
-      int tamanioParametro = string_length(instruccion->strings[i]);
+    int cantidadPalabras = cantidadParametros + 1;
+    for (int j = 0; j < cantidadPalabras; j++) {
+      int tamanioParametro = string_length(instruccion->strings[j]) + 1;
       memcpy(buffer->stream + *posicion, &(tamanioParametro), sizeof(int));
       *posicion += sizeof(int);
 
-      memcpy(buffer->stream + *posicion, instruccion->strings[i], tamanioParametro);
+      memcpy(buffer->stream + *posicion, instruccion->strings[j], tamanioParametro);
       *posicion += tamanioParametro;
     }
   }
@@ -58,12 +60,15 @@ void serializarInstrucciones(t_buffer* buffer, t_list* instrucciones, int* posic
 
 int tamanioBytesInstruccion(t_instruccion* instruccion) {
   int cantidadBytes = 0;
-  int cantidadParametros = list_size(instruccion->strings);
+  int cantidadStrings = instruccion->cantidadParametros + 1;
 
-  for (int i = 0; i < cantidadParametros; i++) {
-    cantidadBytes += string_length(list_get(instruccion->strings, i)) + 1;
+  for (int i = 0; i < cantidadStrings; i++) {
+    cantidadBytes += string_length(instruccion->strings[i]) + 1;
   }
-  cantidadBytes += sizeof(int) * cantidadParametros;
+
+  cantidadBytes += sizeof(int) * cantidadStrings;
+  // sizeof(int) representando la cantidad de parametros de la instruccion
+  cantidadBytes += sizeof(int);
   return cantidadBytes;
 }
 
@@ -75,8 +80,6 @@ int tamanioBytesInstrucciones(t_list* listaInstrucciones) {
   for (int i = 0; i < cantidadInstrucciones; i++) {
     t_instruccion* instruccion = list_get(listaInstrucciones, i);
     tamanioTotal += tamanioBytesInstruccion(instruccion);
-    // sizeof(int) representando la cantidad de parametros de la instruccion
-    tamanioTotal += sizeof(int);
   }
 
   return tamanioTotal;

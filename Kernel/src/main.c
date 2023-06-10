@@ -18,6 +18,6 @@ int main(int argc, char* argv[]) {
   montarServidor();
 
   liberarRecursos();
-  return EXIT_SUCCESS;
+  return 0;
 }
 
