@@ -28,7 +28,6 @@
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarPseudoCodigo(char* pathPseudoCodigo);
-  void configuracion_consola(t_config* config);
   void liberarRecursos();
 
 #endif

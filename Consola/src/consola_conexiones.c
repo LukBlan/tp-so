@@ -25,7 +25,6 @@ void cargarConexionConKernel() {
   recursosConsola->conexiones->socketKernel = socketKernel;
 }
 
-
 void enviarInstrucciones(t_list* instrucciones) {
   int* posicion = malloc(sizeof(int));
   *posicion = 0;

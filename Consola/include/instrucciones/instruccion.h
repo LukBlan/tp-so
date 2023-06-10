@@ -10,4 +10,3 @@
   char* getFileAsString();
 
 #endif
-

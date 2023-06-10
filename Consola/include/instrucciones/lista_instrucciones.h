@@ -6,4 +6,3 @@
   void generarListaDeInstrucciones(t_list* listaInstrucciones);
 
 #endif
-
