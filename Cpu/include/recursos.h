@@ -1,5 +1,5 @@
-#ifndef CPU_RECURSOS_H_
-#define CPU_RECURSOS_H_
+#ifndef CPU_RECURSOS_H
+#define CPU_RECURSOS_H
 
   #include <commons/log.h>
 
