@@ -52,5 +52,6 @@
   void agregarAListo(PCB* proceso);
   int sePuedeAgregarMasProcesos();
   void cambiarEstado(estadoProceso estado, PCB* proceso);
+  void ejecutar(PCB* proceso);
 
 #endif

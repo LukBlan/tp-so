@@ -14,6 +14,7 @@ void crearRecursosCpu() {
   recursosCpu->logger = NULL;
   recursosCpu->conexiones->socketCpu = -1;
   recursosCpu->conexiones->socketMemoria = -1;
+
 }
 
 void cargarConfiguracion(char* pathConfiguracin) {
@@ -58,6 +59,10 @@ void liberarRecursos() {
   if (recursosCpu->conexiones->socketMemoria > 0) {
      close(recursosCpu->conexiones->socketMemoria);
    }
+
+  if (recursosCpu->conexiones->socketKernel > 0) {
+       close(recursosCpu->conexiones->socketKernel);
+     }
 
   if (recursosCpu->logger != NULL) {
     log_destroy(recursosCpu->logger);

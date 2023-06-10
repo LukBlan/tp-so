@@ -15,6 +15,7 @@
   typedef struct {
     int socketCpu;
     int socketMemoria;
+    int socketKernel;
   } t_conexiones;
 
   typedef struct {

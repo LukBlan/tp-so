@@ -4,7 +4,7 @@
 #include <string.h>
 
 t_paquete* crearPaquete(t_buffer* buffer, op_code codigoOperacion) {
-  t_paquete* paquete = malloc(buffer->size + sizeof(int) * 2);
+  t_paquete* paquete = malloc(sizeof(t_paquete));
   paquete->buffer = buffer;
   paquete->codigo_operacion = codigoOperacion;
   return paquete;

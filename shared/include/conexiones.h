@@ -15,6 +15,8 @@
 	t_buffer* obtenerBuffer(int socketCliente);
 	op_code obtenerCodigoOperacion(int socketCliente);
 	void enviar_paquete(t_paquete* paquete, int socketCliente);
+	void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOperacion);
+	contextoEjecucion* recibirContexto(int socketCliente);
 
 #endif
 

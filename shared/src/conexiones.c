@@ -4,6 +4,8 @@
 #include <commons/log.h>
 #include <string.h>
 #include <serializacion/paquete.h>
+#include <serializacion/contexto.h>
+#include <serializacion/buffer.h>
 
 int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
@@ -106,4 +108,19 @@ void enviar_paquete(t_paquete* paquete, int socketCliente) {
   void* a_enviar = serializar_paquete(paquete, bytes);
   send(socketCliente, a_enviar, bytes, 0);
   free(a_enviar);
+}
+
+void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOperacion) {
+  int tamanioContexto = tamanioBytesContexto(contexto);
+  t_buffer* buffer = generarBuffer(tamanioContexto);
+
+  serializarContexto(buffer, contexto);
+  t_paquete* paquete = crearPaquete(buffer, codigoOperacion);
+  enviar_paquete(paquete, socketCpu);
+}
+
+contextoEjecucion* recibirContexto(int socketCliente) {
+  t_buffer* buffer = obtenerBuffer(socketCliente);
+  contextoEjecucion* contexto = deserializarContexto(buffer);
+  return contexto;
 }

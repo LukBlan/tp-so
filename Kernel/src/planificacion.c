@@ -4,6 +4,7 @@
 #include <serializacion/contexto.h>
 #include <serializacion/buffer.h>
 #include <serializacion/paquete.h>
+#include <conexiones.h>
 
 t_queue* colaNew;
 t_list *colaReady;
@@ -129,29 +130,39 @@ void agregarAListo(PCB* proceso) {
   sem_post(&semProcesoReady);
 }
 
-void enviarContexto(PCB* proceso, int socketCpu) {
-  contextoEjecucion* contexto = proceso->contexto;
-  int tamanioContexto = tamanioBytesContexto(contexto);
-  t_buffer* buffer = generarBuffer(tamanioContexto);
-  void* aEnviar;
-
-  serializarContexto(buffer, contexto);
-  t_paquete* paquete = crearPaquete(buffer, Pcb);
-  enviar_paquete(paquete, socketCpu);
-}
-
 void ejecutar(PCB* proceso) {
   int socketCpu = recursosKernel->conexiones->socketCpu;
-  enviarContexto(proceso, socketCpu);
+  log_info(recursosKernel->logger, "Envio proceso con PID: [%d] por CPU-Dispatch.", proceso->pid);
+  enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
+  contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
+  puts("Recibi contexto de cpu");
 
+  switch (codigoOperacion) {
+     case YIELD:
+       puts("Kernel: Me llego un YIELD");
+       //sacarDeEjecutando(procesoRecibido);
+       //agregarAListo(procesoRecibido)
+       break;
+     case EXIT:
+       puts("Kernel: Me llego un Exit");
+       break;
+     default:
+       puts("Entre por default");
+       break;
+  }
+       //sacarDeEjecutando(procesoRecibido);
+       //agregarFinalizado(procesoRecibido)
+       //pid = procesoRecibido->pid;
+       //paquete = crear_paquete(FINALIZAR);
+       //agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+       //semwait(&comunicacionMemoria);
+       //enviar_paquete_a_servidor(paquete, socketMemoria);
+       //log_info(logger, "Se envio el proceso %d a la memoria para finalizar", pid);
+       //confirmar que llego a memoria
+       //sem_post(&comunicacionMemoria);
 
   /*
-    enviar_pcb(proceso, socketCPU);
-    //log_info(logger, "Envio proceso con PID: [%d] por CPU-Dispatch.", proceso->pid);
-
-    op_code codOperacion = obtener_codigo_operacion(socketCPU);
-
     Pcb *procesoRecibido;
     procesoRecibido = deserializar_pcb(socketCPU);
     switch (codOperacion) {
@@ -229,6 +240,7 @@ void sacarDeEjecutando(PCB* proceso){
   sem_post(&semaforoCantidadProcesosExec);
 }
 
+/*
 PCB* sacarBloqueado(){
  PCB *pcbSaliente;
 
@@ -241,7 +253,7 @@ PCB* sacarBloqueado(){
 
     return pcbSaliente;
 }
-/*
+
 void *io()
 {
     while (1)
