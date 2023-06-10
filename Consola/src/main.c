@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
   generarListaDeInstrucciones(instrucciones);
   mostrarInstrucciones(instrucciones);
   enviarInstrucciones(instrucciones);
+  esperarResultado();
 
   liberarInstrucciones(instrucciones);
   liberarRecursos();

@@ -56,10 +56,6 @@ int esperarCliente(int socketServidor) {
   return accept(socketServidor, NULL, NULL);
 }
 
-void cerrarConexion(int socketServidor) {
-  close(socketServidor);
-}
-
 int realizarHandshake(t_log* logger, int socketCliente) {
   int informacionEnviada = 4;
   int informacionRecivida = 0;

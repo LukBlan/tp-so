@@ -41,3 +41,22 @@ void enviarInstrucciones(t_list* instrucciones) {
 	free(posicion);
 }
 
+void esperarResultado() {
+  t_log* logger = recursosConsola->logger;
+  int socketKernel = recursosConsola->conexiones->socketKernel;
+  log_info(logger, "Esperando Resultado del Proceso");
+  op_code resultadoEspera = obtenerCodigoOperacion(socketKernel);
+
+  switch(resultadoEspera) {
+    case EXIT:
+      log_info(logger, "El Proceso Termino Correctamente");
+      break;
+    case DESCONEXION:
+      log_error(logger, "Perdi la conexion con el Kernel?");
+      break;
+    default:
+      puts("Algo paso fijate man");
+      break;
+  }
+}
+

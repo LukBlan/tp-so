@@ -10,6 +10,7 @@ void crearRecursos() {
   recursosKernel = malloc(sizeof(t_recursos));
   recursosKernel->configuracion = NULL;
   recursosKernel->conexiones = malloc(sizeof(t_conexiones));
+  recursosKernel->conexiones->procesosConsola = list_create();
   recursosKernel->conexiones->socketCpu = -1;
   recursosKernel->conexiones->socketFileSystem = -1;
   recursosKernel->conexiones->socketMemoria = -1;

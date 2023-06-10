@@ -47,6 +47,13 @@ t_list* obtenerListaInstruciones(int socketCliente) {
   return listaInstrucciones;
 }
 
+void agregarConsolaALista(PCB* pcb, int socketCliente) {
+  procesoConsola* nuevoProcesoConsola = malloc(sizeof(procesoConsola));
+  nuevoProcesoConsola->pid = pcb->pid;
+  nuevoProcesoConsola->socketConsola = socketCliente;
+  list_add(recursosKernel->conexiones->procesosConsola, nuevoProcesoConsola);
+}
+
 void montarServidor() {
   t_list* instrucciones;
   PCB* pcb;
@@ -59,8 +66,8 @@ void montarServidor() {
     instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
+    agregarConsolaALista(pcb, socketCliente);
     agregarANew(pcb);
-    close(socketCliente);
   }
 }
 

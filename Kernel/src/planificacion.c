@@ -5,6 +5,7 @@
 #include <serializacion/buffer.h>
 #include <serializacion/paquete.h>
 #include <conexiones.h>
+#include <utils.h>
 
 t_queue* colaNew;
 t_list *colaReady;

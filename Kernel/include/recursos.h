@@ -21,10 +21,16 @@
   } t_configuracion;
 
   typedef struct {
+    int socketConsola;
+    int pid;
+  } procesoConsola;
+
+  typedef struct {
     int socketKernel;
     int socketFileSystem;
     int socketMemoria;
     int socketCpu;
+    t_list* procesosConsola;
   } t_conexiones;
 
   typedef struct {

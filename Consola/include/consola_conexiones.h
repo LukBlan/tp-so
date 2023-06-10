@@ -3,6 +3,7 @@
 
   void cargarConexionConKernel();
   void enviarInstrucciones(t_list* instrucciones);
+  void esperarResultado();
 
 #endif
 
