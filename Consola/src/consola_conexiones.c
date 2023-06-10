@@ -38,5 +38,6 @@ void enviarInstrucciones(t_list* instrucciones) {
   log_info(recursosConsola->logger, "Enviando lista de instrucciones al servidor Kernel.");
 	enviar_paquete(paquete, recursosConsola->conexiones->socketKernel);
 	liberarPaquete(paquete);
+	free(posicion);
 }
 
