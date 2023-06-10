@@ -80,6 +80,7 @@ void setear_valor_registro(char nombre_registro,char valor){
 	struct Registro registro_encontrado = buscar_registro(nombre_registro);
 	registro_encontrado.valor = valor;
 }
+
 void ejecutar_lista_instrucciones_del_pcb(PCB *pcb, int socketKernel)
 {
   Logger *logger = iniciarLoggerCPU();
@@ -92,12 +93,7 @@ void ejecutar_lista_instrucciones_del_pcb(PCB *pcb, int socketKernel)
     Instruccion instruccion = obtener_tipo_instruccion(lineaInstruccion->identificador);
     pcb->contadorPrograma++;
 
-    switch (instruccion)
-    {
-    case YIELD:
-      log_info(logger, "Ejecutando YIELD");
-      ejecutar_yield();
-      break;
+    switch (instruccion) {
     case IO:
       log_info(logger, "Ejecutando IO");
       ejecutar_io(pcb, lineaInstruccion->parametros[0], socketKernel);
@@ -116,10 +112,6 @@ void ejecutar_lista_instrucciones_del_pcb(PCB *pcb, int socketKernel)
 	log_info(logger, "Ejecutando WAIT : %d  %d", lineaInstruccion->parametros[0],lineaInstruccion->parametros[1]);
       ejecutar_wait(pcb, recurso);
       break;
-    case EXIT:
-      log_info(logger, "Ejecutando EXIT");
-      ejecutar_exit(pcb, socketKernel);
-      break;
     default:
       log_error(logger, "Instrucción desconocida: %s", lineaInstruccion->identificador);
       return;
@@ -133,51 +125,12 @@ void ejecutar_lista_instrucciones_del_pcb(PCB *pcb, int socketKernel)
   }
 }
 
-*/
 
-TipoInstruccion obtener_tipo_instruccion(char *instruccion)
-{
-  if (!strcmp(instruccion, "SET"))
-    return SET;
-  else if (!strcmp( instruccion, "YIELD"))
-    return YIELD;
-	else if (!strcmp( instruccion, "WAIT"))
-    return WAIT;
-	else if (!strcmp( instruccion, "SIGNAL"))
-    return SIGNAL;
-	else if (!strcmp( instruccion, "I/O"))
-    return IO;
-  else if (!strcmp(instruccion, "EXIT"))
-    return EXIT;
-  else
-    return DESCONOCIDA;
-}
 
-/*
-void ejecutar_EXIT(Pcb *pcb, int socketKernel)
-{
-  //pcb->escenario->estado = TERMINADO;
-
-  Paquete *paquete = crear_paquete(PCB);
-
-  //serializar_pcb(paquete, pcb);
-
-  enviar_paquete(paquete, socketKernel);
-  eliminar_paquete(paquete);
-
-}
-*/
-
-/*void ejecutar_set(char nom_registro,char valor) {
+void ejecutar_set(char nom_registro,char valor) {
 	setear_valor_registro(nom_registro,valor);
 }
-*/
-/*void ejecutar_yield() {
-  t_paquete* paquete = crear_paquete(YIELD);
-  //serializar_pcb(paquete, pcb);
-  enviar_paquete(paquete, socketKernel);
-  eliminar_paquete(paquete);
-}
+
 void ejecutar_signal() {
 	t_paquete* paquete = crear_paquete(SIGNAL);
 	agregar_a_paquete (paquete,&recurso,sizeof(char));
@@ -186,6 +139,7 @@ void ejecutar_signal() {
   log_info(logger, "Se recibio el mensaje de KERNEL %d", valor);
   eliminar_paquete(paquete);
 }
+
 void ejecutar_wait() {
   t_paquete* paquete = crear_paquete(WAIT);
   agregar_a_paquete (paquete,&recurso,sizeof(char));
@@ -194,6 +148,7 @@ void ejecutar_wait() {
   log_info(logger, "Se recibio el mensaje de KERNEL %d", valor);
   eliminar_paquete(paquete);
 }
+
 void ejecutar_io(PCB *pcb, int tiempoBloqueadoIO, int socketKernel)
 {
   pcb->tiempoBloqueadoIO = tiempoBloqueadoIO;

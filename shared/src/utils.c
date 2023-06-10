@@ -10,7 +10,6 @@ void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenos
 
 void mostrarInstrucciones(t_list* listaInstrucciones) {
   int numeroInstrucciones = list_size(listaInstrucciones);
-
   for (int i = 0; i < numeroInstrucciones; i++) {
     t_instruccion* instruccion = list_get(listaInstrucciones, i);
     int cantidadStrings = instruccion->cantidadParametros + 1;
@@ -23,6 +22,10 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
 }
 
 void mostrarContexto(contextoEjecucion* contexto) {
+  puts("----------------------------------------");
+  puts("         Contexto Ejecucion             ");
+  puts("----------------------------------------");
   printf("programCounter = %d\n", contexto->programCounter);
   mostrarInstrucciones(contexto->instrucciones);
+  puts("----------------------------------------");
 }

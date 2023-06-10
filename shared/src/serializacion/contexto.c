@@ -12,7 +12,6 @@ int tamanioBytesContexto(contextoEjecucion* contexto) {
 }
 
 void serializarProgramCounter(t_buffer* buffer, int programCounter, int* posicion) {
-  printf("Program counter = %d\n", programCounter);
   memcpy(buffer->stream + *posicion, &(programCounter), sizeof(int));
   *posicion += sizeof(int);
 }

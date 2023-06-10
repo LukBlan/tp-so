@@ -1,4 +1,5 @@
 #include <serializacion/instrucciones.h>
+#include <serializacion/buffer.h>
 #include <commons/string.h>
 #include <conexiones.h>
 #include <estructuras.h>

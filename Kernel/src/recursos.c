@@ -4,6 +4,35 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+t_queue* colaNew;
+t_list *colaReady;
+PCB* procesoEjecutandose;
+t_queue* colaBlock;
+t_queue* colaEnd;
+
+pthread_mutex_t mutexNumeroProceso;
+pthread_mutex_t mutexProcesoListo;
+
+pthread_mutex_t mutexColaNew;
+pthread_mutex_t mutexColaReady;
+pthread_mutex_t mutexColaBlock;
+pthread_mutex_t mutexColaExec;
+pthread_mutex_t mutexColaEnd;
+
+pthread_mutex_t mutex_cola;
+pthread_mutex_t mutexcantidadProcesosMemoria;
+
+sem_t semProcesoNew;
+sem_t semProcesoReady;
+sem_t semProcesoExec;
+
+sem_t blockCounter;
+
+sem_t largoPlazo;
+
+sem_t semaforoCantidadProcesosExec;
+sem_t comunicacionMemoria;
+
 t_recursos* recursosKernel;
 
 void crearRecursos() {
@@ -87,4 +116,26 @@ void liberarRecursos() {
 
   free(recursosKernel->conexiones);
   free(recursosKernel);
+}
+
+void iniciarColas() {
+  colaNew = queue_create();
+  colaReady = list_create();
+  colaBlock = queue_create();
+  colaEnd = queue_create();
+}
+
+void iniciarSemaforos() {
+  pthread_mutex_init(&mutexNumeroProceso, NULL);
+  pthread_mutex_init(&mutexColaNew, NULL);
+  pthread_mutex_init(&mutexColaReady, NULL);
+  pthread_mutex_init(&mutexColaExec, NULL);
+  pthread_mutex_init(&mutexColaBlock, NULL);
+  pthread_mutex_init(&mutexColaEnd, NULL);
+
+  sem_init(&semProcesoNew, 0, 0);
+  sem_init(&semProcesoReady, 0, 0);
+  sem_init(&blockCounter, 0, 0);
+  sem_init(&semaforoCantidadProcesosExec, 0, 1);
+  sem_init(&largoPlazo, 0, 0);
 }

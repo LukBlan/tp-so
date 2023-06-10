@@ -13,7 +13,6 @@ void ejecutarContexto(contextoEjecucion* contexto) {
       contexto->programCounter++;
       codigoPaquete = ejecutarInstruccion(contexto, instruccion, continuarEjecutando);
   }
-  puts("Estoy enviando al kernel instruccion");
   enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoPaquete);
   //liberarContexto(contexto);
 }
@@ -37,13 +36,14 @@ op_code ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instrucc
 op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando) {
   op_code codigoOperacion;
   char* identificador = instruccion->strings[0];
+  t_log* logger = recursosCpu->logger;
 
   if (strcmp("YIELD", identificador) == 0) {
-    puts("Estoy ejecutando YIELD");
+    log_info(logger, "Ejecutando YIELD");
     *continuarEjecutando = 0;
     codigoOperacion = YIELD;
   } else if (strcmp("EXIT", identificador) == 0) {
-    puts("Estoy ejecutando EXIT");
+    log_info(logger, "Ejecutando EXIT");
     *continuarEjecutando = 0;
     codigoOperacion = EXIT;
   }
