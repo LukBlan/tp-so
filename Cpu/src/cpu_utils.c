@@ -160,3 +160,5 @@ void ejecutar_io(PCB *pcb, int tiempoBloqueadoIO, int socketKernel)
   eliminar_paquete(paquete);
 }
 */
+
+

@@ -16,6 +16,16 @@
     Valor valor;
   } Registro;
 
+  typedef struct {
+    char ax[4];
+    char ax[4];
+  } registros;
+
+  typedef struct {
+    char nombre[20];
+     char[8] y char[16]
+  } Registro;
+
   typedef enum {
     NEW,
     READY,

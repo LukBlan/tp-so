@@ -40,6 +40,7 @@ contextoEjecucion* deserializarContexto(t_buffer* buffer) {
 
   contexto->instrucciones = deserializarInstrucciones(buffer, posicion);
   contexto->programCounter = deserializarProgramCounter(buffer, posicion);
+  free(posicion);
   return contexto;
 }
 

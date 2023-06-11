@@ -66,6 +66,14 @@ int sePuedeAgregarMasProcesos() {
 }
 
 void cambiarEstado(estadoProceso estado, PCB* proceso) {
+  //TODO
+  /*
+  log_info(
+      recursosKernel->logger,
+      "Cambio de Estado: PID: <PID> - Estado Anterior: %s - Estado Actual: %s",
+
+  );
+  */
   proceso->estado = estado;
 }
 
@@ -144,9 +152,9 @@ void ejecutar(PCB* proceso) {
        agregarAListo(procesoExpulsado);
        break;
      case EXIT:
-       puts("Kernel: Me llego un Exit");
        PCB* procesoTerminado = procesoEjecutandose;
        sacarDeEjecutando();
+       log_info(recursosKernel->logger,  "Finaliza el proceso %d, Motivo: SUCCESS", proceso->pid);
        avisarConsola(procesoTerminado);
        //liberarPcb(procesoTerminado);
        break;
