@@ -26,6 +26,7 @@
     int programCounter;
     //Registro registros;
     //struct tablaSegmentos;
+    //int tiempoBloqueadoIO
     t_list* archivosAbiertos;
   } contextoEjecucion;
 

@@ -8,6 +8,7 @@ int main(int argc, char* argv[]) {
   crearRecursosMemoria();
   cargarLogger("memoria.log");
   cargarConfiguracion(argv[1]);
+  //iniciarEstructurasMemoria();
   cargarConexiones();
 
   montarServidor();
