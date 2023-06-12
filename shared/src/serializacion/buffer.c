@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 t_buffer* generarBuffer(int tamanio) {
-  t_buffer* buffer = malloc(t_buffer);
+  t_buffer* buffer = malloc(sizeof(t_buffer));
   buffer->stream = malloc(tamanio);;
   buffer->size = tamanio;
   return buffer;

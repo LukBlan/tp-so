@@ -81,7 +81,7 @@ t_buffer* obtenerBuffer(int socketCliente) {
   recv(socketCliente, &tamanioBuffer, sizeof(int), 0);
   void* stream = malloc(tamanioBuffer);
   recv(socketCliente, stream, tamanioBuffer, 0);
-  t_buffer* buffer = malloc(tamanioBuffer + sizeof(int));
+  t_buffer* buffer = malloc(sizeof(t_buffer));
   buffer->stream = stream;
   buffer->size = tamanioBuffer;
   return buffer;

@@ -5,26 +5,9 @@
   #include <commons/collections/list.h>
   #include <stdio.h>
 
-  typedef union {
-    uint32_t cuatro_bytes;
-    uint64_t ocho_bytes;
-    uint32_t dieciseis_bytes [4];
-  } Valor;
-
-  typedef struct {
-    char nombre[20];
-    Valor valor;
-  } Registro;
-
   typedef struct {
     char ax[4];
-    char ax[4];
-  } registros;
-
-  typedef struct {
-    char nombre[20];
-     char[8] y char[16]
-  } Registro;
+  } registro;
 
   typedef enum {
     NEW,
@@ -92,5 +75,6 @@
   } t_paquete;
 
   void liberarInstrucciones(t_list* instrucciones);
+  void liberarContexto(contextoEjecucion* contexto);
 
 #endif
