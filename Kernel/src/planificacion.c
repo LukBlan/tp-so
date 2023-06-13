@@ -98,7 +98,7 @@ void sacarDeEjecutando(){
 }
 
 void actualizarContexto(contextoEjecucion* nuevoContexto){
-  liberarCotexto(procesoEjecutandose->contexto);
+  liberarContexto(procesoEjecutandose->contexto);
   procesoEjecutandose->contexto = nuevoContexto;
 }
 
@@ -277,16 +277,16 @@ void *io()
         agregarAListo(proceso);
     }
 }
-
+*/
 int findElementPosition(char array[], int size, char* target) {
     for (int i = 0; i < size; i++) {
-        if (array[i] == target) {
+        if (array[i] == *target) {
             return i;
         }
     }
     return -1;  // Return -1 if the element is not found
 }
-
+/*
 bool kernelTieneRecurso(char* recurso){
   int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
   int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
@@ -311,8 +311,39 @@ void disminuirRecurso(char* recurso){
   int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
   --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
+*/
 
+float estimacion(PCB* proceso){
+  t_configuracion* config = recursosKernel->configuracion;
+  float alfa = config->HRRN_ALFA;
+  float estimacionAnterior = proceso->estimadoRafaga;
+  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
+  float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
+  return resultado;
+}
+int tiempoAhora(){
+  return time(NULL);
+}
 
+int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
+{
+    return tiempoAhora() - proceso->llegadaReady;
+}
+float calcularResponseRatio (PCB* proceso){
+  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
+}
+bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2){
+  return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
+}
+
+PCB* sacarProcesoMayorHRRN(){
+  PCB* procesoAEjecutar;
+  pthread_mutex_lock(&mutexColaReady);
+  list_sort(colaReady, &ordenarSegunCalculoHRRN);
+  procesoAEjecutar = list_remove (colaReady,0);
+  pthread_mutex_unlock(&mutexColaReady);
+  return procesoAEjecutar;
+}
 void planificador_corto_plazo_HRRN() {
     t_log* logger = recursosKernel->logger;
     log_info(logger, "INICIO PLANIFICACION FIFO");
@@ -328,38 +359,7 @@ void planificador_corto_plazo_HRRN() {
     }
 }
 
-PCB* sacarProcesoMayorHRRN(){
-  PCB* procesoAEjecutar;
-  pthread_mutex_lock(&mutexColaReady);
-  list_sort(colaReady, &ordenarSegunCalculoHRRN);
-  procesoAEjecutar = list_remove (colaReady,0);
-  pthread_mutex_unlock(&mutexColaReady);
-  return procesoAEjecutar;
-}
-bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2){
-  return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
-}
-float calcularResponseRatio (PCB* proceso){
-  return ((tiempoAhora()-proceso->contexto->llegadaReady)+estimacion(*proceso))/estimacion(*proceso);
-}
-float estimacion(PCB* proceso){
-  t_configuracion* config = recursosKernel->configuracion;
-  float alfa = config->HRRN_ALFA;
-  float estimacionAnterior = proceso->contexto->estimadoRafaga;
-  int rafagaPrevia = proceso->contexto->rafagaRealPrevia * 1000 ;
-  float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
-  return resultado;
-}
-int tiempoAhora(){
-  return time(NULL);
-}
-
-
-int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
-{
-    return tiempoAhora() - proceso->contexto->llegadaReady;
-}
-
+/*
 void agregar_proceso_bloqueado(PCB *procesoBloqueado)
 {
     procesoBloqueado->contexto->estimadoRafaga = estimacion(procesoBloqueado);

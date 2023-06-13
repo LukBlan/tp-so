@@ -24,6 +24,7 @@ op_code ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instrucc
       codigoPaquete = ejecutarCeroParametros(contexto, instruccion, continuarEjecutando);
       break;
     case 1:
+    	codigoPaquete = ejecutarUnParametro(contexto, instruccion, continuarEjecutando);
       break;
     case 2:
       break;
@@ -49,7 +50,7 @@ op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instr
   }
   return codigoOperacion;
 }
-/*
+
 op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando){
   op_code codigoOperacion;
   char* identificador = instruccion->strings[0];
@@ -57,18 +58,18 @@ op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instrucc
 
   if (strcmp("I/O", identificador) == 0) {
       log_info(logger, "Ejecutando I/O");
-      int tiempoBloqueado = instruccion->strings[1];
-      contexto->tiempoBloqueadoIO = tiempoBloqueado ;
+      int tiempoBloqueado = atoi(instruccion->strings[1]);
+      //contexto->tiempoBloqueadoIO = tiempoBloqueado ;
       codigoOperacion = IO;
       enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoOperacion);
     } else if (strcmp("WAIT", identificador) == 0){
       char* recurso = instruccion->strings[1];
-      log_info(logger, "Ejecutando WAIT: %d", recurso);
+      log_info(logger, "Ejecutando WAIT: %c", *recurso);
       *continuarEjecutando = 0;
       codigoOperacion = WAIT;
     } else if (strcmp("SIGNAL", identificador) == 0){
       char* recurso = instruccion->strings[1];
-      log_info(logger, "Ejecutando SIGNAL: %d", recurso);
+      log_info(logger, "Ejecutando SIGNAL: %c", *recurso);
       *continuarEjecutando = 0;
       codigoOperacion = SIGNAL;
     }

@@ -62,7 +62,7 @@
 
   typedef struct {
     char* strings[4];
-	  int cantidadParametros;
+	int cantidadParametros;
   } t_instruccion;
 
   typedef struct {
