@@ -113,7 +113,6 @@ void liberarRecursos() {
     log_destroy(recursosKernel->logger);
   }
 
-
   free(recursosKernel->conexiones);
   free(recursosKernel);
 }

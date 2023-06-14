@@ -2,6 +2,7 @@
 #define CPU_RECURSOS_H
 
   #include <commons/log.h>
+  #include <estructuras.h>
 
   typedef struct {
     int RETARDO_INSTRUCCION;
@@ -22,6 +23,7 @@
     t_configuracion* configuracion;
     t_conexiones* conexiones;
     t_log* logger;
+    t_registros registros;
   } t_recursos;
 
   extern t_recursos* recursosCpu;
