@@ -15,7 +15,7 @@ void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
   sem_post(&largoPlazo);
   cambiarEstado(NEW, pcb);
-  log_info(recursosKernel->logger, "Proceso [%d] se movio a Nuevo \n", pcb->pid);
+  log_info(recursosKernel->logger, "Proceso [%d] se movio a Nuevo", pcb->pid);
 }
 
 void crearSocketKernel() {

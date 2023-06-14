@@ -56,7 +56,7 @@ void planificador_largo_plazo() {
       cambiarEstado(READY, procesoSaliente);
       agregarAListo(procesoSaliente);
     }
-    log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d\n", list_size(colaReady));
+    log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d", list_size(colaReady));
   }
 }
 
@@ -65,16 +65,41 @@ int sePuedeAgregarMasProcesos() {
   return (config->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
 }
 
+char* estadoAsString(estadoProceso estado) {
+  char* estadoAsString;
+  switch(estado) {
+    case NEW:
+      estadoAsString = "New";
+      break;
+    case READY:
+      estadoAsString = "Ready";
+      break;
+    case EXEC:
+      estadoAsString = "Execute";
+      break;
+    case BLOCK:
+      estadoAsString = "Block";
+      break;
+    case EXITSTATE:
+      estadoAsString = "Exit";
+      break;
+    default:
+      estadoAsString = "Sin Estado";
+      break;
+  }
+  return estadoAsString;
+}
+
 void cambiarEstado(estadoProceso estado, PCB* proceso) {
-  //TODO
-  /*
+  char* estadoAnterior = estadoAsString(proceso->estado);
+  proceso->estado = estado;
+  char* estadoNuevo = estadoAsString(proceso->estado);
+
   log_info(
       recursosKernel->logger,
-      "Cambio de Estado: PID: <PID> - Estado Anterior: %s - Estado Actual: %s",
-
+      "Cambio de Estado: PID: [%d] - Estado Anterior: %s - Estado Actual: %s",
+      proceso->pid, estadoAnterior, estadoNuevo
   );
-  */
-  proceso->estado = estado;
 }
 
 void agregarAListo(PCB* proceso) {
@@ -82,16 +107,17 @@ void agregarAListo(PCB* proceso) {
 
   pthread_mutex_lock(&mutexColaReady);
   list_add(colaReady, proceso);
-  log_info(logger, "Proceso [%d] se movio a listo \n", proceso->pid);
+  log_info(logger, "Proceso: [%d] se movio a listo", proceso->pid);
   pthread_mutex_unlock(&mutexColaReady);
   sem_post(&semProcesoReady);
 }
 
-void sacarDeEjecutando(){
+void sacarDeEjecutando(estadoProceso estado) {
   t_log* logger = recursosKernel->logger;
 
   pthread_mutex_lock(&mutexColaExec);
   log_info(logger, "Proceso: [%d] salío de EJECUTANDO.", procesoEjecutandose->pid);
+  cambiarEstado(estado, procesoEjecutandose);
   procesoEjecutandose = NULL;
   pthread_mutex_unlock(&mutexColaExec);
   sem_post(&semaforoCantidadProcesosExec);
@@ -136,7 +162,7 @@ void avisarConsola(PCB* procesoFinalizado) {
 
 void ejecutar(PCB* proceso) {
   int socketCpu = recursosKernel->conexiones->socketCpu;
-  log_info(recursosKernel->logger, "Envio proceso con PID: [%d] por CPU-Dispatch.", proceso->pid);
+  log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
@@ -146,15 +172,14 @@ void ejecutar(PCB* proceso) {
 
   switch (codigoOperacion) {
      case YIELD:
-       puts("Kernel: Me llego un YIELD");
        PCB* procesoExpulsado = procesoEjecutandose;
-       sacarDeEjecutando();
+       sacarDeEjecutando(READY);
        agregarAListo(procesoExpulsado);
        break;
      case EXIT:
        PCB* procesoTerminado = procesoEjecutandose;
-       sacarDeEjecutando();
-       log_info(recursosKernel->logger,  "Finaliza el proceso %d, Motivo: SUCCESS", proceso->pid);
+       sacarDeEjecutando(EXITSTATE);
+       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
        avisarConsola(procesoTerminado);
        //liberarPcb(procesoTerminado);
        break;

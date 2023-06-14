@@ -13,7 +13,8 @@
     NEW,
     READY,
     EXEC,
-    BLOCK
+    BLOCK,
+    EXITSTATE
   } estadoProceso;
 
   typedef struct {
