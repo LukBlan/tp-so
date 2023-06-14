@@ -17,3 +17,8 @@ void liberarInstrucciones(t_list* instrucciones) {
   }
   list_destroy(instrucciones);
 }
+
+void liberarContexto(contextoEjecucion* contexto) {
+  liberarInstrucciones(contexto->instrucciones);
+  free(contexto);
+}

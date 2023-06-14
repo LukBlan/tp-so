@@ -1,5 +1,6 @@
 #include <ejecutar.h>
 #include <conexiones.h>
+#include <estructuras.h>
 #include <recursos.h>
 
 void ejecutarContexto(contextoEjecucion* contexto) {
@@ -14,7 +15,7 @@ void ejecutarContexto(contextoEjecucion* contexto) {
       codigoPaquete = ejecutarInstruccion(contexto, instruccion, continuarEjecutando);
   }
   enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoPaquete);
-  //liberarContexto(contexto);
+  liberarContexto(contexto);
 }
 
 op_code ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando) {
