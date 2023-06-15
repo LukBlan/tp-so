@@ -161,6 +161,7 @@ void avisarConsola(PCB* procesoFinalizado) {
 }
 
 void ejecutar(PCB* proceso) {
+  procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
@@ -183,6 +184,7 @@ void ejecutar(PCB* proceso) {
        avisarConsola(procesoTerminado);
        //liberarPcb(procesoTerminado);
        break;
+     case WAIT:
      default:
        puts("Entre por default");
        break;
@@ -221,6 +223,7 @@ void ejecutar(PCB* proceso) {
         }
         break;
     case WAIT:
+
         char* recurso = obtenerRecursoDePaquete(socketCPU);
         if(kernelTieneRecurso(recurso) && hayRecursoDisponible(recurso)){
           disminuirRecurso(recurso);

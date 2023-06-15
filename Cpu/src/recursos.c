@@ -14,7 +14,6 @@ void crearRecursosCpu() {
   recursosCpu->logger = NULL;
   recursosCpu->conexiones->socketCpu = -1;
   recursosCpu->conexiones->socketMemoria = -1;
-
 }
 
 void cargarConfiguracion(char* pathConfiguracin) {

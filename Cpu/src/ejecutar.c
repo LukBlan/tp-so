@@ -12,8 +12,11 @@ void ejecutarContexto(contextoEjecucion* contexto) {
   while(*continuarEjecutando) {
       t_instruccion* instruccion = list_get(listaInstrucciones, contexto->programCounter);
       contexto->programCounter++;
+      recursosCpu->registros = contexto->registros;
       codigoPaquete = ejecutarInstruccion(contexto, instruccion, continuarEjecutando);
+      contexto->registros = recursosCpu->registros;
   }
+
   enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoPaquete);
   liberarContexto(contexto);
 }
@@ -28,6 +31,7 @@ op_code ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instrucc
     	codigoPaquete = ejecutarUnParametro(contexto, instruccion, continuarEjecutando);
       break;
     case 2:
+      codigoPaquete = ejecutarDosParametros(contexto, instruccion, continuarEjecutando);
       break;
     case 3:
       break;
@@ -62,7 +66,6 @@ op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instrucc
       int tiempoBloqueado = atoi(instruccion->strings[1]);
       //contexto->tiempoBloqueadoIO = tiempoBloqueado ;
       codigoOperacion = IO;
-      enviarContexto(contexto, recursosCpu->conexiones->socketKernel, codigoOperacion);
     } else if (strcmp("WAIT", identificador) == 0){
       char* recurso = instruccion->strings[1];
       log_info(logger, "Ejecutando WAIT: %c", *recurso);
@@ -76,4 +79,7 @@ op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instrucc
     }
     
   return codigoOperacion;  
+}
+
+op_code ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion, int* continuarEjecutando) {
 }
