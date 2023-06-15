@@ -89,7 +89,7 @@ PCB* crearPcb(t_list* listaInstrucciones) {
   return pcb;
 }
 
-//TODO agregar tabla de segmentos
+// TODO agregar tabla de segmentos
 void cargarConexiones() {
   conectar_con_memoria();
   conectar_con_cpu();

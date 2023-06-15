@@ -21,11 +21,16 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
   }
 }
 
+void mosrarRegistros(t_registros registros) {
+
+}
+
 void mostrarContexto(contextoEjecucion* contexto) {
   puts("----------------------------------------");
   puts("         Contexto Ejecucion             ");
   puts("----------------------------------------");
   printf("programCounter = %d\n", contexto->programCounter);
   mostrarInstrucciones(contexto->instrucciones);
+  mosrarRegistros(contexto->registros);
   puts("----------------------------------------");
 }
