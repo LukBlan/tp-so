@@ -6,8 +6,8 @@
 int tamanioBytesContexto(contextoEjecucion* contexto) {
   int tamanioTotal = 0;
   tamanioTotal += tamanioBytesInstrucciones(contexto->instrucciones);
-  tamanioTotal += sizeof(int) * 3;
-  tamanioTotal += sizeof(float);
+  tamanioTotal += sizeof(int) * 2;
+  tamanioTotal += sizeof(t_registros);
   return tamanioTotal;
 }
 

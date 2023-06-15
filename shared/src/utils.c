@@ -21,8 +21,12 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
   }
 }
 
-void mosrarRegistros(t_registros registros) {
-
+void mostrarRegistros(t_registros registros) {
+  puts("----------- Registros ------------------");
+  printf("Ax %s ", registros.AX);
+  printf("Bx %s ", registros.BX);
+  printf("Cx %s ", registros.CX);
+  printf("Dx %s\n", registros.DX);
 }
 
 void mostrarContexto(contextoEjecucion* contexto) {
@@ -31,6 +35,6 @@ void mostrarContexto(contextoEjecucion* contexto) {
   puts("----------------------------------------");
   printf("programCounter = %d\n", contexto->programCounter);
   mostrarInstrucciones(contexto->instrucciones);
-  mosrarRegistros(contexto->registros);
+  mostrarRegistros(contexto->registros);
   puts("----------------------------------------");
 }
