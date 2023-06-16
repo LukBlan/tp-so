@@ -82,6 +82,12 @@ op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instrucc
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
     *continuarEjecutando = 0;
     codigoOperacion = DELETE_SEGMENT;
+  } else if (strcmp("F_OPEN", identificador) == 0) {
+    *continuarEjecutando = 0;
+    codigoOperacion = F_OPEN;
+  } else if (strcmp("F_CLOSE", identificador) == 0) {
+    *continuarEjecutando = 0;
+    codigoOperacion = F_CLOSE;
   }
     
   return codigoOperacion;  
