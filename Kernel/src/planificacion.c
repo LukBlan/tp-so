@@ -171,6 +171,7 @@ void ejecutar(PCB* proceso) {
   actualizarContexto(nuevoContexto);
   puts("Recibi contexto de cpu");
   PCB* procesoDevuelto = procesoEjecutandose;
+
   switch (codigoOperacion) {
      case YIELD:
        sacarDeEjecutando(READY);

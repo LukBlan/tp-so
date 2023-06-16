@@ -67,6 +67,7 @@ op_code ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instrucc
     int tiempoBloqueado = atoi(primerParametro);
     contexto->tiempoBloqueadoIO = tiempoBloqueado;
     codigoOperacion = IO;
+    *continuarEjecutando = 0;
   } else if (strcmp("WAIT", identificador) == 0){
     char* recurso = primerParametro;
     *continuarEjecutando = 0;
@@ -117,8 +118,8 @@ op_code ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instr
   char* tercerParametro = instruccion->strings[3];
 
   log_info(logger, "Ejecutando %s %s %s %s", identificador, primerParametro, segundoParametro, tercerParametro);
-  if (strcmp("F_READ ", identificador) == 0) {
-    codigoOperacion = SET;
+  if (strcmp("F_READ", identificador) == 0) {
+    codigoOperacion = F_READ;
     *continuarEjecutando = 0;
   } else if (strcmp("F_WRITE", identificador) == 0) {
     *continuarEjecutando = 0;
