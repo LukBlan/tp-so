@@ -170,23 +170,28 @@ void ejecutar(PCB* proceso) {
   mostrarContexto(nuevoContexto);
   actualizarContexto(nuevoContexto);
   puts("Recibi contexto de cpu");
-
+  PCB* procesoDevuelto = procesoEjecutandose;
   switch (codigoOperacion) {
      case YIELD:
-       PCB* procesoExpulsado = procesoEjecutandose;
        sacarDeEjecutando(READY);
-       agregarAListo(procesoExpulsado);
+       agregarAListo(procesoDevuelto);
        break;
      case EXIT:
-       PCB* procesoTerminado = procesoEjecutandose;
+       PCB* procesoTerminado = procesoDevuelto;
        sacarDeEjecutando(EXITSTATE);
        log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
        avisarConsola(procesoTerminado);
        //liberarPcb(procesoTerminado);
        break;
      case WAIT:
+       puts("Entre por wait");
+       sacarDeEjecutando(READY);
+       agregarAListo(procesoDevuelto);
+       break;
      default:
        puts("Entre por default");
+       sacarDeEjecutando(READY);
+       agregarAListo(procesoDevuelto);
        break;
   }
        //sacarDeEjecutando(procesoRecibido);

@@ -69,7 +69,15 @@
     WAIT,
     SIGNAL,
     IO,
-    EXIT
+    EXIT,
+    F_OPEN,
+    F_CLOSE,
+    F_SEEK,
+    F_READ,
+    F_WRITE,
+    F_TRUNCATE,
+    CREATE_SEGMENT,
+    DELETE_SEGMENT
   } TipoInstruccion;
 
   typedef struct {
