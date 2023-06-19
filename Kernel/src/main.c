@@ -14,7 +14,9 @@ int main(int argc, char* argv[]) {
   iniciarColas();
   iniciarSemaforos();
   comenzarPlanificadores();
-
+ // t_configuracion* t_config = recursosKernel->configuracion;
+  int cantRecursos = 3;//list_size(t_config->INSTANCIAS_RECURSOS);
+  printf("la cantidad de recursos es %d\n",cantRecursos);
   montarServidor();
 
   liberarRecursos();

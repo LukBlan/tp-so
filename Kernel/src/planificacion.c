@@ -98,7 +98,7 @@ void sacarDeEjecutando(){
 }
 
 void actualizarContexto(contextoEjecucion* nuevoContexto){
-  liberarContexto(procesoEjecutandose->contexto);
+  //liberarContexto(procesoEjecutandose->contexto);
   procesoEjecutandose->contexto = nuevoContexto;
 }
 
