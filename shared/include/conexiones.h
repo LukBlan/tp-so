@@ -17,6 +17,8 @@
 	void enviar_paquete(t_paquete* paquete, int socketCliente);
 	void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOperacion);
 	contextoEjecucion* recibirContexto(int socketCliente);
+	void enviarEntero(int valorAEnviar, int socket);
+	int recibirEntero(int socket);
 
 #endif
 

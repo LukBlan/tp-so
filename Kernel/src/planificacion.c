@@ -177,6 +177,12 @@ void ejecutar(PCB* proceso) {
        sacarDeEjecutando(READY);
        agregarAListo(procesoDevuelto);
        break;
+     case IO:
+       int tiempoBloqueado = recibirEntero(socketCpu);
+       printf("Tiempo Bloequdo = %d\n", tiempoBloqueado);
+       sacarDeEjecutando(READY);
+       agregarAListo(procesoDevuelto);
+       break;
      case EXIT:
        PCB* procesoTerminado = procesoDevuelto;
        sacarDeEjecutando(EXITSTATE);
@@ -210,10 +216,6 @@ void ejecutar(PCB* proceso) {
     Pcb *procesoRecibido;
     procesoRecibido = deserializar_pcb(socketCPU);
     switch (codOperacion) {
-    case BLOQUEADOIO:
-    sacarDeEjecutando(procesoRecibido);
-        agregar_proceso_bloqueado(procesoRecibido);
-        break;
     case YIELD:
         sacarDeEjecutando(procesoRecibido);
         agregarAListo(procesoRecibido)

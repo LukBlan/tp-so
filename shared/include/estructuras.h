@@ -59,7 +59,8 @@
     SIGNALCODE,
     WAITCODE,
     EXITCODE,
-    BLOQUEADOIO
+    BLOQUEADOIO,
+    ENTERO
   } op_code;
 
   typedef enum {

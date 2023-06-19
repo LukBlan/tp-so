@@ -119,3 +119,20 @@ contextoEjecucion* recibirContexto(int socketCliente) {
   contextoEjecucion* contexto = deserializarContexto(buffer);
   return contexto;
 }
+
+void enviarEntero(int valorAEnviar, int socket) {
+  t_buffer* buffer = generarBuffer(sizeof(int));
+  memcpy(buffer->stream, &(valorAEnviar), sizeof(int));
+  t_paquete* paquete = crearPaquete(buffer, ENTERO);
+  enviar_paquete(paquete, socket);
+  liberarPaquete(paquete);
+}
+
+int recibirEntero(int socket) {
+  obtenerCodigoOperacion(socket);
+  t_buffer* buffer = obtenerBuffer(socket);
+  int enteroRecibido;
+  memcpy(&(enteroRecibido), buffer->stream, sizeof(int));
+  liberarBuffer(buffer);
+  return enteroRecibido;
+}
