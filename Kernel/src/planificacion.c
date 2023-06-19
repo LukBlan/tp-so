@@ -167,39 +167,43 @@ void ejecutar(PCB* proceso) {
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
-  mostrarContexto(nuevoContexto);
   actualizarContexto(nuevoContexto);
-  puts("Recibi contexto de cpu");
   PCB* procesoDevuelto = procesoEjecutandose;
 
   switch (codigoOperacion) {
-     case YIELD:
-       sacarDeEjecutando(READY);
-       agregarAListo(procesoDevuelto);
-       break;
-     case IO:
-       int tiempoBloqueado = recibirEntero(socketCpu);
-       printf("Tiempo Bloequdo = %d\n", tiempoBloqueado);
-       sacarDeEjecutando(READY);
-       agregarAListo(procesoDevuelto);
-       break;
-     case EXIT:
-       PCB* procesoTerminado = procesoDevuelto;
-       sacarDeEjecutando(EXITSTATE);
-       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
-       avisarConsola(procesoTerminado);
-       //liberarPcb(procesoTerminado);
-       break;
-     case WAIT:
-       puts("Entre por wait");
-       sacarDeEjecutando(READY);
-       agregarAListo(procesoDevuelto);
-       break;
-     default:
-       puts("Entre por default");
-       sacarDeEjecutando(READY);
-       agregarAListo(procesoDevuelto);
-       break;
+    case YIELD:
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case IO:
+      int tiempoBloqueado = recibirEntero(socketCpu);
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      //sacarDeEjecutando(BLOCK);
+      //agregar_proceso_bloqueado(procesoDevuelto);
+      break;
+    case EXIT:
+      PCB* procesoTerminado = procesoDevuelto;
+      sacarDeEjecutando(EXITSTATE);
+      log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
+      avisarConsola(procesoTerminado);
+      //liberarPcb(procesoTerminado);
+      break;
+    case WAIT:
+      char* recursoWait = recibirString(socketCpu);
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case SIGNAL:
+      char* recursoSignal = recibirString(socketCpu);
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    default:
+      puts("Entre por default");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
   }
        //sacarDeEjecutando(procesoRecibido);
        //agregarFinalizado(procesoRecibido)
@@ -323,6 +327,24 @@ int findElementPosition(char array[], int size, char* target) {
     return -1;  // Return -1 if the element is not found
 }
 /*
+void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
+    procesoBloqueado->contexto->estimadoRafaga = estimacion(procesoBloqueado);
+    procesoBloqueado->contexto->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+    pthread_mutex_lock(&mutexColaBlock);
+
+    queue_push(colaBlock, procesoBloqueado);
+    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+
+    pthread_mutex_unlock(&mutexColaBlock);
+
+    // Despierto dispositivo I/O
+    sem_post(&blockCounter);
+
+    // Despierto al planificador de largo plazo
+
+    sem_post(&largoPlazo);
+}
+
 bool kernelTieneRecurso(char* recurso){
   int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
   int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
@@ -396,25 +418,6 @@ void planificador_corto_plazo_HRRN() {
 }
 
 /*
-void agregar_proceso_bloqueado(PCB *procesoBloqueado)
-{
-    procesoBloqueado->contexto->estimadoRafaga = estimacion(procesoBloqueado);
-    procesoBloqueado->contexto->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
-    pthread_mutex_lock(&mutexColaBlock);
-
-    queue_push(colaBlock, procesoBloqueado);
-    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
-
-    pthread_mutex_unlock(&mutexColaBlock);
-
-    // Despierto dispositivo I/O
-    sem_post(&blockCounter);
-
-    // Despierto al planificador de largo plazo
-
-    sem_post(&largoPlazo);
-}
-
 void enviar_pcb(PCB *proceso, int socketDispatch)
 {
     paquete *paquete = crear_paquete(Pcb);

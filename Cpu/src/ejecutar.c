@@ -7,7 +7,6 @@ void ejecutarContexto(contextoEjecucion* contexto) {
   t_list* listaInstrucciones = contexto->instrucciones;
   int continuarEjecutando = 1;
 
-
   while(continuarEjecutando) {
       t_instruccion* instruccion = list_get(listaInstrucciones, contexto->programCounter);
       contexto->programCounter++;
@@ -72,10 +71,12 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     char* recurso = primerParametro;
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, WAIT);
+    enviarString(recurso, socketKernel);
   } else if (strcmp("SIGNAL", identificador) == 0){
     char* recurso = primerParametro;
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, SIGNAL);
+    enviarString(recurso, socketKernel);
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, CREATE_SEGMENT);

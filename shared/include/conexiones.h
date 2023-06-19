@@ -19,6 +19,8 @@
 	contextoEjecucion* recibirContexto(int socketCliente);
 	void enviarEntero(int valorAEnviar, int socket);
 	int recibirEntero(int socket);
+	char* recibirString(int socket);
+	void enviarString(char* stringEnviado, int socket);
 
 #endif
 

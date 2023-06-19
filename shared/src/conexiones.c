@@ -6,6 +6,7 @@
 #include <serializacion/paquete.h>
 #include <serializacion/contexto.h>
 #include <serializacion/buffer.h>
+#include <commons/string.h>
 
 int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
@@ -135,4 +136,27 @@ int recibirEntero(int socket) {
   memcpy(&(enteroRecibido), buffer->stream, sizeof(int));
   liberarBuffer(buffer);
   return enteroRecibido;
+}
+
+void enviarString(char* valorAEnviar, int socket) {
+  int cantidadCaracters = string_length(valorAEnviar) + 1;
+  t_buffer* buffer = generarBuffer(sizeof(int) + cantidadCaracters + 1);
+
+  memcpy(buffer->stream, &(cantidadCaracters), sizeof(int));
+  memcpy(buffer->stream + sizeof(int), valorAEnviar, sizeof(int));
+  t_paquete* paquete = crearPaquete(buffer, ENTERO);
+  enviar_paquete(paquete, socket);
+  liberarPaquete(paquete);
+}
+
+char* recibirString(int socket) {
+  obtenerCodigoOperacion(socket);
+  t_buffer* buffer = obtenerBuffer(socket);
+  int cantidadCaracteres;
+  memcpy(&(cantidadCaracteres), buffer->stream, sizeof(int));
+  char* stringRecibido = malloc(cantidadCaracteres);
+  memcpy(stringRecibido, buffer->stream + sizeof(int), cantidadCaracteres + 1);
+
+  liberarBuffer(buffer);
+  return stringRecibido;
 }
