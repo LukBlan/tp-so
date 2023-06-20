@@ -21,9 +21,67 @@ void planificador_corto_plazo_fifo() {
   }
 }
 
+float estimacion(PCB* proceso) {
+  t_configuracion* config = recursosKernel->configuracion;
+  float alfa = config->HRRN_ALFA;
+  float estimacionAnterior = proceso->estimadoRafaga;
+  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
+  float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
+  return resultado;
+}
+
+PCB* sacarBloqueado() {
+  t_log* logger = recursosKernel->logger;
+  PCB *pcbSaliente;
+
+  pthread_mutex_lock(&mutexColaBlock);
+  pcbSaliente = queue_pop(colaBlock);
+  log_info(logger, "Proceso: [%d] salío de BLOQUEADO.", pcbSaliente->pid);
+  pthread_mutex_unlock(&mutexColaBlock);
+
+  return pcbSaliente;
+}
+
+void *io() {
+  t_log* logger = recursosKernel->logger;
+  while (1) {
+
+  sem_wait(&blockCounter);
+  PCB* proceso = queue_peek(colaBlock); // Aun sigue en la cola de bloqueado.
+  //TODO campo PCB
+  int tiempoBloqueo = proceso->tiempoBloqueadoIO;
+  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,se bloqueara %f segundos.----------", proceso->pid, tiempoBloqueo / 1000.0);
+  int tiempoBloqueoEnMicrosegundos = tiempoBloqueo * 1000;
+  usleep(tiempoBloqueoEnMicrosegundos);
+  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,termino I/O %f segundos.----------", proceso->pid, tiempoBloqueo / 1000.0);
+
+  proceso = sacarBloqueado();
+  agregarAListo(proceso);
+  }
+}
+
+void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
+    procesoBloqueado->estimadoRafaga = estimacion(procesoBloqueado);
+    procesoBloqueado->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+    pthread_mutex_lock(&mutexColaBlock);
+
+    queue_push(colaBlock, procesoBloqueado);
+    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+
+    pthread_mutex_unlock(&mutexColaBlock);
+
+    // Despierto dispositivo I/O
+    sem_post(&blockCounter);
+
+    // Despierto al planificador de largo plazo
+
+    sem_post(&largoPlazo);
+}
+
 void comenzarPlanificadores() {
   pthread_t hilo_largo_plazo;
   pthread_t hiloCortoPlazo;
+  pthread_t hilo_dispositivo_io;
 
   pthread_create(&hilo_largo_plazo, NULL, (void*)planificador_largo_plazo, NULL);
   pthread_detach(hilo_largo_plazo);
@@ -32,6 +90,9 @@ void comenzarPlanificadores() {
     pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
     pthread_detach(hiloCortoPlazo);
   }
+
+  pthread_create(&hilo_dispositivo_io, NULL, io, NULL);
+  pthread_detach(hilo_dispositivo_io);
   /*
   else
   {
@@ -39,8 +100,7 @@ void comenzarPlanificadores() {
     pthread_detach(hiloCortoPlazo);
   }
 
-  pthread_create(&hilo_dispositivo_io, NULL, dispositivo_io, NULL);
-  pthread_detach(hilo_dispositivo_io);
+
   */
 }
 
@@ -48,7 +108,7 @@ void planificador_largo_plazo() {
   t_log* logger = recursosKernel->logger;
   t_configuracion* config = recursosKernel->configuracion;
 
-  log_info(logger, "Inicio PLanificador LARGO PLAZO en [%s]\n", config->ALGORITMO_PLANIFICACION);
+  log_info(logger, "Inicio PLanificador LARGO PLAZO en [%s]", config->ALGORITMO_PLANIFICACION);
   while (1) {
     sem_wait(&largoPlazo);
     if (sePuedeAgregarMasProcesos()) {
@@ -176,11 +236,9 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case IO:
-      int tiempoBloqueado = recibirEntero(socketCpu);
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
-      //sacarDeEjecutando(BLOCK);
-      //agregar_proceso_bloqueado(procesoDevuelto);
+      procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
+      sacarDeEjecutando(BLOCK);
+      agregar_proceso_bloqueado(procesoDevuelto);
       break;
     case EXIT:
       PCB* procesoTerminado = procesoDevuelto;
@@ -281,43 +339,6 @@ void agregarFinalizado(PCB* proceso){
     sem_post(&largoPlazo);
 }
 
-/*
-PCB* sacarBloqueado(){
- PCB *pcbSaliente;
-
-    pthread_mutex_lock(&mutexColaBlock);
-    t_log* logger = recursosKernel->logger;
-    pcbSaliente = queue_pop(colaBlock);
-    log_info(logger, "Proceso: [%d] salío de BLOQUEADO.", pcbSaliente->pid);
-
-    pthread_mutex_unlock(&mutexColaBlock);
-
-    return pcbSaliente;
-}
-
-void *io()
-{
-    while (1)
-    {
-
-        sem_wait(&contadorBloqueados);
-
-        PCB* proceso = queue_peek(colaBloqueados); // Aun sigue en la cola de bloqueado.
-        //TODO campo PCB
-        //int tiempoBloqueo = proceso->tiempoBloqueadoIO;
-        //log_info(loggerPlanificacion, "----------[DISP I/O] Proceso: [%d] ,se bloqueara %d segundos.----------", proceso->pid, tiempoBloqueo / 1000);
-        // Bloqueo el proceso.
-        int tiempoBloqueoEnMicrosegundos = tiempoBloqueo * 1000;
-        usleep(tiempoBloqueoEnMicrosegundos);
-        //log_info(loggerPlanificacion, "----------[DISP I/O] Proceso: [%d] ,termino I/O %d segundos.----------", proceso->pid, tiempoBloqueo / 1000);.
-        
-        proceso = sacarBloqueado();
-
-
-        agregarAListo(proceso);
-    }
-}
-*/
 int findElementPosition(char array[], int size, char* target) {
     for (int i = 0; i < size; i++) {
         if (array[i] == *target) {
@@ -327,23 +348,6 @@ int findElementPosition(char array[], int size, char* target) {
     return -1;  // Return -1 if the element is not found
 }
 /*
-void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
-    procesoBloqueado->contexto->estimadoRafaga = estimacion(procesoBloqueado);
-    procesoBloqueado->contexto->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
-    pthread_mutex_lock(&mutexColaBlock);
-
-    queue_push(colaBlock, procesoBloqueado);
-    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
-
-    pthread_mutex_unlock(&mutexColaBlock);
-
-    // Despierto dispositivo I/O
-    sem_post(&blockCounter);
-
-    // Despierto al planificador de largo plazo
-
-    sem_post(&largoPlazo);
-}
 
 bool kernelTieneRecurso(char* recurso){
   int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
@@ -352,7 +356,7 @@ bool kernelTieneRecurso(char* recurso){
   return position != -1;
 }
 
-bool hayRecursoDisponible(char* recurso){
+bool hayRecursoDisponible(char* recurso) {
   int tamanioArray = sizeof(recursosKernel->configuracion->RECURSOS);
   int position = findElementPosition(recursosKernel->configuracion->RECURSOS,tamanioArray, recurso);
   int cantidad = recursosKernel->configuracion->INSTANCIAS_RECURSOS[position] ;
@@ -370,31 +374,21 @@ void disminuirRecurso(char* recurso){
   --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
 */
-
-float estimacion(PCB* proceso){
-  t_configuracion* config = recursosKernel->configuracion;
-  float alfa = config->HRRN_ALFA;
-  float estimacionAnterior = proceso->estimadoRafaga;
-  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
-  float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
-  return resultado;
-}
-int tiempoAhora(){
+int tiempoAhora() {
   return time(NULL);
 }
 
-int calcular_tiempo_rafaga_real_anterior(PCB *proceso)
-{
+int calcular_tiempo_rafaga_real_anterior(PCB *proceso) {
     return tiempoAhora() - proceso->llegadaReady;
 }
-float calcularResponseRatio (PCB* proceso){
+float calcularResponseRatio (PCB* proceso) {
   return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
 }
-bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2){
+bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
   return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
 }
 
-PCB* sacarProcesoMayorHRRN(){
+PCB* sacarProcesoMayorHRRN() {
   PCB* procesoAEjecutar;
   pthread_mutex_lock(&mutexColaReady);
   list_sort(colaReady, &ordenarSegunCalculoHRRN);
@@ -403,45 +397,30 @@ PCB* sacarProcesoMayorHRRN(){
   return procesoAEjecutar;
 }
 void planificador_corto_plazo_HRRN() {
-    t_log* logger = recursosKernel->logger;
-    log_info(logger, "INICIO PLANIFICACION FIFO");
-    while (1) {
-        sem_wait(&semProcesoReady);
-        sem_wait(&semaforoCantidadProcesosExec);
+  t_log* logger = recursosKernel->logger;
+  log_info(logger, "INICIO PLANIFICACION FIFO");
+  while (1) {
+    sem_wait(&semProcesoReady);
+    sem_wait(&semaforoCantidadProcesosExec);
 
-        PCB* procesoEjecutar = sacarProcesoMayorHRRN();
+    PCB* procesoEjecutar = sacarProcesoMayorHRRN();
 
-        cambiarEstado(EXEC, procesoEjecutar);
+    cambiarEstado(EXEC, procesoEjecutar);
 
-        ejecutar(procesoEjecutar);
-    }
+    ejecutar(procesoEjecutar);
+  }
 }
 
 /*
-void enviar_pcb(PCB *proceso, int socketDispatch)
-{
-    paquete *paquete = crear_paquete(Pcb);
-
-    serializar_pcb(paquete, proceso);
-
-    enviar_paquete_a_servidor(paquete, socketDispatch);
-
-    eliminar_paquete(paquete);
-}
-
-bool esProcesoNuevo(PCB *proceso)
-{
+bool esProcesoNuevo(PCB *proceso) {
     return proceso->estado == NEW;
 }
-
-
 
 bool sePuedeAgregarMasProcesos() {
     return (cantidad_procesos_memoria() < recursosKernel->configuracion->GRADO_MAX_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNew, &mutexColaNew) > 0 );
 }
 
-void liberar_semaforos()
-{
+void liberar_semaforos() {
     pthread_mutex_destroy(&mutexNumeroProceso);
     pthread_mutex_destroy(&mutexProcesoListo);
     pthread_mutex_destroy(&mutexColaNew);
@@ -459,8 +438,8 @@ void liberar_semaforos()
     sem_destroy(&largoPlazo);
     sem_destroy(&semaforoCantidadProcesosExec);
 }
-void liberar_estructuras()
-{
+
+void liberar_estructuras() {
 
     list_destroy(colaReady);
 

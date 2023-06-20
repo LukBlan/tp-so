@@ -63,7 +63,6 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
   log_info(logger, "Ejecutando %s %s", identificador, primerParametro);
   if (strcmp("I/O", identificador) == 0) {
     int tiempoBloqueado = atoi(primerParametro);
-    contexto->tiempoBloqueadoIO = tiempoBloqueado;
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, IO);
     enviarEntero(tiempoBloqueado, socketKernel);

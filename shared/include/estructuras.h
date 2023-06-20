@@ -38,7 +38,6 @@
     int programCounter;
     t_registros registros;
     //struct tablaSegmentos;
-    int tiempoBloqueadoIO;
     t_list* archivosAbiertos;
   } contextoEjecucion;
 
@@ -47,8 +46,9 @@
     estadoProceso estado;
     float estimadoRafaga;
     int llegadaReady;
-    int rafagaRealPrevia;
+    float rafagaRealPrevia;
     contextoEjecucion* contexto;
+    int tiempoBloqueadoIO;
   } PCB;
 
   typedef enum {
