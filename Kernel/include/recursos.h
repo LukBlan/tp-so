@@ -47,6 +47,11 @@
     t_log* logger;
   } t_recursos;
 
+  typedef struct {
+  	  char* recurso;
+  	  int cantidad_inst_recurso;
+  } t_recurso;
+
   extern t_recursos* recursosKernel;
 
   extern t_queue* colaNew;
