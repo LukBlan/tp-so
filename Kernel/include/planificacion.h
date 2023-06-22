@@ -10,6 +10,7 @@
 
   #include <estructuras.h>
   #include <stdbool.h>
+  #include <recursos.h>
 
   void comenzarPlanificadores();
   void planificador_corto_plazo_fifo();
@@ -18,5 +19,6 @@
   int sePuedeAgregarMasProcesos();
   void cambiarEstado(estadoProceso estado, PCB* proceso);
   void ejecutar(PCB* proceso);
-
+  void procesarRecursoWait(int existeRecurso, recursoKernel* registroRecurso);
+  void procesarRecursoSignal(int existeRecurso, recursoKernel* registroRecurso);
 #endif
