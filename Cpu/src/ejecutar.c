@@ -12,7 +12,6 @@ void ejecutarContexto(contextoEjecucion* contexto) {
       contexto->programCounter++;
       recursosCpu->registros = contexto->registros;
       continuarEjecutando = ejecutarInstruccion(contexto, instruccion);
-      contexto->registros = recursosCpu->registros;
   }
   liberarContexto(contexto);
 }
@@ -93,15 +92,46 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
   return continuarEjecutando;
 }
 
+void setearRegistro(char* primerParametro, char* segundoParametro) {
+
+  if (strcmp("AX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.AX, segundoParametro);
+  } else if (strcmp("BX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.BX, segundoParametro);
+  } else if (strcmp("CX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.CX, segundoParametro);
+  } else if (strcmp("DX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.DX, segundoParametro);
+  } else if (strcmp("EAX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.EAX, segundoParametro);
+  } else if (strcmp("EBX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.EBX, segundoParametro);
+  } else if (strcmp("ECX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.ECX, segundoParametro);
+  } else if (strcmp("EDX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.EDX, segundoParametro);
+  } else if (strcmp("RAX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.RAX, segundoParametro);
+  } else if (strcmp("RBX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.RBX, segundoParametro);
+  } else if (strcmp("RCX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.RCX, segundoParametro);
+  } else if (strcmp("RDX", primerParametro) == 0) {
+    strcpy(recursosCpu->registros.RDX, segundoParametro);
+  }
+}
+
 int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
   char* primerParametro = instruccion->strings[1];
   char* segundoParametro = instruccion->strings[2];
-  int continuarEjecutando;
+  int continuarEjecutando = 1;
 
   log_info(logger, "Ejecutando %s %s %s", identificador, primerParametro, segundoParametro);
   if (strcmp("SET", identificador) == 0) {
+    setearRegistro(primerParametro, segundoParametro);
+    contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_IN", identificador) == 0) {
   } else if (strcmp("MOV_OUT", identificador) == 0) {
   } else if (strcmp("F_SEEK", identificador) == 0) {
