@@ -19,6 +19,6 @@
   int sePuedeAgregarMasProcesos();
   void cambiarEstado(estadoProceso estado, PCB* proceso);
   void ejecutar(PCB* proceso);
-  void procesarRecursoWait(int existeRecurso, recursoKernel* registroRecurso);
-  void procesarRecursoSignal(int existeRecurso, recursoKernel* registroRecurso);
+  void procesarRecursoWait(char* recursopedido);
+  void procesarRecursoSignal(char* recursopedido);
 #endif

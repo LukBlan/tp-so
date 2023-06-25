@@ -158,6 +158,13 @@ void ejecutar(PCB* proceso) {
        avisarConsola(procesoTerminado);
        //liberarPcb(procesoTerminado);
        break;
+     case WAIT:
+    	 procesarRecursoWait('computadora');//le paso el recurso solicitado
+    	// t_queue* colaBloqueados = devuelvoColaBloqueados(colaBloqueados);
+    	 break;
+     case SIGNAL:
+    	 procesarRecursoSignal('computadora');//le paso el recurso solicitado
+    	 break;
      default:
        puts("Entre por default");
        break;
@@ -435,87 +442,88 @@ void liberar_estructuras()
 }
 
 */
-/*
-void validoExistenciaDeRecurso(t_queue* listaRecursos,recursopedido){
-	t_queue* auxListaRecursos = queue_create();
-	t_queue* listainstancias = cargarListaDeInstancias();
-	char* recurso = "computadora";
 
-	while (!queue_is_empty(listaRecursos)) {
-		void *elemento = queue_peek(listaRecursos);
+void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido){
 
-	    // Copiar el elemento a la cola copiada
-	    queue_push(auxListaRecursos, elemento);
-
-	    // Eliminar el elemento de la cola original
-	    queue_pop(auxListaRecursos);
-	}
-
-	if(!queue_is_empty(listaRecursos)){
-		queue_clean(listaRecursos);
-	}
-
-	int cantRecursos = queue_size(auxListaRecursos);// obtengo la cantidad de recursos
+	int cantRecursos = list_size(listaRecursos);// obtengo la cantidad de recursos
 	int existeRecurso = 0;
+	recursoSolicitados* reg_recurso;
+
+	for (size_t i = 0; i < cantRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
+		reg_recurso =  list_get(listaRecursos, i);
+		char* elementoRecurso = reg_recurso->recurso;
+		int comparacion = strcmp(recursopedido, elementoRecurso);
+
+		if (comparacion == 0){
+			existeRecurso = 1;
+			t_queue* colaBloqueados = crearColaRecursosBloqueados();
+			procesarRecursoExistenteWait(reg_recurso,colaBloqueados);
+		}
+	}
+
+	if(existeRecurso == 0){ //sino existe recurso lo mando al EXIT
+		PCB* procesoTerminado = procesoEjecutandose;
+		sacarDeEjecutando();
+		log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
+		avisarConsola(procesoTerminado);
+		//liberarPcb(procesoTerminado);
+	}
+}
+
+void procesarRecursoWait(char* recursopedido){
+	t_list* listRecursos = cargarListaDeRecursos();
+	validoExistenciaDeRecursoWait(listRecursos, recursopedido);
+}
+
+void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados){
+
+	int cantidadInstancias = registroRecurso->cantidad_inst_recurso;
+	if(cantidadInstancias > 0){
+		registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso - 1; //resto 1 a la cantidad de recursos disponibles
+		//devuelvoColaBloqueados(colaBloqueados);
+	}
+	else {
+		queue_push(colaBloqueados,registroRecurso); //bloqueo el recurso solicitado
+		registroRecurso->colaBloqueados = colaBloqueados;
+		//devuelvoColaBloqueados(colaBloqueados);
+	}
+}
+
+void procesarRecursoSignal(char* recpedido){
+	t_list* listaRecursos;
+	validoExistenciaDeRecursoSignal(listaRecursos,recpedido);
+}
+
+void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido){
+
+	int cantRecursos = list_size(listaRecursos);// obtengo la cantidad de recursos
+	int existeRecurso = 0;
+	recursoSolicitados* reg_recurso;
+
 	for (size_t i = 0; i < cantRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
 		// Obtener el elemento en el frente de la cola
-		//void * elemento = queue_peek(listaRecursos);
-		char* elemento =  queue_peek(auxListaRecursos);
-		if (recurso == elemento){
+		reg_recurso =  list_get(listaRecursos, i);
+		char* elementoRecurso = reg_recurso->recurso;
+
+		if (recursopedido == elementoRecurso){
 			existeRecurso = 1;
-			procesarRecursoWait(existeRecurso,listainstancias);
+			t_queue* colaBloqueados;
+			procesarRecursoExistenteSignal(reg_recurso,colaBloqueados);
 		}
-		i+=1;
-	}
-	if (existeRecurso != 1){
-		//sino existe el recurso lo mando al proceso en EXIT
 	}
 
-}
-*/
-
-void validoExistenciaDeRecurso(t_list* listaRecursos/*,recursopedido*/){
-	t_list* auxListaRecursos = cargarListaDeRecursos();
-	char* recurso = 'computadora';
-
-	int cantRecursos = list_size(auxListaRecursos);// obtengo la cantidad de recursos
-	int existeRecurso = 0;
-	recursoKernel* reg_recurso;
-	while (!list_is_empty(auxListaRecursos)) {
-		for (size_t i = 0; i < cantRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
-			// Obtener el elemento en el frente de la cola
-			reg_recurso =  list_get(auxListaRecursos, i);
-			char* elementoRecurso = reg_recurso->recurso;
-
-			if (recurso == elementoRecurso){
-				existeRecurso = 1;
-				procesarRecursoWait(existeRecurso,reg_recurso);
-			}
-			i+=1;
-		}
-		if (existeRecurso != 1){
-				//sino existe el recurso lo mando al proceso en EXIT
-		}
+	if(existeRecurso == 0){ //sino existe recurso lo mando al EXIT
+		PCB* procesoTerminado = procesoEjecutandose;
+		sacarDeEjecutando();
+		log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
+		avisarConsola(procesoTerminado);
+		//liberarPcb(procesoTerminado);
 	}
 }
 
-void procesarRecursoWait(int existeRecurso, recursoKernel* registroRecurso){
-	if (existeRecurso == 1){
-		int cantidadInstancias = registroRecurso->cantidad_inst_recurso;
-		if(cantidadInstancias > 0){
-			registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso - 1; //resto 1 a la cantidad de recursos disponibles
-		}
-		else {
-			  //bloqueo el recurso solicitado
-		}
-	}
-}
-
-void procesarRecursoSignal(int existeRecurso, recursoKernel* registroRecurso){
-	if (existeRecurso == 1){
-		registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso + 1;//sumo 1 a la cantidad de recursos disponibles
-		// desbloqueo el primer elemento de la cola de bloqeados d ese recurso.
-		// se devuelve la ejecución al proceso que peticionó el SIGNAL.
-	}
+void procesarRecursoExistenteSignal( recursoSolicitados* registroRecurso,t_queue* colaBloqueados){
+	registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso + 1;//sumo 1 a la cantidad de recursos disponibles
+	queue_pop(registroRecurso);// desbloqueo el primer elemento de la cola de bloqeados d ese recurso.
+	// se devuelve la ejecución al proceso que peticionó el SIGNAL.
 }
 

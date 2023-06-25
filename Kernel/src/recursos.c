@@ -34,7 +34,6 @@ sem_t semaforoCantidadProcesosExec;
 sem_t comunicacionMemoria;
 
 t_recursos* recursosKernel;
-//t_queue* listaRecursos;
 t_list* listaRecursos;
 
 void crearRecursos() {
@@ -143,77 +142,32 @@ void iniciarSemaforos() {
 }
 
 t_list* cargarListaDeRecursos(void){
-	t_list* listaRecursos = crearListaDeRecursos();
+	t_list* listaRecursos = list_create();
 
-	if(queue_is_empty(listaRecursos)){ // valido que este vacia si lo esta voy a cargar todos los recursos que vienen en el config
-		t_configuracion* recursos;
-		int cantRecursos = list_size(recursos->RECURSOS);
-		int cantInstancias = list_size(recursos->INSTANCIAS_RECURSOS);
-		recursoKernel* recurso;
-		if(cantRecursos == cantInstancias){
-			for (size_t i = 0; i < cantRecursos; i++) {
+	t_configuracion* recursos;
+	int cantRecursos = list_size(recursos->RECURSOS);
+	recursoSolicitados* recurso;
 
-				char* auxRecursos = list_get(recursos->RECURSOS, i);
-				int auxInstancias = list_get(recursos->INSTANCIAS_RECURSOS, i);
+	for (size_t i = 0; i < cantRecursos; i++) {
 
-				recurso->recurso = auxRecursos;
-				recurso->cantidad_inst_recurso = auxInstancias;
+		char* auxRecursos = list_get(recursos->RECURSOS, i);
+		int auxInstancias = list_get(recursos->INSTANCIAS_RECURSOS, i);
 
-				list_add_in_index(listaRecursos, i, recurso);
+		recurso->recurso = auxRecursos;
+		recurso->cantidad_inst_recurso = auxInstancias;
 
-				i+=1;
-			}
-		}
+		list_add_in_index(listaRecursos, i, recurso);
+
+		i+=1;
 	}
 	return listaRecursos;
 }
 
-t_list* crearListaDeRecursos(void){
-	t_list* listaRecursos = list_create();// creo la lista de recursos
-	return listaRecursos;
+t_queue* crearColaRecursosBloqueados(void){
+	t_queue* colaRecursosBloqueados = queue_create();// creo la lista de recursos
+	return colaRecursosBloqueados;
 }
 
-/*
-t_queue* crearListaDeRecursos(void){
-	t_queue* listaRecursos = queue_create();// creo la lista de recursos
-	return listaRecursos;
+t_queue* devuelvoColaBloqueados(colaRecBloqueados){
+	return colaRecBloqueados;
 }
-
-t_queue* crearListaDeInstancias(void){
-	t_queue* listaInstanciaRecursos = queue_create();// creo la lista de recursos
-	return listaInstanciaRecursos;
-}
-
-t_queue* cargarListaDeRecursos(void){
-	t_queue* listaRecursos = crearListaDeRecursos();
-
-	if(queue_is_empty(listaRecursos)){ // valido que este vacia si lo esta voy a cargar todos los recursos que vienen en el config
-		t_configuracion* instancias;
-		int cantRecursos = list_size(instancias->RECURSOS);
-
-		for (size_t i = 0; i < cantRecursos; i++) {
-
-			int auxRecursos = list_get(instancias->RECURSOS, i);
-			queue_push(listaRecursos, auxRecursos);
-			i+=1;
-		}
-	}
-	return listaRecursos;
-}
-
-t_queue* cargarListaDeInstancias(void){
-
-	t_queue* listaInstancias = crearListaDeInstancias();
-	if(queue_is_empty(listaInstancias)){ // valido que este vacia si lo esta voy a cargar todos los recursos que vienen en el config
-		t_configuracion* instancias;
-		int cantInstancias = list_size(instancias->INSTANCIAS_RECURSOS);
-
-		for (size_t i = 0; i < cantInstancias; i++) {
-
-			int auxInstancia = list_get(instancias->INSTANCIAS_RECURSOS, i);
-			queue_push(listaInstancias, auxInstancia);
-			i+=1;
-		}
-	}
-	return listaInstancias;
-}*/

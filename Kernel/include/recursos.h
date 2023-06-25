@@ -50,7 +50,8 @@
   typedef struct {
   	  char* recurso;
   	  int cantidad_inst_recurso;
-  } recursoKernel;
+  	  t_queue* colaBloqueados;
+  } recursoSolicitados;
 
   extern t_recursos* recursosKernel;
 
@@ -89,6 +90,5 @@
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarLogger(char* pathLogger);
   void liberarRecursos();
-  t_list* crearListaDeRecursos(void);
   t_list* cargarListaDeRecursos(void);
 #endif
