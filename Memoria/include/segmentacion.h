@@ -5,7 +5,7 @@ typedef struct
     int id;
     int base;
     int limite;
-}segmento;
+}Segmento;
 
 //char* tablaDeHuecos;
 //t_bitarray* bitMapSegmento;
