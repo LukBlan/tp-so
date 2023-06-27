@@ -15,6 +15,11 @@
   } t_configuracion;
 
   typedef struct {
+    int BLOCK_SIZE;
+    int BLOCK_COUNT;
+  } t_superBloque;
+
+  typedef struct {
     int socketMemoria;
     int socketFileSystem;
   } t_conexiones;
@@ -23,6 +28,7 @@
     t_configuracion* configuracion;
     t_log* logger;
     t_conexiones* conexiones;
+    t_superBloque* superBloque;
   } t_recursos;
 
   extern t_recursos* recursosFileSystem;

@@ -10,6 +10,7 @@ void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
   recursosFileSystem->conexiones = malloc(sizeof(t_conexiones));
   recursosFileSystem->configuracion = NULL;
+  recursosFileSystem->superBloque = NULL;
   recursosFileSystem->logger = NULL;
   recursosFileSystem->conexiones->socketFileSystem = -1;
   recursosFileSystem->conexiones->socketMemoria = -1;
@@ -37,6 +38,24 @@ void cargarConfiguracion(char* pathConfiguracin) {
 
   config_destroy(fileConfig);
   recursosFileSystem->configuracion = config;
+}
+
+void cargarSuperbloque() {
+  fileSuperBloque* superBloque;
+  t_config* fileSuperBloque = config_create(recursosFileSystem->configuracion->PATH_SUPERBLOQUE);
+
+  if (fileConfig != NULL) {
+    superBloque = malloc(sizeof(fileSuperBloque));
+    superBloque->BLOCK_SIZE = string_duplicate(config_get_string_value(fileSuperBloque, "BLOCK_SIZE"));
+    superBloque->BLOCK_COUNT = string_duplicate(config_get_string_value(fileSuperBloque, "BLOCK_COUNT"));
+  } else {
+    log_error(recursosFileSystem->logger, "No se pudo Encontrar el Archivo de superBloque");
+    liberarRecursos();
+    exit(-1);
+  }
+
+  config_destroy(fileSuperBloque);
+  recursosFileSystem->superBloque = superBloque;
 }
 
 void cargarLogger(char* pathLogger) {
