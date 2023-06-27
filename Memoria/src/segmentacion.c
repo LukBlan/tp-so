@@ -1,23 +1,12 @@
 #include <recursos.h>
 /*
-int bitsToBytes(int bits){
 
-	double c = (double) bits;
-	bytes = ceil(c/8.0);
-	
-	return bytes;
-}
 void iniciarSegmentacion (){
-    int tamanio = bitsToBytes(recursosMemoria->configuracion->TAM_MEMORIA);
-    arratDeHuecos = generarArray(recursosMemoria->configuracion->TAM_MEMORIA);
-    bitMapSegmento = bitarray_create_with_mode(tablaDeHuecos,tamanio, MSB_FIRST);
+    int tamanio = recursosMemoria->configuracion->TAM_MEMORIA
+    arrayDeHuecos = generarArray(recursosMemoria->configuracion->TAM_MEMORIA);
+    bitMapSegmento = bitarray_create_with_mode(arrayDeHuecos,tamanio, MSB_FIRST);
 }
-char* generarArray(int bytes){
-    char* aux;
-    aux = malloc(bytes);
-    memset(aux,0,bytes); // SETEA LOS BYTES EN 0
-    return aux;
-}
+
 int puedoGuardar(int quieroGuardar){ //RECIBE CANT BYTES QUE QUIERO GUARDAR
 
     int tamanioLibre = tamanioTotalDisponible();

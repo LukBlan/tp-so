@@ -2,6 +2,7 @@
 #define RECURSOS_H_
 
   #include <commons/log.h>
+  #include <utils.h>
 
   typedef struct {
     char* IP_MEMORIA;
@@ -29,6 +30,7 @@
     t_log* logger;
     t_conexiones* conexiones;
     t_superBloque* superBloque;
+    t_bitarray* bitMap;
   } t_recursos;
 
   extern t_recursos* recursosFileSystem;

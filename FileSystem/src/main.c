@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
 	crearRecursosFileSystem();
 	cargarLogger("fileSystem.log");
 	cargarConfiguracion(argv[1]);
+	cargarSuperbloque();
 	cargarConexiones();
 
 	realizarHandshakeMemoria();

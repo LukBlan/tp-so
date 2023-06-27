@@ -46,8 +46,8 @@ void cargarSuperbloque() {
 
   if (fileConfig != NULL) {
     superBloque = malloc(sizeof(fileSuperBloque));
-    superBloque->BLOCK_SIZE = string_duplicate(config_get_string_value(fileSuperBloque, "BLOCK_SIZE"));
-    superBloque->BLOCK_COUNT = string_duplicate(config_get_string_value(fileSuperBloque, "BLOCK_COUNT"));
+    superBloque->BLOCK_SIZE = config_get_int_value(fileSuperBloque, "BLOCK_SIZE");
+    superBloque->BLOCK_COUNT = config_get_int_value(fileSuperBloque, "BLOCK_COUNT");
   } else {
     log_error(recursosFileSystem->logger, "No se pudo Encontrar el Archivo de superBloque");
     liberarRecursos();
@@ -57,6 +57,14 @@ void cargarSuperbloque() {
   config_destroy(fileSuperBloque);
   recursosFileSystem->superBloque = superBloque;
 }
+
+void cargarBitMap() {
+  int bytesDelBitarray = bitAByte(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
+  char* arrayDeHuecos = generarArray(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
+  t_bitarray* bitMapBloque = bitarray_create_with_mode(arrayDeHuecos,bytesDelBitarray, MSB_FIRST);
+  recursosFileSystem->bitMap = bytesDelBitarray;
+}
+
 
 void cargarLogger(char* pathLogger) {
   recursosFileSystem->logger = log_create(pathLogger, "FileSystem", 1, LOG_LEVEL_INFO);
@@ -85,7 +93,7 @@ void liberarRecursos() {
   if (recursosFileSystem->logger != NULL) {
     log_destroy(recursosFileSystem->logger);
   }
-
+  //TODO FREE BITMAP Y SUPERBLOQUE
   free(recursosFileSystem->conexiones);
   free(recursosFileSystem);
 }

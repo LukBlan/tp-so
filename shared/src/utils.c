@@ -38,3 +38,18 @@ void mostrarContexto(contextoEjecucion* contexto) {
   mostrarRegistros(contexto->registros);
   puts("----------------------------------------");
 }
+
+int bitsToBytes(int bits){
+
+	double c = (double) bits;
+	bytes = ceil(c/8.0);
+	
+	return bytes;
+}
+
+char* generarArray(int bytes){
+    char* aux;
+    aux = malloc(bytes);
+    memset(aux,0,bytes); // SETEA LOS BYTES EN 0
+    return aux;
+}

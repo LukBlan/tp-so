@@ -2,6 +2,7 @@
 #define RECURSOS_H_
 
   #include <commons/log.h>
+  #include <utils.h>
 
   typedef struct {
     char* PUERTO_ESCUCHA;
