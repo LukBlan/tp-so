@@ -59,10 +59,14 @@ void cargarSuperbloque() {
 }
 
 void cargarBitMap() {
+  int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
   int bytesDelBitarray = bitAByte(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
-  char* arrayDeHuecos = generarArray(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
-  t_bitarray* bitMapBloque = bitarray_create_with_mode(arrayDeHuecos,bytesDelBitarray, MSB_FIRST);
-  recursosFileSystem->bitMap = bytesDelBitarray;
+  void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
+  t_bitarray* bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);
+  recursosFileSystem->bitMap = bitMapBloque;
+  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+  close(fileDescriptor);
+
 }
 
 

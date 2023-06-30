@@ -10,11 +10,13 @@ int main(int argc, char* argv[]) {
 	crearRecursosFileSystem();
 	cargarLogger("fileSystem.log");
 	cargarConfiguracion(argv[1]);
-	cargarSuperbloque();
 	cargarConexiones();
 
 	realizarHandshakeMemoria();
 	montarServidor();
+
+	cargarSuperbloque();
+	cargarBitMap();
 
 	liberarRecursos();
 	return EXIT_SUCCESS;

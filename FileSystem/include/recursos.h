@@ -20,7 +20,7 @@
     int BLOCK_COUNT;
   } t_superBloque;
 
-    typedef struct {
+  typedef struct {
     char nombre_archivo;
     int file_size;
     uint32_t punteroDirecto;
