@@ -20,6 +20,13 @@
     int BLOCK_COUNT;
   } t_superBloque;
 
+    typedef struct {
+    char nombre_archivo;
+    int file_size;
+    uint32_t punteroDirecto;
+    uint32_t punteroIndirecto;
+  } FCB;
+
   typedef struct {
     int socketMemoria;
     int socketFileSystem;
