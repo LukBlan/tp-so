@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 t_recursos* recursosFileSystem;
+void* copiaBloque;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -61,6 +62,7 @@ void cargarSuperbloque() {
 void cargarBitMap() {
   int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
   int bytesDelBitarray = bitAByte(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
+  ftruncate(fileDescriptor, bytesDelBitarray );
   void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
   t_bitarray* bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);
   recursosFileSystem->bitMap = bitMapBloque;
@@ -69,6 +71,36 @@ void cargarBitMap() {
 
 }
 
+void cargarBloques(){
+  copiaBloque = malloc(recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
+  int fileDescriptor = open(recursosFileSystem->configuracion->PATH_BLOQUES, O_CREAT | O_RDWR,0664);
+  ftruncate(fileDescriptor, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
+  void* bloque = mmap(NULL, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
+  //pthread_mutex_lock(&sincro_block);
+		memcpy(copiaBloque,bloque,config_valores.block_size * config_valores.blocks);
+		//pthread_mutex_unlock(&sincro_block);
+		while(1){ 
+
+			sleep(recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE);
+			//pthread_mutex_lock(&sincro_block);
+			memcpy(bloque,copiaBlock,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
+			//pthread_mutex_unlock(&sincro_block);
+			int sincronizacion = msync(bloque, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, MS_SYNC);
+			if(sincronizacion == -1){
+        
+        printf("fallo en la sincronizacion\n");
+        
+        }
+			else{
+        
+        printf("se realizo una sincronizacion exitosa\n");
+        
+        }
+		}
+
+		close(fd);
+		return EXIT_SUCCESS;
+}
 
 void cargarLogger(char* pathLogger) {
   recursosFileSystem->logger = log_create(pathLogger, "FileSystem", 1, LOG_LEVEL_INFO);
@@ -98,6 +130,7 @@ void liberarRecursos() {
     log_destroy(recursosFileSystem->logger);
   }
   //TODO FREE BITMAP Y SUPERBLOQUE
+  //TODO VER SI COPIA BLOCK VA ACA
   free(recursosFileSystem->conexiones);
   free(recursosFileSystem);
 }

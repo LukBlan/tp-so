@@ -41,6 +41,7 @@
   } t_recursos;
 
   extern t_recursos* recursosFileSystem;
+  extern void* copiaBloque;
 
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);
