@@ -1,5 +1,8 @@
 #include <recursos.h>
 /*
+Segmento* segmentoCero;
+char* arrayDeHuecos;
+t_bitarray* bitMapSegmento;
 
 void iniciarSegmentacion (){
     int tamanio = recursosMemoria->configuracion->TAM_MEMORIA
@@ -7,13 +10,60 @@ void iniciarSegmentacion (){
     bitMapSegmento = bitarray_create_with_mode(arrayDeHuecos,tamanio, MSB_FIRST);
 }
 
-int puedoGuardar(int quieroGuardar){ //RECIBE CANT BYTES QUE QUIERO GUARDAR
+Segmento* crearSegmentoCero(){
+    Segmento* segmento = malloc(sizeof(Segmento));
+    segmento->id = 1;
+    segmento->base = 0;
+    segmento->limite= recursosMemoria->configuracion->TAM_SEGMENTO_0;
+    guardarEnMemoria(segmento,segmento,recursosMemoria->configuracion->TAM_SEGMENTO_0); //TODO Ver si esta bien la implementacion de guardado en memoria
+    return segmento;
+}
+
+Segmento* crearSegmento(void* elemento, int size){
+    
+    Segmento* unSegmento = malloc(sizeof(Segmento));
+    Segmento* aux;
+
+    aux = buscarCandidato(size); 
+
+    guardarEnMemoria(elemento, aux, size);
+    
+    unSegmento->id = aux->id;
+    unSegmento->base = aux->base;
+    unSegmento->limite= size;
+
+    free(aux);
+
+    return unSegmento; //DEVUELVE EL SEGMENTO QUE FUE GUARDADO
+}
+
+void guardarEnMemoria(void* elemento, t_segmento* segmento, int size){
+    
+    ocuparBitMap(bitMapSegment, segmento->base,size);
+    ocuparMemoria(elemento, segmento->base, size);
+}
+
+void ocuparMemoria(void* tareas, int base, int size){
+	pthread_mutex_lock(&mutexMemoria);
+    memcpy(memoriaPrincipal+base, tareas, size);
+    pthread_mutex_unlock(&mutexMemoria);
+}
+
+void ocuparBitMap(t_bitarray* bitMap, int base, int size){
+	
+	mutex
+	for(int i = 0; i < size; i++){
+		bitarray_set_bit(bitMapSegmento, base + i); 
+	}
+	mutex
+}
+
+int puedoGuardar(int quieroGuardar){ 
 
     int tamanioLibre = tamanioTotalDisponible();
     if(quieroGuardar <= tamanioLibre){
         return 1;
-    }else return 0; //DEVUELVE 1 SI HAY ESPACIO SUFICIENTE PARA GUARDAR LO QUE QUIERO GUARDAR
-
+    }else return 0; 
     
 }
 int tamanioTotalDisponible(void){

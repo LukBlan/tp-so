@@ -7,5 +7,6 @@ typedef struct
     int limite;
 }Segmento;
 
-//char* tablaDeHuecos;
-//t_bitarray* bitMapSegmento;
+//extern char* tablaDeHuecos;
+//extern t_bitarray* bitMapSegmento;
+//extern Segmento* segmentoCero;
