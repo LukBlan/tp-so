@@ -1,5 +1,5 @@
 #include <recursos.h>
-#include <segmentacion.h>
+#include <memoria_utils.h>
 
 Segmento* segmentoCero;
 char* arrayDeHuecos;
