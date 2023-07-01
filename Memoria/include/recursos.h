@@ -3,6 +3,9 @@
 
   #include <commons/log.h>
   #include <utils.h>
+  #include <commons/bitarray.h>
+  #include <fcntl.h>
+  #include <sys/mman.h>
 
   typedef struct {
     char* PUERTO_ESCUCHA;

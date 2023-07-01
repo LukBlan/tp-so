@@ -1,10 +1,9 @@
-// #include <segmentacion.h>
-// extern memoriaPrincipal
-/*
+#include <segmentacion.h>
+
+extern  void * memoriaPrincipal;
+
 typedef struct
 {
     int id;
-    list Segmento segmentos_proceso ;
+    t_list segmentos_proceso ;
 }tablaDeSegmento;
-
-*/

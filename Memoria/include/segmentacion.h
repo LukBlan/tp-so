@@ -1,5 +1,7 @@
   #include <estructuras.h>
   #include <commons/bitarray.h>
+  #include <memoria_utils.h>
+
 typedef struct
 {
     int id;
@@ -7,6 +9,6 @@ typedef struct
     int limite;
 }Segmento;
 
-//extern char* tablaDeHuecos;
-//extern t_bitarray* bitMapSegmento;
-//extern Segmento* segmentoCero;
+extern char* tablaDeHuecos;
+extern t_bitarray* bitMapSegmento;
+extern Segmento* segmentoCero;

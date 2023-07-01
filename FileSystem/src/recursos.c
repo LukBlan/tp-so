@@ -42,10 +42,10 @@ void cargarConfiguracion(char* pathConfiguracin) {
 }
 
 void cargarSuperbloque() {
-  fileSuperBloque* superBloque;
+  t_superBloque* superBloque;
   t_config* fileSuperBloque = config_create(recursosFileSystem->configuracion->PATH_SUPERBLOQUE);
 
-  if (fileConfig != NULL) {
+  if (fileSuperBloque != NULL) {
     superBloque = malloc(sizeof(fileSuperBloque));
     superBloque->BLOCK_SIZE = config_get_int_value(fileSuperBloque, "BLOCK_SIZE");
     superBloque->BLOCK_COUNT = config_get_int_value(fileSuperBloque, "BLOCK_COUNT");
@@ -61,7 +61,7 @@ void cargarSuperbloque() {
 
 void cargarBitMap() {
   int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
-  int bytesDelBitarray = bitAByte(recursosFileSystem->configuracion->PATH_SUPERBLOQUE->BLOCK_COUNT);
+  int bytesDelBitarray = bitAByte(recursosFileSystem->superBloque->BLOCK_COUNT);
   ftruncate(fileDescriptor, bytesDelBitarray );
   void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
   t_bitarray* bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);
@@ -77,13 +77,13 @@ void cargarBloques(){
   ftruncate(fileDescriptor, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
   void* bloque = mmap(NULL, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
   //pthread_mutex_lock(&sincro_block);
-		memcpy(copiaBloque,bloque,config_valores.block_size * config_valores.blocks);
+		memcpy(copiaBloque,bloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
 		//pthread_mutex_unlock(&sincro_block);
 		while(1){ 
 
 			sleep(recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE);
 			//pthread_mutex_lock(&sincro_block);
-			memcpy(bloque,copiaBlock,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
+			memcpy(bloque,copiaBloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
 			//pthread_mutex_unlock(&sincro_block);
 			int sincronizacion = msync(bloque, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, MS_SYNC);
 			if(sincronizacion == -1){
@@ -98,8 +98,7 @@ void cargarBloques(){
         }
 		}
 
-		close(fd);
-		return EXIT_SUCCESS;
+		close(fileDescriptor);
 }
 
 void cargarLogger(char* pathLogger) {

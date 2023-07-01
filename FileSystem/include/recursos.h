@@ -2,7 +2,10 @@
 #define RECURSOS_H_
 
   #include <commons/log.h>
+  #include <commons/bitarray.h>
   #include <utils.h>
+  #include <fcntl.h>
+  #include <sys/mman.h>
 
   typedef struct {
     char* IP_MEMORIA;
