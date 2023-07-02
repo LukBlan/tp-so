@@ -20,7 +20,7 @@ Segmento* crearSegmentoCero(){
     return segmento;
 }
 
-Segmento* crearSegmento(void* elemento, int size){
+Segmento* crearSegmento(void* elemento, int size,int id){
     
     Segmento* unSegmento = malloc(sizeof(Segmento));
     Segmento* aux;
@@ -29,7 +29,7 @@ Segmento* crearSegmento(void* elemento, int size){
 
     guardarEnMemoria(elemento, aux, size);
     
-    unSegmento->id = aux->id;
+    unSegmento->id = id;
     unSegmento->base = aux->base;
     unSegmento->limite= size;
 
