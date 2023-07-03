@@ -1,5 +1,7 @@
 #include <utils.h>
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenosEsperadosada) {
    if (cantidadArgumentos != cantidadArgumenosEsperadosada) {
@@ -39,17 +41,12 @@ void mostrarContexto(contextoEjecucion* contexto) {
   puts("----------------------------------------");
 }
 
-int bitsToBytes(int bits){
-
-	double c = (double) bits;
-	bytes = ceil(c/8.0);
-	
-	return bytes;
+int bitsToBytes(int bits) {
+	return (int) ceil(bits / 8.0);
 }
 
 char* generarArray(int bytes){
-    char* aux;
-    aux = malloc(bytes);
-    memset(aux,0,bytes); // SETEA LOS BYTES EN 0
+    char* aux = malloc(bytes);
+    memset(aux, 0, bytes); // SETEA LOS BYTES EN 0
     return aux;
 }
