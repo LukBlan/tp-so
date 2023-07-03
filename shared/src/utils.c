@@ -45,8 +45,8 @@ int bitsToBytes(int bits) {
 	return (int) ceil(bits / 8.0);
 }
 
-char* generarArray(int bytes){
-    char* aux = malloc(bytes);
-    memset(aux, 0, bytes); // SETEA LOS BYTES EN 0
-    return aux;
+char* generarArray(int bytes) {
+  char* aux = malloc(bytes);
+  memset(aux, 0, bytes); // SETEA LOS BYTES EN 0
+  return aux;
 }

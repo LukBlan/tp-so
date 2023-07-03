@@ -41,7 +41,7 @@ main-build: libshared.so
 libshared.so: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -shared -o "libshared.so" $(OBJS) $(USER_OBJS) $(LIBS) -lcommons
+	gcc -shared -o "libshared.so" $(OBJS) $(USER_OBJS) $(LIBS) -lcommons -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 
