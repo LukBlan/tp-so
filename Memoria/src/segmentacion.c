@@ -1,17 +1,21 @@
 #include <recursos.h>
-#include <memoria_utils.h>
+#include <segmentacion.h>
+#include <stdlib.h>
+#include <utils.h>
+#include <segmentacion.h>
+#include <string.h>
 
 Segmento* segmentoCero;
 char* arrayDeHuecos;
 t_bitarray* bitMapSegmento;
 
-void iniciarSegmentacion (){
+void iniciarSegmentacion() {
     int tamanio = recursosMemoria->configuracion->TAM_MEMORIA;
     arrayDeHuecos = generarArray(recursosMemoria->configuracion->TAM_MEMORIA);
     bitMapSegmento = bitarray_create_with_mode(arrayDeHuecos,tamanio, MSB_FIRST);
 }
 
-Segmento* crearSegmentoCero(){
+Segmento* crearSegmentoCero() {
     Segmento* segmento = malloc(sizeof(Segmento));
     segmento->id = 1;
     segmento->base = 0;
@@ -20,13 +24,12 @@ Segmento* crearSegmentoCero(){
     return segmento;
 }
 
-Segmento* crearSegmento(void* elemento, int size,int id){
-    
+/*
+Segmento* crearSegmento(void* elemento, int size,int id) {
     Segmento* unSegmento = malloc(sizeof(Segmento));
     Segmento* aux;
 
     aux = buscarCandidato(size); 
-
     guardarEnMemoria(elemento, aux, size);
     
     unSegmento->id = id;
@@ -34,24 +37,22 @@ Segmento* crearSegmento(void* elemento, int size,int id){
     unSegmento->limite= size;
 
     free(aux);
-
     return unSegmento; //DEVUELVE EL SEGMENTO QUE FUE GUARDADO
 }
+*/
 
-void guardarEnMemoria(void* elemento, Segmento* segmento, int size){
-    
+void guardarEnMemoria(void* elemento, Segmento* segmento, int size) {
     ocuparBitMap(bitMapSegmento, segmento->base,size);
     ocuparMemoria(elemento, segmento->base, size);
 }
 
-void ocuparMemoria(void* tareas, int base, int size){
+void ocuparMemoria(void* tareas, int base, int size) {
 	//pthread_mutex_lock(&mutexMemoria);
     memcpy(memoriaPrincipal+base, tareas, size);
     //pthread_mutex_unlock(&mutexMemoria);
 }
 
-void ocuparBitMap(t_bitarray* bitMap, int base, int size){
-	
+void ocuparBitMap(t_bitarray* bitMap, int base, int size) {
 	//mutex
 	for(int i = 0; i < size; i++){
 		bitarray_set_bit(bitMapSegmento, base + i); 
@@ -59,64 +60,61 @@ void ocuparBitMap(t_bitarray* bitMap, int base, int size){
 	//mutex
 }
 
-int puedoGuardar(int quieroGuardar){ 
-
+int puedoGuardar(int quieroGuardar) {
     int tamanioLibre = tamanioTotalDisponible();
-    if(quieroGuardar <= tamanioLibre){
-        return 1;
-    }else return 0; 
-    
+    return (quieroGuardar <= tamanioLibre)? 1 : 0;
 }
-int tamanioTotalDisponible(void){
-    
+
+int tamanioTotalDisponible(void) {
     int contador = 0;
     int desplazamiento = 0 ;
 
-    while (desplazamiento < recursosMemoria->configuracion->TAM_MEMORIA){
-
+    while (desplazamiento < recursosMemoria->configuracion->TAM_MEMORIA) {
     	//pthread_mutex_lock(&mutexBitMapSegment);
-        if((bitarray_test_bit(bitMapSegmento, desplazamiento) == 0)){
-            contador ++;
-        }
-        //pthread_mutex_unlock(&mutexBitMapSegment);
-        desplazamiento ++; 
+      if((bitarray_test_bit(bitMapSegmento, desplazamiento) == 0)) {
+        contador ++;
+      }
+      //pthread_mutex_unlock(&mutexBitMapSegment);
+      desplazamiento ++;
     }
-
     return contador;
 }
-t_list* buscarSegmentosDisponibles(){
-    Segmento* unSegmento = malloc (sizeof(Segmento));
+
+/*
+t_list* buscarSegmentosDisponibles() {
+    Segmento* unSegmento = malloc(sizeof(Segmento));
     t_list* segmentosDisponibles = list_create();
     int base = 0;
     int tamanio = 0 ;
     //mutex a bitarray
-    while(base < (recursosMemoria->configuracion->TAM_MEMORIA)){
-    if(bitarray_test_bit(bitMapSegmento,base) == 1){
+    while(base < (recursosMemoria->configuracion->TAM_MEMORIA)) {
+      if(bitarray_test_bit(bitMapSegmento,base) == 1){
         int desplazamiento = contarEspaciosEnUno(bitMapSegmento,base);
         base += desplazamiento;
-    }
-    tamanio = contarEspacioEnCero(bitMapSegmento,base);
-    //unSegmento -> id = ++id;
-    unSegmento -> base = base;
-    unSegmento -> limite = tamanio;
-    list_add(segmentosDisponibles,unSegmento);
+      }
+
+      tamanio = contarEspacioEnCero(bitMapSegmento,base);
+      //unSegmento -> id = ++id;
+      unSegmento -> base = base;
+      unSegmento -> limite = tamanio;
+      list_add(segmentosDisponibles,unSegmento);
     }
     return segmentosDisponibles;
 }
+*/
 
 t_list* puedenGuardar(t_list* segmentos, int size){
-   
     t_list* segmentosTamanioNecesario;
-    int puedoGuardarSeg(Segmento* segmento){
 
+    int puedoGuardarSeg(Segmento* segmento) {
         return(segmento->limite >= size);
-
     }
+
     segmentosTamanioNecesario = list_filter(segmentos, (void*)puedoGuardarSeg);
     return segmentosTamanioNecesario;
 }
 /*
-Segmento* buscarCandidato(int tamanio){
+Segmento* buscarCandidato(int tamanio) {
     Segmento* segmento;
     t_list* todosLosSegLibres;
     todosLosSegLibres =  buscarSegmentosDisponibles(); 
@@ -135,7 +133,7 @@ Segmento* buscarCandidato(int tamanio){
     return segmento;
 }
 
-Segmento* elegirCriterio (t_list* segmentos, int tamanio){
+Segmento* elegirCriterio (t_list* segmentos, int tamanio) {
     Segmento* segmento;
     if(strcmp(recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION,"FIRST")==0){
         segmento = list_get(segmentos,0);
