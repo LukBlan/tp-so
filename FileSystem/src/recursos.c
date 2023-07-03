@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <commons/config.h>
 #include <unistd.h>
+#include <utils.h>
 
 t_recursos* recursosFileSystem;
 void* copiaBloque;
@@ -61,7 +62,7 @@ void cargarSuperbloque() {
 
 void cargarBitMap() {
   int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
-  int bytesDelBitarray = bitAByte(recursosFileSystem->superBloque->BLOCK_COUNT);
+  int bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
   ftruncate(fileDescriptor, bytesDelBitarray );
   void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
   t_bitarray* bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);
