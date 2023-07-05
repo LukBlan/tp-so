@@ -6,6 +6,17 @@
   #include <stdio.h>
 
   typedef struct {
+    int id;
+    t_list segmentos_proceso ;
+  } tablaDeSegmento;
+
+  typedef struct {
+    int id;
+    int base;
+    int limite;
+  } Segmento;
+
+  typedef struct {
     char AX[4];
     char BX[4];
     char CX[4];

@@ -9,6 +9,7 @@
 #include <utils.h>
 #include <pthread.h>
 #include <serializacion/paquete.h>
+#include <serializacion/contexto.h>
 
 int idProceso = 0;
 
@@ -57,14 +58,16 @@ void agregarConsolaALista(PCB* pcb, int socketCliente) {
 }
 
 void recibirSegementoMemoria(PCB* pcb) {
+  int* posicion = malloc(sizeof(int));
+  *posicion = 0;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
   t_buffer* buffer = generarBuffer(0);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
 
   enviar_paquete(paquete, socketMemoria);
   obtenerCodigoOperacion(socketMemoria);
-
   t_buffer* bufferRecibido = obtenerBuffer(socketMemoria);
+  pcb->contexto->tablaSegmentos = deserializarSegmentos(bufferRecibido, posicion);
   printf("Buffer recibido de tamaño %d", bufferRecibido->size);
 }
 

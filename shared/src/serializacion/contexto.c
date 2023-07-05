@@ -11,6 +11,43 @@ int tamanioBytesContexto(contextoEjecucion* contexto) {
   return tamanioTotal;
 }
 
+int tamanioBytesSegmentos(t_list* listaSegmentos) {
+  int tamanioLista = listaSegmentos->elements_count;
+  return tamanioLista * sizeof(Segmento) + sizeof(int);
+}
+
+void serializarSegmentos(t_buffer* buffer, t_list* segmentos, int* posicion) {
+  int cantidadSegmentos = segmentos->elements_count;
+
+  printf("cantidad de segmentos %d\n", cantidadSegmentos);
+  memcpy(buffer->stream + *posicion, &(cantidadSegmentos), sizeof(int));
+  *posicion += sizeof(int);
+
+  for(int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmento = list_get(segmentos, i);
+
+    memcpy(buffer->stream + *posicion, &(segmento->id), sizeof(int));
+    *posicion += sizeof(int);
+
+    memcpy(buffer->stream + *posicion, &(segmento->base), sizeof(int));
+    *posicion += sizeof(int);
+
+    memcpy(buffer->stream + *posicion, &(segmento->limite), sizeof(int));
+    *posicion += sizeof(int);
+  }
+}
+
+t_list* deserializarSegmentos(t_buffer* buffer, int* posicion) {
+  t_list* listaSegmentos = list_create();
+  int cantidadSegmentos = 0;
+
+  memcpy(&(cantidadSegmentos), buffer + *posicion, sizeof(int));
+  *posicion += sizeof(int);
+
+  printf("cantidad de segmentos = %d", cantidadSegmentos);
+  return listaSegmentos;
+}
+
 void serializarProgramCounter(t_buffer* buffer, int programCounter, int* posicion) {
   memcpy(buffer->stream + *posicion, &(programCounter), sizeof(int));
   *posicion += sizeof(int);

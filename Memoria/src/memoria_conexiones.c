@@ -7,6 +7,8 @@
 #include <estructuras.h>
 #include <serializacion/paquete.h>
 #include <serializacion/buffer.h>
+#include <serializacion/contexto.h>
+#include <segmentacion.h>
 
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
@@ -38,7 +40,14 @@ void montarServidor() {
 }
 
 void enviarSegmentoCero(int socketCliente) {
-  t_buffer* buffer = generarBuffer(0);
+  int* posicion = malloc(sizeof(int));
+  *posicion = 0;
+  t_list* listaSegmentos = list_create();
+  list_add(listaSegmentos, segmentoCero);
+  int tamanioListaSegmentos = tamanioBytesSegmentos(listaSegmentos);
+
+  t_buffer* buffer = generarBuffer(tamanioListaSegmentos);
+  serializarSegmentos(buffer, listaSegmentos, posicion);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
   enviar_paquete(paquete, socketCliente);
 }
