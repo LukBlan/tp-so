@@ -68,7 +68,6 @@ void recibirSegementoMemoria(PCB* pcb) {
   obtenerCodigoOperacion(socketMemoria);
   t_buffer* bufferRecibido = obtenerBuffer(socketMemoria);
   pcb->contexto->tablaSegmentos = deserializarSegmentos(bufferRecibido, posicion);
-  printf("Buffer recibido de tamaño %d", bufferRecibido->size);
 }
 
 void montarServidor() {

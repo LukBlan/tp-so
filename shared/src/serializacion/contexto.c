@@ -41,10 +41,24 @@ t_list* deserializarSegmentos(t_buffer* buffer, int* posicion) {
   t_list* listaSegmentos = list_create();
   int cantidadSegmentos = 0;
 
-  memcpy(&(cantidadSegmentos), buffer + *posicion, sizeof(int));
+  memcpy(&(cantidadSegmentos), buffer->stream + *posicion, sizeof(int));
   *posicion += sizeof(int);
 
-  printf("cantidad de segmentos = %d", cantidadSegmentos);
+  for (int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmento = malloc(sizeof(Segmento));
+
+    memcpy(&(segmento->id), buffer->stream + *posicion, sizeof(int));
+    *posicion += sizeof(int);
+
+    memcpy(&(segmento->base), buffer->stream + *posicion, sizeof(int));
+    *posicion += sizeof(int);
+
+    memcpy(&(segmento->limite), buffer->stream + *posicion, sizeof(int));
+    *posicion += sizeof(int);
+
+    list_add(listaSegmentos, segmento);
+  }
+
   return listaSegmentos;
 }
 
