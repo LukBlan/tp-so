@@ -5,6 +5,8 @@
 #include <pthread.h>
 #include <netdb.h>
 #include <estructuras.h>
+#include <serializacion/paquete.h>
+#include <serializacion/buffer.h>
 
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
@@ -35,6 +37,12 @@ void montarServidor() {
   }
 }
 
+void enviarSegmentoCero(int socketCliente) {
+  t_buffer* buffer = generarBuffer(0);
+  t_paquete* paquete = crearPaquete(buffer, Pcb);
+  enviar_paquete(paquete, socketCliente);
+}
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   switch (codigoOperacion) {
     case HANDSHAKE:
@@ -42,6 +50,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       log_info(recursosMemoria->logger, "Recibido Pedido de Handshake, Respondiendo");
       recv(socketCliente, &valorRecibido, sizeof(int), 0);
       send(socketCliente, &valorRecibido, sizeof(int), 0);
+      break;
+    case Pcb:
+      enviarSegmentoCero(socketCliente);
       break;
     default:
       close(socketCliente);

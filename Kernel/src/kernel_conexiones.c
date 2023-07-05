@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <utils.h>
 #include <pthread.h>
+#include <serializacion/paquete.h>
 
 int idProceso = 0;
 
@@ -55,6 +56,18 @@ void agregarConsolaALista(PCB* pcb, int socketCliente) {
   list_add(recursosKernel->conexiones->procesosConsola, nuevoProcesoConsola);
 }
 
+void recibirSegementoMemoria(PCB* pcb) {
+  int socketMemoria = recursosKernel->conexiones->socketMemoria;
+  t_buffer* buffer = generarBuffer(0);
+  t_paquete* paquete = crearPaquete(buffer, Pcb);
+
+  enviar_paquete(paquete, socketMemoria);
+  obtenerCodigoOperacion(socketMemoria);
+
+  t_buffer* bufferRecibido = obtenerBuffer(socketMemoria);
+  printf("Buffer recibido de tamaño %d", bufferRecibido->size);
+}
+
 void montarServidor() {
   t_list* instrucciones;
   PCB* pcb;
@@ -67,6 +80,7 @@ void montarServidor() {
     instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
+    recibirSegementoMemoria(pcb);
     agregarConsolaALista(pcb, socketCliente);
     agregarANew(pcb);
   }

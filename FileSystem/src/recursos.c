@@ -69,7 +69,6 @@ void cargarBitMap() {
   recursosFileSystem->bitMap = bitMapBloque;
   msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   close(fileDescriptor);
-
 }
 
 void cargarBloques(){

@@ -37,7 +37,7 @@
     t_list* instrucciones;
     int programCounter;
     t_registros registros;
-    //struct tablaSegmentos;
+    t_list* tablaSegmentos;
     t_list* archivosAbiertos;
   } contextoEjecucion;
 

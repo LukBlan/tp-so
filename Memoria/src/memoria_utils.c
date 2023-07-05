@@ -3,11 +3,11 @@
 #include <segmentacion.h>
 #include <string.h>
 
- void *memoriaPrincipal;
+void *memoriaPrincipal;
  
- void iniciarEstructurasMemoria(){
-    memoriaPrincipal = (void*) malloc(recursosMemoria->configuracion->TAM_MEMORIA);
-    memset(memoriaPrincipal, '0', recursosMemoria->configuracion->TAM_MEMORIA);
-    iniciarSegmentacion();
-    segmentoCero = crearSegmentoCero();
- }
+void iniciarEstructurasMemoria() {
+  memoriaPrincipal = (void*) malloc(recursosMemoria->configuracion->TAM_MEMORIA);
+  memset(memoriaPrincipal, '0', recursosMemoria->configuracion->TAM_MEMORIA);
+  iniciarSegmentacion();
+  segmentoCero = crearSegmentoCero();
+}
