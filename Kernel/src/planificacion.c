@@ -99,8 +99,6 @@ void comenzarPlanificadores() {
     pthread_create(&hiloCortoPlazo, NULL, planificador_corto_plazo_HRRN, NULL);
     pthread_detach(hiloCortoPlazo);
   }
-
-
   */
 }
 
@@ -254,6 +252,14 @@ void ejecutar(PCB* proceso) {
       break;
     case SIGNAL:
       char* recursoSignal = recibirString(socketCpu);
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case CREATE_SEGMENT:
+      puts("Entre en create_segment");
+      char* idSegmento = recibirString(socketCpu);
+      char* tamanioSegmento = recibirString(socketCpu);
+      //aviso a memoria
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;

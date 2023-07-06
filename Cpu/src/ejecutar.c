@@ -75,9 +75,6 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, SIGNAL);
     enviarString(recurso, socketKernel);
-  } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
-    continuarEjecutando = 0;
-    enviarContexto(contexto, socketKernel, CREATE_SEGMENT);
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
@@ -127,6 +124,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   char* primerParametro = instruccion->strings[1];
   char* segundoParametro = instruccion->strings[2];
   int continuarEjecutando = 1;
+  int socketKernel = recursosCpu->conexiones->socketKernel;
 
   log_info(logger, "Ejecutando %s %s %s", identificador, primerParametro, segundoParametro);
   if (strcmp("SET", identificador) == 0) {
@@ -136,13 +134,15 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   } else if (strcmp("MOV_OUT", identificador) == 0) {
   } else if (strcmp("F_SEEK", identificador) == 0) {
     continuarEjecutando = 0;
-    enviarContexto(contexto, recursosCpu->conexiones->socketKernel, F_SEEK);
+    enviarContexto(contexto, socketKernel, F_SEEK);
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
-    enviarContexto(contexto, recursosCpu->conexiones->socketKernel, F_TRUNCATE);
+    enviarContexto(contexto, socketKernel, F_TRUNCATE);
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
     continuarEjecutando = 0;
-    enviarContexto(contexto, recursosCpu->conexiones->socketKernel, CREATE_SEGMENT);
+    enviarContexto(contexto, socketKernel, CREATE_SEGMENT);
+    enviarString(primerParametro, socketKernel);
+    enviarString(segundoParametro, socketKernel);
   }
   return continuarEjecutando;
 }
