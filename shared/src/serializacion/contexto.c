@@ -19,7 +19,6 @@ int tamanioBytesSegmentos(t_list* listaSegmentos) {
 void serializarSegmentos(t_buffer* buffer, t_list* segmentos, int* posicion) {
   int cantidadSegmentos = segmentos->elements_count;
 
-  printf("cantidad de segmentos %d\n", cantidadSegmentos);
   memcpy(buffer->stream + *posicion, &(cantidadSegmentos), sizeof(int));
   *posicion += sizeof(int);
 
@@ -103,17 +102,6 @@ void serializarRegistros(t_buffer* buffer, t_registros registros, int* posicion)
   *posicion += sizeof(char) * 4;
 }
 
-void serializarContexto(t_buffer* buffer, contextoEjecucion* contexto) {
-  int* posicion = malloc(sizeof(int));
-  *posicion = 0;
-
-  serializarInstrucciones(buffer, contexto->instrucciones, posicion);
-  serializarProgramCounter(buffer, contexto->programCounter, posicion);
-  serializarRegistros(buffer, contexto->registros, posicion);
-
-  free(posicion);
-}
-
 t_registros deserializarRegistros(t_buffer* buffer, int* posicion) {
   t_registros registros;
   memcpy(registros.AX, buffer->stream + *posicion, sizeof(char) * 4);
@@ -145,6 +133,19 @@ t_registros deserializarRegistros(t_buffer* buffer, int* posicion) {
   return registros;
 }
 
+void serializarContexto(t_buffer* buffer, contextoEjecucion* contexto) {
+  int* posicion = malloc(sizeof(int));
+  *posicion = 0;
+
+  serializarInstrucciones(buffer, contexto->instrucciones, posicion);
+  serializarProgramCounter(buffer, contexto->programCounter, posicion);
+  serializarRegistros(buffer, contexto->registros, posicion);
+  serializarSegmentos(buffer, contexto->tablaSegmentos, posicion);
+
+  free(posicion);
+}
+
+
 contextoEjecucion* deserializarContexto(t_buffer* buffer) {
   contextoEjecucion* contexto = malloc(sizeof(contextoEjecucion));
   int* posicion = malloc(sizeof(int));
@@ -153,6 +154,7 @@ contextoEjecucion* deserializarContexto(t_buffer* buffer) {
   contexto->instrucciones = deserializarInstrucciones(buffer, posicion);
   contexto->programCounter = deserializarProgramCounter(buffer, posicion);
   contexto->registros = deserializarRegistros(buffer, posicion);
+  contexto->tablaSegmentos = deserializarSegmentos(buffer, posicion);
 
   free(posicion);
   return contexto;

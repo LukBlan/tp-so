@@ -38,6 +38,7 @@ void mostrarContexto(contextoEjecucion* contexto) {
   printf("programCounter = %d\n", contexto->programCounter);
   mostrarInstrucciones(contexto->instrucciones);
   mostrarRegistros(contexto->registros);
+  printf("Cantidad Segmentos %d\n", contexto->tablaSegmentos->elements_count);
   puts("----------------------------------------");
 }
 
