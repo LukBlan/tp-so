@@ -53,18 +53,35 @@ void enviarSegmentoCero(int socketCliente) {
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
+  printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case HANDSHAKE:
+      puts("Entre handshake");
       int valorRecibido = 0;
       log_info(recursosMemoria->logger, "Recibido Pedido de Handshake, Respondiendo");
       recv(socketCliente, &valorRecibido, sizeof(int), 0);
       send(socketCliente, &valorRecibido, sizeof(int), 0);
       break;
     case Pcb:
+      puts("Entre pcb");
       enviarSegmentoCero(socketCliente);
       break;
+    case CREAR_SEGMENTO:
+      puts("crear segmento");
+      contextoEjecucion* contexto = recibirContexto(socketCliente);
+      char* idSegmento = recibirString(socketCliente);
+      char* tamanioSegmento = recibirString(socketCliente);
+      printf("Create segment %s %s\n", idSegmento, tamanioSegmento);
+      break;
     default:
+      /*
+      puts("Cerre una conexion");
+      contextoEjecucion* contexto2 = recibirContexto(socketCliente);
+      char* idSegmento2 = recibirString(socketCliente);
+      char* tamanioSegmento2 = recibirString(socketCliente);
+      printf("Create segment %s %s\n", idSegmento2, tamanioSegmento2);
       close(socketCliente);
+      */
       break;
   }
 }

@@ -71,6 +71,7 @@
     WAITCODE,
     EXITCODE,
     BLOQUEADOIO,
+    CREAR_SEGMENTO,
     ENTERO
   } op_code;
 

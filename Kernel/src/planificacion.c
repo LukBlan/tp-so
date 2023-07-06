@@ -255,11 +255,16 @@ void ejecutar(PCB* proceso) {
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
-    case CREATE_SEGMENT:
-      puts("Entre en create_segment");
+    case CREAR_SEGMENTO:
+      int socketMemoria = recursosKernel->conexiones->socketMemoria;
+      printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       char* idSegmento = recibirString(socketCpu);
       char* tamanioSegmento = recibirString(socketCpu);
-      //aviso a memoria
+
+      enviarContexto(procesoDevuelto->contexto, socketMemoria, CREAR_SEGMENTO);
+      enviarString(idSegmento, socketMemoria);
+      enviarString(tamanioSegmento, socketMemoria);
+
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
