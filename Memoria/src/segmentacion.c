@@ -24,25 +24,77 @@ Segmento* crearSegmentoCero() {
     return segmento;
 }
 
-/*
-Segmento* crearSegmento(void* elemento, int size,int id) {
-    Segmento* unSegmento = malloc(sizeof(Segmento));
-    Segmento* aux;
+// DEVUELVE EL SEGMENTO QUE FUE GUARDADO
+Segmento* crearSegmento(int id, int size) {
+  Segmento* unSegmento = malloc(sizeof(Segmento));
+  Segmento* aux;
 
-    aux = buscarCandidato(size); 
-    guardarEnMemoria(elemento, aux, size);
-    
-    unSegmento->id = id;
-    unSegmento->base = aux->base;
-    unSegmento->limite= size;
+  aux = buscarCandidato(size);
 
-    free(aux);
-    return unSegmento; //DEVUELVE EL SEGMENTO QUE FUE GUARDADO
+  unSegmento->id = id;
+  unSegmento->base = aux->base;
+  unSegmento->limite= size;
+
+  free(aux);
+  return unSegmento;
 }
-*/
+
+Segmento* buscarCandidato(int tamanio) {
+  Segmento* segmento;
+  t_list* todosLosSegLibres;
+  t_list* segmentosCandidatos;
+
+  todosLosSegLibres = buscarSegmentosDisponibles();
+  segmentosCandidatos = puedenGuardar(todosLosSegLibres , tamanio);
+
+  if(list_is_empty(segmentosCandidatos)) {
+    puts("Compactando... (En verdad no estamos haciendo nada, pero bueno yo q c)");
+    //compactacion();
+    //segmento = buscarCandidato(tamanio);
+  } else if (list_size(segmentosCandidatos) == 1) {
+    segmento = list_get(segmentosCandidatos, 0);
+  } else {
+    segmento = elegirCriterio(segmentosCandidatos, tamanio);
+  }
+
+  //TODO list destroy
+  return segmento;
+}
+
+int contarCantidadDe(int base, int numero) {
+  int cantidad = 0;
+
+  while(bitarray_test_bit(bitMapSegmento, base + cantidad) == numero) {
+    cantidad++;
+  }
+  return cantidad;
+}
+
+t_list* buscarSegmentosDisponibles() {
+  t_list* segmentosDisponibles = list_create();
+  int base = 0;
+  int tamanio = 0 ;
+
+  //mutex a bitarray
+  while(base < (recursosMemoria->configuracion->TAM_MEMORIA)) {
+    Segmento* unSegmento = malloc(sizeof(Segmento));
+
+    int desplazamiento = contarCantidadDe(base, 1);
+    base += desplazamiento;
+
+    tamanio = contarCantidadDe(base, 0);
+    unSegmento->base = base;
+    unSegmento->limite = tamanio;
+    base += tamanio;
+
+    list_add(segmentosDisponibles, unSegmento);
+  }
+
+  return segmentosDisponibles;
+}
 
 void guardarEnMemoria(void* elemento, Segmento* segmento, int size) {
-    ocuparBitMap(bitMapSegmento, segmento->base,size);
+    ocuparBitMap(bitMapSegmento, segmento->base, size);
     ocuparMemoria(elemento, segmento->base, size);
 }
 
@@ -80,29 +132,6 @@ int tamanioTotalDisponible(void) {
     return contador;
 }
 
-/*
-t_list* buscarSegmentosDisponibles() {
-    Segmento* unSegmento = malloc(sizeof(Segmento));
-    t_list* segmentosDisponibles = list_create();
-    int base = 0;
-    int tamanio = 0 ;
-    //mutex a bitarray
-    while(base < (recursosMemoria->configuracion->TAM_MEMORIA)) {
-      if(bitarray_test_bit(bitMapSegmento,base) == 1){
-        int desplazamiento = contarEspaciosEnUno(bitMapSegmento,base);
-        base += desplazamiento;
-      }
-
-      tamanio = contarEspacioEnCero(bitMapSegmento,base);
-      //unSegmento -> id = ++id;
-      unSegmento -> base = base;
-      unSegmento -> limite = tamanio;
-      list_add(segmentosDisponibles,unSegmento);
-    }
-    return segmentosDisponibles;
-}
-*/
-
 t_list* puedenGuardar(t_list* segmentos, int size){
     t_list* segmentosTamanioNecesario;
 
@@ -113,34 +142,17 @@ t_list* puedenGuardar(t_list* segmentos, int size){
     segmentosTamanioNecesario = list_filter(segmentos, (void*)puedoGuardarSeg);
     return segmentosTamanioNecesario;
 }
-/*
-Segmento* buscarCandidato(int tamanio) {
-    Segmento* segmento;
-    t_list* todosLosSegLibres;
-    todosLosSegLibres =  buscarSegmentosDisponibles(); 
-    t_list* segmentosCandidatos;
-    segmentosCandidatos = puedenGuardar( todosLosSegLibres , tamanio);
-    if(list_is_empty(segmentosCandidatos)){
-        compactacion();
-        segmento = buscarSegmentoSegunTamanio(tamanio);
-    }else if(list_size(segmentosCandidatos)== 1){
-        segmento = list_get(segmentosCandidatos, 0);
-    }else{
-        segmento = elegirCriterio(segmentosCandidatos, tamanio);
-    }
-    
-    //TODO list destroy 
-    return segmento;
-}
 
 Segmento* elegirCriterio (t_list* segmentos, int tamanio) {
-    Segmento* segmento;
-    if(strcmp(recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION,"FIRST")==0){
-        segmento = list_get(segmentos,0);
-    } else if (strcmp(recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION,"BEST")==0){
-        segmento = segmentoBest(segmentos,tamanio);
-    } else if (strcmp(recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION,"WORST")==0){
-        segmento = segmentoWorst(segmentos,tamanio);
+  Segmento* segmento;
+  char*  algoritmo = recursosMemoria->configuracion->ALGOTIRMO_ASIGNACION;
 
+  if(strcmp(algoritmo, "FIRST") == 0) {
+    segmento = list_get(segmentos, 0);
+  } else if (strcmp(algoritmo, "BEST") == 0) {
+    //segmento = segmentoBest(segmentos, tamanio);
+  } else if (strcmp(algoritmo, "WORST") == 0) {
+    //segmento = segmentoWorst(segmentos, tamanio);
+  }
+  return segmento;
 }
-*/

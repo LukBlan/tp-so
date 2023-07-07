@@ -14,17 +14,17 @@
   extern Segmento* segmentoCero;
   extern char* arrayDeHuecos;
 
-  void iniciarSegmentacion ();
+  void iniciarSegmentacion();
   Segmento* crearSegmentoCero();
-  Segmento* crearSegmento(void* elemento, int size,int id);
+  Segmento* crearSegmento(int id, int size);
+  Segmento* buscarCandidato(int tamanio);
+  t_list* buscarSegmentosDisponibles();
   void guardarEnMemoria(void* elemento, Segmento* segmento, int size);
   void ocuparMemoria(void* tareas, int base, int size);
   void ocuparBitMap(t_bitarray* bitMap, int base, int size);
   int puedoGuardar(int quieroGuardar);
   int tamanioTotalDisponible(void);
-  t_list* buscarSegmentosDisponibles();
   t_list* puedenGuardar(t_list* segmentos, int size);
-  Segmento* buscarCandidato(int tamanio);
   Segmento* elegirCriterio (t_list* segmentos, int tamanio);
 
 #endif

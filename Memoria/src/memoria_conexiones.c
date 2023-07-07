@@ -9,6 +9,7 @@
 #include <serializacion/buffer.h>
 #include <serializacion/contexto.h>
 #include <segmentacion.h>
+#include <string.h>
 
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
@@ -70,9 +71,11 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case CREATE_SEGMENT:
       puts("crear segmento");
       contextoEjecucion* contexto = recibirContexto(socketCliente);
-      char* idSegmento = recibirString(socketCliente);
-      char* tamanioSegmento = recibirString(socketCliente);
-      printf("Create segment %s %s\n", idSegmento, tamanioSegmento);
+      int idSegmento = atoi(recibirString(socketCliente));
+      int tamanioSegmento = atoi(recibirString(socketCliente));
+      Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
+      printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
+      printf("base nuevo segmento %d\n", segmento->base);
       break;
     default:
       puts("Cerre una conexion");
