@@ -16,12 +16,15 @@ void iniciarSegmentacion() {
 }
 
 Segmento* crearSegmentoCero() {
-    Segmento* segmento = malloc(sizeof(Segmento));
-    segmento->id = 1;
-    segmento->base = 0;
-    segmento->limite= recursosMemoria->configuracion->TAM_SEGMENTO_0;
-    guardarEnMemoria(segmento,segmento,recursosMemoria->configuracion->TAM_SEGMENTO_0); //TODO Ver si esta bien la implementacion de guardado en memoria
-    return segmento;
+  Segmento* segmentoCero = malloc(sizeof(Segmento));
+  int tamanioSegmentoCero = recursosMemoria->configuracion->TAM_SEGMENTO_0;
+
+  segmentoCero->id = 1;
+  segmentoCero->base = 0;
+  segmentoCero->limite = tamanioSegmentoCero;
+
+  ocuparBitArray(segmentoCero);
+  return segmentoCero;
 }
 
 void ocuparBitArray(Segmento* segmento) {
@@ -98,23 +101,10 @@ t_list* buscarSegmentosDisponibles() {
   return segmentosDisponibles;
 }
 
-void guardarEnMemoria(void* elemento, Segmento* segmento, int size) {
-    ocuparBitMap(bitMapSegmento, segmento->base, size);
-    ocuparMemoria(elemento, segmento->base, size);
-}
-
 void ocuparMemoria(void* tareas, int base, int size) {
 	//pthread_mutex_lock(&mutexMemoria);
     memcpy(memoriaPrincipal+base, tareas, size);
     //pthread_mutex_unlock(&mutexMemoria);
-}
-
-void ocuparBitMap(t_bitarray* bitMap, int base, int size) {
-	//mutex
-	for(int i = 0; i < size; i++){
-		bitarray_set_bit(bitMapSegmento, base + i); 
-	}
-	//mutex
 }
 
 int puedoGuardar(int quieroGuardar) {
@@ -137,7 +127,7 @@ int tamanioTotalDisponible(void) {
     return contador;
 }
 
-t_list* puedenGuardar(t_list* segmentos, int size){
+t_list* puedenGuardar(t_list* segmentos, int size) {
     t_list* segmentosTamanioNecesario;
 
     int puedoGuardarSeg(Segmento* segmento) {
