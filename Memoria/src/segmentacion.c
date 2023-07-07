@@ -24,19 +24,24 @@ Segmento* crearSegmentoCero() {
     return segmento;
 }
 
+void ocuparBitArray(Segmento* segmento) {
+  int base = segmento->base;
+  int tamanio = segmento->limite;
+
+  for (int i = base; i < base + tamanio; i++) {
+    bitarray_set_bit(bitMapSegmento, i);
+  }
+}
+
 // DEVUELVE EL SEGMENTO QUE FUE GUARDADO
 Segmento* crearSegmento(int id, int size) {
-  Segmento* unSegmento = malloc(sizeof(Segmento));
-  Segmento* aux;
+  Segmento* segmentoNuevo = buscarCandidato(size);
 
-  aux = buscarCandidato(size);
+  segmentoNuevo->id = id;
+  segmentoNuevo->limite= size;
+  ocuparBitArray(segmentoNuevo);
 
-  unSegmento->id = id;
-  unSegmento->base = aux->base;
-  unSegmento->limite= size;
-
-  free(aux);
-  return unSegmento;
+  return segmentoNuevo;
 }
 
 Segmento* buscarCandidato(int tamanio) {
