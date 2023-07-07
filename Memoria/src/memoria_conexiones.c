@@ -64,9 +64,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
     case Pcb:
       puts("Entre pcb");
+      t_buffer* buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
       break;
-    case CREAR_SEGMENTO:
+    case CREATE_SEGMENT:
       puts("crear segmento");
       contextoEjecucion* contexto = recibirContexto(socketCliente);
       char* idSegmento = recibirString(socketCliente);
@@ -74,12 +75,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       printf("Create segment %s %s\n", idSegmento, tamanioSegmento);
       break;
     default:
-      /*
       puts("Cerre una conexion");
-      contextoEjecucion* contexto2 = recibirContexto(socketCliente);
-      char* idSegmento2 = recibirString(socketCliente);
-      char* tamanioSegmento2 = recibirString(socketCliente);
-      printf("Create segment %s %s\n", idSegmento2, tamanioSegmento2);
+      /*
       close(socketCliente);
       */
       break;

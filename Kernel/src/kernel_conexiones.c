@@ -61,7 +61,7 @@ void recibirSegementoMemoria(PCB* pcb) {
   int* posicion = malloc(sizeof(int));
   *posicion = 0;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
-  t_buffer* buffer = generarBuffer(0);
+  t_buffer* buffer = generarBuffer(4);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
 
   enviar_paquete(paquete, socketMemoria);

@@ -67,16 +67,7 @@
     LINEAS_INSTRUCCION,
     HANDSHAKE,
     Pcb,
-    SIGNALCODE,
-    WAITCODE,
-    EXITCODE,
-    BLOQUEADOIO,
-    CREAR_SEGMENTO,
-    ENTERO
-  } op_code;
-
-  typedef enum {
-    DESCONOCIDA = -1,
+    ENTERO,
     SET,
     YIELD,
     WAIT,
@@ -90,8 +81,9 @@
     F_WRITE,
     F_TRUNCATE,
     CREATE_SEGMENT,
-    DELETE_SEGMENT
-  } TipoInstruccion;
+    DELETE_SEGMENT,
+    DESCONOCIDA
+  } op_code;
 
   typedef struct {
     char* strings[4];

@@ -140,7 +140,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
     continuarEjecutando = 0;
-    enviarContexto(contexto, socketKernel, CREAR_SEGMENTO);
+    enviarContexto(contexto, socketKernel, CREATE_SEGMENT);
     enviarString(primerParametro, socketKernel);
     enviarString(segundoParametro, socketKernel);
   }

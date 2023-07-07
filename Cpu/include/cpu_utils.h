@@ -6,6 +6,5 @@
   #include <estructuras.h>
 
   void setear_valor_registro(char nombre_registro, char valor);
-  TipoInstruccion obtener_tipo_instruccion(char *instruccion);
 
 #endif
