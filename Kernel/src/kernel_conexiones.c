@@ -102,6 +102,7 @@ PCB* crearPcb(t_list* listaInstrucciones) {
   pcb->llegadaReady = 0;
   pcb->contexto->programCounter = 0;
   pcb->contexto->instrucciones = listaInstrucciones;
+  pcb->contexto->archivosAbiertos = list_create();
   return pcb;
 }
 

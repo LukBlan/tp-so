@@ -16,6 +16,20 @@ int tamanioBytesSegmentos(t_list* listaSegmentos) {
   return tamanioLista * sizeof(Segmento) + sizeof(int);
 }
 
+int tamanioBytesListaArchivosAbiertos(t_list* listaArchivos) {
+  int cantidadArchivos = listaArchivos->elements_count;
+  // Por cantidadDeElementos de la lista;
+  int bytes = sizeof(int);
+
+  for (int i = 0; i < cantidadArchivos; i++) {
+    archivoAbierto* archivo = list_get(listaArchivos, i);
+    bytes += string_length(archivo->nombre) + 1;
+    bytes += sizeof(FILE*);
+  }
+
+  return bytes;
+}
+
 void serializarSegmentos(t_buffer* buffer, t_list* segmentos, int* posicion) {
   int cantidadSegmentos = segmentos->elements_count;
 
@@ -131,6 +145,58 @@ t_registros deserializarRegistros(t_buffer* buffer, int* posicion) {
   memcpy(registros.RDX, buffer->stream + *posicion, sizeof(char) * 16);
   *posicion += sizeof(char) * 4;
   return registros;
+}
+
+void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, int* posicion) {
+  t_list* listaArchivos = contexto->archivosAbiertos;
+  int cantidadArchivos = listaArchivos->elements_count;
+
+  memcpy(buffer->stream + *posicion, &(cantidadArchivos), sizeof(int));
+  *posicion += sizeof(int);
+
+  for (int i = 0; i < cantidadArchivos; i++) {
+    archivoAbierto* archivo = list_get(listaArchivos, i);
+    char* nombreArchivo = archivo->nombre;
+    int cantidadCaracteres = string_length(nombreArchivo) + 1;
+
+    memcpy(buffer->stream + *posicion, &(cantidadCaracteres), sizeof(int));
+    *posicion += sizeof(int);
+
+    memcpy(buffer->stream + *posicion, nombreArchivo, cantidadCaracteres);
+    *posicion += cantidadCaracteres;
+
+    memcpy(buffer->stream + *posicion, archivo->punteroArchivo, sizeof(FILE*));
+    *posicion += sizeof(FILE*);
+  }
+}
+
+t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {
+  t_list* listaArchivos = list_create();
+  int cantidadArchivos = 0;
+
+  memcpy(&(cantidadArchivos), buffer->stream + *posicion, sizeof(int));
+  *posicion += sizeof(int);
+
+  for (int i = 0; i < cantidadArchivos; i++) {
+    archivoAbierto* archivo = malloc(sizeof(archivo));
+    int cantidadCaracteres = 0;
+
+    memcpy(&(cantidadCaracteres), buffer->stream + *posicion, sizeof(int));
+    *posicion += sizeof(int);
+    printf("cantidad caracteres %d", cantidadCaracteres);
+
+    char* nombreArchivo = malloc(cantidadCaracteres);
+    memcpy(nombreArchivo, buffer->stream + *posicion,  cantidadCaracteres);
+    *posicion += cantidadCaracteres;
+
+    void* dirrecion;
+    memcpy(dirrecion, buffer->stream + *posicion, sizeof(FILE*));
+    *posicion += sizeof(FILE*);
+    printf("dirrecion %p\n", dirrecion);
+    archivo->nombre = nombreArchivo;
+    list_add(listaArchivos, archivo);
+  }
+  return listaArchivos;
 }
 
 void serializarContexto(t_buffer* buffer, contextoEjecucion* contexto) {

@@ -11,5 +11,8 @@
   int tamanioBytesSegmentos(t_list* listaSegmentos);
   void serializarSegmentos(t_buffer* buffer, t_list* segmentos, int* posicion);
   t_list* deserializarSegmentos(t_buffer* buffer, int* posicion);
+  int tamanioBytesListaArchivosAbiertos(t_list* listaArchivos);
+  void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, int* posicion);
+  t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion);
 
 #endif
