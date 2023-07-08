@@ -165,6 +165,7 @@ void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, i
     memcpy(buffer->stream + *posicion, nombreArchivo, cantidadCaracteres);
     *posicion += cantidadCaracteres;
 
+    printf("dirrecion serializada %p\n", archivo->punteroArchivo);
     memcpy(buffer->stream + *posicion, archivo->punteroArchivo, sizeof(FILE*));
     *posicion += sizeof(FILE*);
   }
@@ -178,7 +179,7 @@ t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {
   *posicion += sizeof(int);
 
   for (int i = 0; i < cantidadArchivos; i++) {
-    archivoAbierto* archivo = malloc(sizeof(archivo));
+    archivoAbierto* archivo = malloc(sizeof(archivoAbierto));
     int cantidadCaracteres = 0;
 
     memcpy(&(cantidadCaracteres), buffer->stream + *posicion, sizeof(int));
@@ -189,11 +190,13 @@ t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {
     memcpy(nombreArchivo, buffer->stream + *posicion,  cantidadCaracteres);
     *posicion += cantidadCaracteres;
 
-    void* dirrecion;
+    FILE* dirrecion;
     memcpy(dirrecion, buffer->stream + *posicion, sizeof(FILE*));
     *posicion += sizeof(FILE*);
-    printf("dirrecion %p\n", dirrecion);
+
+    printf("dirrecion deserializada %p\n", dirrecion);
     archivo->nombre = nombreArchivo;
+    archivo->punteroArchivo = dirrecion;
     list_add(listaArchivos, archivo);
   }
   return listaArchivos;
