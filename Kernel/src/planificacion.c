@@ -239,6 +239,7 @@ void ejecutar(PCB* proceso) {
       agregar_proceso_bloqueado(procesoDevuelto);
       break;
     case EXIT:
+      puts("Entre por exit");
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);

@@ -40,6 +40,8 @@ void mostrarContexto(contextoEjecucion* contexto) {
   mostrarRegistros(contexto->registros);
   printf("Cantidad Segmentos %d\n", contexto->tablaSegmentos->elements_count);
   puts("----------------------------------------");
+  archivoAbierto* archivo = list_get(contexto->archivosAbiertos, 0);
+  printf("dirrecion primer archivo %p\n", archivo->punteroArchivo);
 }
 
 int bitsToBytes(int bits) {

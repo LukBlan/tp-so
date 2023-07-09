@@ -8,6 +8,7 @@ int tamanioBytesContexto(contextoEjecucion* contexto) {
   tamanioTotal += tamanioBytesInstrucciones(contexto->instrucciones);
   tamanioTotal += sizeof(int) * 2;
   tamanioTotal += sizeof(t_registros);
+  tamanioTotal += tamanioBytesListaArchivosAbiertos(contexto->archivosAbiertos);
   return tamanioTotal;
 }
 
@@ -211,6 +212,7 @@ void serializarContexto(t_buffer* buffer, contextoEjecucion* contexto) {
   serializarProgramCounter(buffer, contexto->programCounter, posicion);
   serializarRegistros(buffer, contexto->registros, posicion);
   serializarSegmentos(buffer, contexto->tablaSegmentos, posicion);
+  serializarArchivosAbiertos(buffer, contexto, posicion);
 
   free(posicion);
 }
@@ -225,6 +227,7 @@ contextoEjecucion* deserializarContexto(t_buffer* buffer) {
   contexto->programCounter = deserializarProgramCounter(buffer, posicion);
   contexto->registros = deserializarRegistros(buffer, posicion);
   contexto->tablaSegmentos = deserializarSegmentos(buffer, posicion);
+  contexto->archivosAbiertos = deserializarArchivosAbiertos(buffer, posicion);
 
   free(posicion);
   return contexto;
