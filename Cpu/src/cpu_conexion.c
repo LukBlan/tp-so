@@ -80,7 +80,9 @@ void manejarConexionConKernel() {
 
 void recibirContextoAEjecutar() {
   int socketKernel = recursosCpu->conexiones->socketKernel;
-  while(1) {
+  t_log* logger = recursosCpu->logger;
+  int ejecutarCpu = 1;
+  while(ejecutarCpu) {
     op_code codigoOperacion = obtenerCodigoOperacion(socketKernel);
     switch(codigoOperacion) {
       case Pcb:
@@ -89,7 +91,9 @@ void recibirContextoAEjecutar() {
         ejecutarContexto(contexto);
         break;
       default:
-        puts("Como carajo llegue aca");
+        log_error(logger, "Perdi conexion con el Kernel? (Ya arregle el mensaje este jajjajaj)");
+        ejecutarCpu = 0;
+        break;
     }
   }
 }

@@ -80,6 +80,8 @@
     F_READ,
     F_WRITE,
     F_TRUNCATE,
+    MOV_IN,
+    MOV_OUT,
     CREATE_SEGMENT,
     DELETE_SEGMENT,
     DESCONOCIDA

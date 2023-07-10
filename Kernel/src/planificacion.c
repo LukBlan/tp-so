@@ -230,16 +230,63 @@ void ejecutar(PCB* proceso) {
 
   switch (codigoOperacion) {
     case YIELD:
+      puts("Llego YIELD");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case MOV_IN:
+      puts("Llego MOV_IN");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_TRUNCATE:
+      puts("Llego F_TRUNCATE");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case MOV_OUT:
+      puts("Llego MOV_OUT");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_OPEN:
+      puts("Llego F_OPEN");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case DELETE_SEGMENT:
+      puts("Llego DELETE_SEGMENT");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_CLOSE:
+      puts("Llego F_CLOSE");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_SEEK:
+      puts("Llego F_SEEK");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_READ:
+      puts("Llego F_READ");
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
+      break;
+    case F_WRITE:
+      puts("Llego F_WRITE");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case IO:
+      puts("Llego IO");
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
       break;
     case EXIT:
-      puts("Entre por exit");
+      puts("Llego Exit");
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
@@ -247,16 +294,19 @@ void ejecutar(PCB* proceso) {
       //liberarPcb(procesoTerminado);
       break;
     case WAIT:
+      puts("Llego WAIT");
       char* recursoWait = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case SIGNAL:
+      puts("Llego SIGNAL");
       char* recursoSignal = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case CREATE_SEGMENT:
+      puts("Llego CREATE_SEGMENT");
       int socketMemoria = recursosKernel->conexiones->socketMemoria;
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       char* idSegmento = recibirString(socketCpu);
@@ -340,7 +390,7 @@ void ejecutar(PCB* proceso) {
 }
 
 
-void agregarFinalizado(PCB* proceso){
+void agregarFinalizado(PCB* proceso) {
     pthread_mutex_lock(&mutexColaEnd);
     t_log* logger = recursosKernel->logger;
     queue_push(colaEnd, proceso);

@@ -57,33 +57,27 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
   int socketKernel = recursosCpu->conexiones->socketKernel;
   char* identificador = instruccion->strings[0];
   char* primerParametro = instruccion->strings[1];
-  int continuarEjecutando;
+  int continuarEjecutando = 0;
 
   log_info(logger, "Ejecutando %s %s", identificador, primerParametro);
   if (strcmp("I/O", identificador) == 0) {
     int tiempoBloqueado = atoi(primerParametro);
-    continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, IO);
     enviarEntero(tiempoBloqueado, socketKernel);
   } else if (strcmp("WAIT", identificador) == 0){
     char* recurso = primerParametro;
-    continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, WAIT);
     enviarString(recurso, socketKernel);
   } else if (strcmp("SIGNAL", identificador) == 0){
     char* recurso = primerParametro;
-    continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, SIGNAL);
     enviarString(recurso, socketKernel);
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
-    continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
   } else if (strcmp("F_OPEN", identificador) == 0) {
-    continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_OPEN);
   } else if (strcmp("F_CLOSE", identificador) == 0) {
-    continuarEjecutando = 0;
-    enviarContexto(contexto, socketKernel, DESCONOCIDA);
+    enviarContexto(contexto, socketKernel, F_CLOSE);
   }
     
   return continuarEjecutando;
@@ -131,7 +125,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_IN", identificador) == 0) {
+    continuarEjecutando = 0;
+    enviarContexto(contexto, socketKernel, MOV_IN);
   } else if (strcmp("MOV_OUT", identificador) == 0) {
+    continuarEjecutando = 0;
+    enviarContexto(contexto, socketKernel, MOV_OUT);
   } else if (strcmp("F_SEEK", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_SEEK);
@@ -149,7 +147,6 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
 
 int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
-  op_code codigoOperacion = DESCONOCIDA;
   char* identificador = instruccion->strings[0];
   char* primerParametro = instruccion->strings[1];
   char* segundoParametro = instruccion->strings[2];
