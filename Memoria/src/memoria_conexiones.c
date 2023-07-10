@@ -51,6 +51,7 @@ void enviarSegmentoCero(int socketCliente) {
   serializarSegmentos(buffer, listaSegmentos, posicion);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
   enviar_paquete(paquete, socketCliente);
+  free(posicion);
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
@@ -68,6 +69,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("Entre pcb");
       buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
+      liberarBuffer(buffer);
       break;
     case CREATE_SEGMENT:
       puts("crear segmento");
@@ -81,6 +83,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case EXIT:
       puts("Termino proceso");
       buffer = obtenerBuffer(socketCliente);
+      liberarBuffer(buffer);
+      liberarRecursos();
+      exit(-1);
       break;
     default:
       puts("Cerre una conexion");

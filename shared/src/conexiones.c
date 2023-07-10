@@ -155,7 +155,7 @@ char* recibirString(int socket) {
   int cantidadCaracteres;
   memcpy(&(cantidadCaracteres), buffer->stream, sizeof(int));
   char* stringRecibido = malloc(cantidadCaracteres);
-  memcpy(stringRecibido, buffer->stream + sizeof(int), cantidadCaracteres + 1);
+  memcpy(stringRecibido, buffer->stream + sizeof(int), cantidadCaracteres);
 
   liberarBuffer(buffer);
   return stringRecibido;

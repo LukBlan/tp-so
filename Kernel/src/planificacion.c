@@ -303,12 +303,14 @@ void ejecutar(PCB* proceso) {
       char* recursoWait = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
+      free(recursoWait);
       break;
     case SIGNAL:
       puts("Llego SIGNAL");
       char* recursoSignal = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
+      free(recursoSignal);
       break;
     case CREATE_SEGMENT:
       puts("Llego CREATE_SEGMENT");
@@ -323,6 +325,8 @@ void ejecutar(PCB* proceso) {
 
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
+      free(idSegmento);
+      free(tamanioSegmento);
       break;
     default:
       puts("Entre por default");
