@@ -18,7 +18,29 @@ void liberarInstrucciones(t_list* instrucciones) {
   list_destroy(instrucciones);
 }
 
+void liberarTablaDeSegmentos(t_list* segmentos) {
+  int cantidadSegmentos = segmentos->elements_count;
+  printf("cantidad segmentos a liberar %d\n", cantidadSegmentos);
+  for(int i = 0; i < cantidadSegmentos; i++) {
+    free(list_get(segmentos, i));
+  }
+
+  list_destroy(segmentos);
+}
+
+void liberarArchivosAbiertos(t_list* archivosAbiertos) {
+  int cantidadArchivos = archivosAbiertos->elements_count;
+
+    for(int i = 0; i < cantidadArchivos; i++) {
+      free(list_get(archivosAbiertos, i));
+    }
+
+    list_destroy(archivosAbiertos);
+}
+
 void liberarContexto(contextoEjecucion* contexto) {
   liberarInstrucciones(contexto->instrucciones);
+  liberarTablaDeSegmentos(contexto->tablaSegmentos);
+  liberarArchivosAbiertos(contexto->archivosAbiertos);
   free(contexto);
 }

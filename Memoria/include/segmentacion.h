@@ -16,7 +16,7 @@
 
   void iniciarSegmentacion();
   Segmento* crearSegmentoCero();
-  Segmento* crearSegmento(int id, int size);
+  Segmento* crearSegmento(char* id, char* size);
   Segmento* buscarCandidato(int tamanio);
   t_list* buscarSegmentosDisponibles();
   void guardarEnMemoria(void* elemento, Segmento* segmento, int size);

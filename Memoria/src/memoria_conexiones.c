@@ -78,10 +78,11 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("crear segmento");
       contextoEjecucion* contexto = recibirContexto(socketCliente);
       char* idSegmento = recibirString(socketCliente);
-      char* tamanioSegmento = atoi(recibirString(socketCliente));
-      Segmento* segmento = crearSegmento(atoi(idSegmento), atoi(tamanioSegmento));
-      printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
+      char* tamanioSegmento = recibirString(socketCliente);
+      Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
+      printf("Create segment %s %s\n", idSegmento, tamanioSegmento);
       printf("base nuevo segmento %d\n", segmento->base);
+
       free(idSegmento);
       free(tamanioSegmento);
       liberarContexto(contexto);

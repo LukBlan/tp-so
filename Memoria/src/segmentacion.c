@@ -37,18 +37,32 @@ void ocuparBitArray(Segmento* segmento) {
 }
 
 // DEVUELVE EL SEGMENTO QUE FUE GUARDADO
-Segmento* crearSegmento(int id, int size) {
-  Segmento* segmentoNuevo = buscarCandidato(size);
+Segmento* crearSegmento(char* id, char* size) {
+  int idSegmento = atoi(id);
+  int tamanioSegmento = atoi(size);
+  Segmento* segmentoNuevo = buscarCandidato(tamanioSegmento);
 
-  segmentoNuevo->id = id;
-  segmentoNuevo->limite= size;
+  segmentoNuevo->id = idSegmento;
+  segmentoNuevo->limite = tamanioSegmento;
   ocuparBitArray(segmentoNuevo);
 
   return segmentoNuevo;
 }
 
+void liberarListaSegmentos(t_list* segmentos) {
+  int cantidadSegmentos = segmentos->elements_count;
+
+  for (int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmentoNuevo = list_get(segmentos, i);
+    free(segmentoNuevo);
+  }
+  list_destroy(segmentos);
+}
+
 Segmento* buscarCandidato(int tamanio) {
-  Segmento* segmento;
+  // Genero un segmento auxiliar para guardar la info antes de liberar listas
+  Segmento* segmentoEncontrado;
+  Segmento* segmentoNuevo = malloc(sizeof(Segmento));
   t_list* todosLosSegLibres;
   t_list* segmentosCandidatos;
 
@@ -60,13 +74,15 @@ Segmento* buscarCandidato(int tamanio) {
     //compactacion();
     //segmento = buscarCandidato(tamanio);
   } else if (list_size(segmentosCandidatos) == 1) {
-    segmento = list_get(segmentosCandidatos, 0);
+    segmentoEncontrado = list_get(segmentosCandidatos, 0);
   } else {
-    segmento = elegirCriterio(segmentosCandidatos, tamanio);
+    segmentoEncontrado = elegirCriterio(segmentosCandidatos, tamanio);
   }
 
-  //TODO list destroy
-  return segmento;
+  segmentoNuevo->base = segmentoEncontrado->base;
+
+  liberarListaSegmentos(todosLosSegLibres);
+  return segmentoNuevo;
 }
 
 int contarCantidadDe(int base, int numero) {
