@@ -51,6 +51,9 @@ void enviarSegmentoCero(int socketCliente) {
   serializarSegmentos(buffer, listaSegmentos, posicion);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
   enviar_paquete(paquete, socketCliente);
+
+  list_destroy(listaSegmentos);
+  liberarPaquete(paquete);
   free(posicion);
 }
 
@@ -74,11 +77,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case CREATE_SEGMENT:
       puts("crear segmento");
       contextoEjecucion* contexto = recibirContexto(socketCliente);
-      int idSegmento = atoi(recibirString(socketCliente));
-      int tamanioSegmento = atoi(recibirString(socketCliente));
-      Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
+      char* idSegmento = recibirString(socketCliente);
+      char* tamanioSegmento = atoi(recibirString(socketCliente));
+      Segmento* segmento = crearSegmento(atoi(idSegmento), atoi(tamanioSegmento));
       printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
       printf("base nuevo segmento %d\n", segmento->base);
+      free(idSegmento);
+      free(tamanioSegmento);
+      liberarContexto(contexto);
       break;
     case EXIT:
       puts("Termino proceso");

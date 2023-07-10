@@ -118,6 +118,7 @@ void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOp
 contextoEjecucion* recibirContexto(int socketCliente) {
   t_buffer* buffer = obtenerBuffer(socketCliente);
   contextoEjecucion* contexto = deserializarContexto(buffer);
+  liberarBuffer(buffer);
   return contexto;
 }
 
