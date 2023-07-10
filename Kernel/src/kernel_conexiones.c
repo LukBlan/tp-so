@@ -70,6 +70,10 @@ void recibirSegementoMemoria(PCB* pcb) {
   pcb->contexto->tablaSegmentos = deserializarSegmentos(bufferRecibido, posicion);
 }
 
+void terminoProceso() {
+
+}
+
 void montarServidor() {
   t_list* instrucciones;
   PCB* pcb;
@@ -97,7 +101,6 @@ PCB* crearPcb(t_list* listaInstrucciones) {
   pthread_mutex_unlock(&mutexNumeroProceso);
 
   strcpy(pcb->contexto->registros.AX, "Add");
-  printf("registro %s\n", pcb->contexto->registros.AX);
   pcb->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
   pcb->llegadaReady = 0;
   pcb->contexto->programCounter = 0;

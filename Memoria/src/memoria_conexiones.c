@@ -54,6 +54,7 @@ void enviarSegmentoCero(int socketCliente) {
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
+  t_buffer* buffer;
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case HANDSHAKE:
@@ -65,7 +66,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
     case Pcb:
       puts("Entre pcb");
-      t_buffer* buffer = obtenerBuffer(socketCliente);
+      buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
       break;
     case CREATE_SEGMENT:
@@ -76,6 +77,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
       printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
       printf("base nuevo segmento %d\n", segmento->base);
+      break;
+    case EXIT:
+      puts("Termino proceso");
+      buffer = obtenerBuffer(socketCliente);
       break;
     default:
       puts("Cerre una conexion");

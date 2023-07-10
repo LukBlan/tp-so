@@ -205,16 +205,21 @@ void terminarConsola(procesoConsola* consolaFinalizada, int posicionProceso) {
   free(consolaFinalizada);
 }
 
-void avisarConsola(PCB* procesoFinalizado) {
-  int pidProcesoFinalizado = procesoFinalizado->pid;
-  int posicionProceso = buscarSocket(pidProcesoFinalizado);
-  procesoConsola* consolaFinalizada = list_get(recursosKernel->conexiones->procesosConsola, posicionProceso);
-
-  t_buffer* buffer = generarBuffer(0);
+void avisarProcesoFinalizado(int socket) {
+  t_buffer* buffer = generarBuffer(4);
   t_paquete* paquete = crearPaquete(buffer, EXIT);
-  enviar_paquete(paquete, consolaFinalizada->socketConsola);
-
+  enviar_paquete(paquete, socket);
   liberarPaquete(paquete);
+}
+
+void finalizarProceso(PCB* procesoFinalizado) {
+  int posicionProceso = buscarSocket(procesoFinalizado->pid);
+  procesoConsola* consolaFinalizada = list_get(recursosKernel->conexiones->procesosConsola, posicionProceso);
+  int socketConsola = consolaFinalizada->socketConsola;
+  int socketMemoria = recursosKernel->conexiones->socketMemoria;
+
+  avisarProcesoFinalizado(socketConsola);
+  avisarProcesoFinalizado(socketMemoria);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
 
@@ -290,7 +295,7 @@ void ejecutar(PCB* proceso) {
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
-      avisarConsola(procesoTerminado);
+      finalizarProceso(procesoTerminado);
       //liberarPcb(procesoTerminado);
       break;
     case WAIT:
