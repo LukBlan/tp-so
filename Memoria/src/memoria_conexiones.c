@@ -121,6 +121,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarContexto(contexto);
       break;
     case DELETE_SEGMENT:
+      puts("Llego delete Segment");
+
       contexto = recibirContexto(socketCliente);
       int idSeg = recibirEntero(socketCliente);
       printf("Segmento %d\n", idSeg);
@@ -132,7 +134,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       // Se devuelve el contexto eliminado al kernel
       liberarContexto(contexto);
       break;
-    case EXIT:
+    case SUCCESS:
       puts("Termino proceso");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
