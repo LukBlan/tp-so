@@ -24,7 +24,7 @@ pthread_mutex_t mutexcantidadProcesosMemoria;
 
 sem_t semProcesoNew;
 sem_t semProcesoReady;
-sem_t semProcesoExec;
+sem_t semaProcesoExec;
 
 sem_t blockCounter;
 
