@@ -73,7 +73,9 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, SIGNAL);
     enviarString(recurso, socketKernel);
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
+    int idSegmento = atoi(primerParametro);
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
+    enviarEntero(idSegmento, socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_OPEN);
   } else if (strcmp("F_CLOSE", identificador) == 0) {

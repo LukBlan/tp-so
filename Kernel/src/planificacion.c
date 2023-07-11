@@ -226,6 +226,8 @@ void finalizarProceso(PCB* procesoFinalizado) {
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
+  int socketMemoria = recursosKernel->conexiones->socketMemoria;
+
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
@@ -260,12 +262,11 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case DELETE_SEGMENT:
-      // recibir el id de la cpu (decodifico la instruccion)
-      //enviar el contexto a memoria (que recibio de cpu)
-      int socketMemoria = recursosKernel->conexiones->socketMemoria;
-      enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
-      // envia ese id a memoria (del segmento a eliminar)
       puts("Llego DELETE_SEGMENT");
+      int idSeg = recibirEntero(socketCpu);
+
+      enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
+      enviarEntero(idSeg, socketMemoria);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
@@ -319,7 +320,6 @@ void ejecutar(PCB* proceso) {
       break;
     case CREATE_SEGMENT:
       puts("Llego CREATE_SEGMENT");
-      int socketMemoria = recursosKernel->conexiones->socketMemoria;
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       char* idSegmento = recibirString(socketCpu);
       char* tamanioSegmento = recibirString(socketCpu);

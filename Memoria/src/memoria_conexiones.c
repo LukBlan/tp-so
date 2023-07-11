@@ -84,6 +84,8 @@ contexto eliminarSegmento(contexto, segmento, posicion) {
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
+  contextoEjecucion* contexto;
+
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case HANDSHAKE:
@@ -101,7 +103,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
     case CREATE_SEGMENT:
       puts("crear segmento");
-      contextoEjecucion* contexto = recibirContexto(socketCliente);
+      contexto = recibirContexto(socketCliente);
       char* idSegmento = recibirString(socketCliente);
       char* tamanioSegmento = recibirString(socketCliente);
       Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
@@ -113,9 +115,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarContexto(contexto);
       break;
     case DELETE_SEGMENT:
-      // Recibir contexto (Yo)
-      // Recibir el id <- (Yo)
-
+      contexto = recibirContexto(socketCliente);
+      int idSeg = recibirEntero(socketCliente);
+      printf("Segmento %d\n", idSeg);
       // Buscar sobre la lista de segmentos el la posicion del id
 
       // Fijate el tipo de retorno del list_get() [Es un puntero, asi que trabajas con punteros]
