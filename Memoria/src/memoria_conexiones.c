@@ -117,6 +117,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
       }
+
+      printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
       enviarContexto(contexto, socketCliente, respuestaMemoria);
       liberarContexto(contexto);
       break;
