@@ -106,10 +106,18 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
-      printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
-      Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
-      printf("base nuevo segmento %d\n", segmento->base);
+      op_code respuestaMemoria;
 
+      if (puedoGuardar(tamanioSegmento)) {
+        printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
+        Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
+        printf("base nuevo segmento %d\n", segmento->base);
+        respuestaMemoria = Pcb;
+      } else {
+        puts("Out of Memory");
+        respuestaMemoria = OUT_OF_MEMORY;
+      }
+      enviarContexto(contexto, socketCliente, respuestaMemoria);
       liberarContexto(contexto);
       break;
     case DELETE_SEGMENT:
@@ -128,8 +136,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("Termino proceso");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
-      liberarRecursos();
-      exit(-1);
       break;
     default:
       puts("Cerre una conexion");

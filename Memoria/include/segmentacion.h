@@ -16,7 +16,7 @@
   Segmento* crearSegmentoCero();
   Segmento* crearSegmento(int id, int size);
   Segmento* buscarCandidato(int tamanio);
-  t_list* buscarSegmentosDisponibles();
+  t_list* buscarSegmentoSegunTamanio(int tamanio);
   void guardarEnMemoria(void* elemento, Segmento* segmento, int size);
   void ocuparMemoria(void* tareas, int base, int size);
   void ocuparBitMap(t_bitarray* bitMap, int base, int size);

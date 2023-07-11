@@ -84,7 +84,8 @@
     MOV_OUT,
     CREATE_SEGMENT,
     DELETE_SEGMENT,
-    DESCONOCIDA
+    DESCONOCIDA,
+    OUT_OF_MEMORY,
   } op_code;
 
   typedef struct {
