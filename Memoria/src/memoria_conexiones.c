@@ -122,11 +122,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       // Obtener el segmento apartir del id <- Funcion commons list.h [list_get(lista, posicion)] operas con la lista de segmentos del contexto
       // EliminarSegmento(....);
       // Se devuelve el contexto eliminado al kernel
+      liberarContexto(contexto);
       break;
     case EXIT:
       puts("Termino proceso");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
+      liberarRecursos();
+      exit(-1);
       break;
     default:
       puts("Cerre una conexion");

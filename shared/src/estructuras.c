@@ -22,7 +22,8 @@ void liberarTablaDeSegmentos(t_list* segmentos) {
   int cantidadSegmentos = segmentos->elements_count;
   printf("cantidad segmentos a liberar %d\n", cantidadSegmentos);
   for(int i = 0; i < cantidadSegmentos; i++) {
-    free(list_get(segmentos, i));
+    Segmento* segmento = list_get(segmentos, i);
+    free(segmento);
   }
 
   list_destroy(segmentos);
