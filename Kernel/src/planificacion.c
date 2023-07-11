@@ -205,21 +205,21 @@ void terminarConsola(procesoConsola* consolaFinalizada, int posicionProceso) {
   free(consolaFinalizada);
 }
 
-void avisarProcesoFinalizado(int socket) {
+void avisarProcesoFinalizado(int socket, op_code motivo) {
   t_buffer* buffer = generarBuffer(4);
-  t_paquete* paquete = crearPaquete(buffer, EXIT);
+  t_paquete* paquete = crearPaquete(buffer, motivo);
   enviar_paquete(paquete, socket);
   liberarPaquete(paquete);
 }
 
-void finalizarProceso(PCB* procesoFinalizado) {
+void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
   int posicionProceso = buscarSocket(procesoFinalizado->pid);
   procesoConsola* consolaFinalizada = list_get(recursosKernel->conexiones->procesosConsola, posicionProceso);
   int socketConsola = consolaFinalizada->socketConsola;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
 
-  avisarProcesoFinalizado(socketConsola);
-  avisarProcesoFinalizado(socketMemoria);
+  avisarProcesoFinalizado(socketConsola, motivo);
+  avisarProcesoFinalizado(socketMemoria, motivo);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
 
@@ -301,7 +301,7 @@ void ejecutar(PCB* proceso) {
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
-      finalizarProceso(procesoTerminado);
+      finalizarProceso(procesoTerminado, SUCCESS);
       //liberarPcb(procesoTerminado);
       break;
     case WAIT:
@@ -335,6 +335,9 @@ void ejecutar(PCB* proceso) {
           agregarAListo(procesoDevuelto);
           break;
         case OUT_OF_MEMORY:
+          sacarDeEjecutando(EXIT);
+          log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
+          finalizarProceso(procesoTerminado, OUT_OF_MEMORY);
           break;
         default:
           puts("Como carajo llegue al defaul de create segment");

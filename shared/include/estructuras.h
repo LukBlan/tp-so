@@ -86,6 +86,7 @@
     DELETE_SEGMENT,
     DESCONOCIDA,
     OUT_OF_MEMORY,
+    SUCCESS,
   } op_code;
 
   typedef struct {

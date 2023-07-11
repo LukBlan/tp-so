@@ -47,8 +47,11 @@ void esperarResultado() {
   op_code resultadoEspera = obtenerCodigoOperacion(socketKernel);
 
   switch(resultadoEspera) {
-    case EXIT:
+    case SUCCESS:
       log_info(logger, "El Proceso Termino Correctamente");
+      break;
+    case OUT_OF_MEMORY:
+      log_error(logger, "OUT_OF_MEMORY");
       break;
     case DESCONEXION:
       log_error(logger, "Perdi la conexion con el Kernel?");
