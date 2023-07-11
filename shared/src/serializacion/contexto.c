@@ -6,9 +6,10 @@
 int tamanioBytesContexto(contextoEjecucion* contexto) {
   int tamanioTotal = 0;
   tamanioTotal += tamanioBytesInstrucciones(contexto->instrucciones);
-  tamanioTotal += sizeof(int) * 2;
+  tamanioTotal += sizeof(int);
   tamanioTotal += sizeof(t_registros);
   tamanioTotal += tamanioBytesListaArchivosAbiertos(contexto->archivosAbiertos);
+  tamanioTotal += tamanioBytesSegmentos(contexto->tablaSegmentos);
   return tamanioTotal;
 }
 
@@ -25,6 +26,7 @@ int tamanioBytesListaArchivosAbiertos(t_list* listaArchivos) {
   for (int i = 0; i < cantidadArchivos; i++) {
     archivoAbierto* archivo = list_get(listaArchivos, i);
     bytes += string_length(archivo->nombre) + 1;
+    bytes += sizeof(int);
     bytes += sizeof(FILE*);
   }
 
@@ -220,6 +222,7 @@ void serializarContexto(t_buffer* buffer, contextoEjecucion* contexto) {
 
 contextoEjecucion* deserializarContexto(t_buffer* buffer) {
   contextoEjecucion* contexto = malloc(sizeof(contextoEjecucion));
+  memset(contexto, 0, sizeof(contextoEjecucion));
   int* posicion = malloc(sizeof(int));
   *posicion = 0;
 

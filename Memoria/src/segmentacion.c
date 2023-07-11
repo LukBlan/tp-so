@@ -82,9 +82,10 @@ Segmento* buscarCandidato(int tamanio) {
 }
 
 int contarCantidadDe(int base, int numero) {
+  int tamanioMemoria = recursosMemoria->configuracion->TAM_MEMORIA;
   int cantidad = 0;
 
-  while(bitarray_test_bit(bitMapSegmento, base + cantidad) == numero) {
+  while((base + cantidad < tamanioMemoria) && bitarray_test_bit(bitMapSegmento, base + cantidad) == numero) {
     cantidad++;
   }
   return cantidad;

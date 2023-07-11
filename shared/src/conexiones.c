@@ -113,6 +113,7 @@ void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOp
   serializarContexto(buffer, contexto);
   t_paquete* paquete = crearPaquete(buffer, codigoOperacion);
   enviar_paquete(paquete, socketCpu);
+  liberarPaquete(paquete);
 }
 
 contextoEjecucion* recibirContexto(int socketCliente) {

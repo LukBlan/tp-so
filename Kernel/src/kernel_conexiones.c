@@ -95,6 +95,7 @@ void montarServidor() {
 PCB* crearPcb(t_list* listaInstrucciones) {
   PCB* pcb = malloc(sizeof(PCB));
   pcb->contexto = malloc(sizeof(contextoEjecucion));
+  memset(pcb->contexto, 0, sizeof(contextoEjecucion));
 
   pthread_mutex_lock(&mutexNumeroProceso);
   pcb->pid = idProceso++;

@@ -142,6 +142,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("Termino proceso Exitosamente");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
+      liberarRecursos();
+      exit(-1);
       break;
     case OUT_OF_MEMORY:
       puts("Termino proceso OUT OF MEMORY");
