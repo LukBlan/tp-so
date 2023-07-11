@@ -366,16 +366,18 @@ void ejecutar(PCB* proceso) {
       enviarEntero(idSegmento, socketMemoria);
       enviarEntero(tamanioSegmento, socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
+      contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
+
+      printf("Respuesta memoria %d\n", respuestaMemoria);
       switch(respuestaMemoria) {
         case Pcb:
-          contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
           sacarDeEjecutando(READY);
           agregarAListo(procesoDevuelto);
           break;
         case OUT_OF_MEMORY:
           sacarDeEjecutando(EXIT);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
-          finalizarProceso(procesoTerminado, OUT_OF_MEMORY);
+          finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);
           break;
         default:
           puts("Como carajo llegue al defaul de create segment");
