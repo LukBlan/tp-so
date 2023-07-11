@@ -321,17 +321,15 @@ void ejecutar(PCB* proceso) {
     case CREATE_SEGMENT:
       puts("Llego CREATE_SEGMENT");
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
-      char* idSegmento = recibirString(socketCpu);
-      char* tamanioSegmento = recibirString(socketCpu);
+      int idSegmento = recibirEntero(socketCpu);
+      int tamanioSegmento = recibirEntero(socketCpu);
 
       enviarContexto(procesoDevuelto->contexto, socketMemoria, CREATE_SEGMENT);
-      enviarString(idSegmento, socketMemoria);
-      enviarString(tamanioSegmento, socketMemoria);
+      enviarEntero(idSegmento, socketMemoria);
+      enviarEntero(tamanioSegmento, socketMemoria);
 
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
-      free(idSegmento);
-      free(tamanioSegmento);
       break;
     default:
       puts("Entre por default");

@@ -37,13 +37,11 @@ void ocuparBitArray(Segmento* segmento) {
 }
 
 // DEVUELVE EL SEGMENTO QUE FUE GUARDADO
-Segmento* crearSegmento(char* id, char* size) {
-  int idSegmento = atoi(id);
-  int tamanioSegmento = atoi(size);
-  Segmento* segmentoNuevo = buscarCandidato(tamanioSegmento);
+Segmento* crearSegmento(int id, int size) {
+  Segmento* segmentoNuevo = buscarCandidato(size);
 
-  segmentoNuevo->id = idSegmento;
-  segmentoNuevo->limite = tamanioSegmento;
+  segmentoNuevo->id = id;
+  segmentoNuevo->limite = size;
   ocuparBitArray(segmentoNuevo);
 
   return segmentoNuevo;

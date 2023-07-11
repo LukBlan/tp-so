@@ -139,10 +139,12 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
+    int idSegmento = atoi(primerParametro);
+    int tamainoSegmento = atoi(segundoParametro);
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, CREATE_SEGMENT);
-    enviarString(primerParametro, socketKernel);
-    enviarString(segundoParametro, socketKernel);
+    enviarEntero(idSegmento, socketKernel);
+    enviarEntero(tamainoSegmento, socketKernel);
   }
   return continuarEjecutando;
 }
