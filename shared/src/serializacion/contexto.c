@@ -57,7 +57,7 @@ t_list* deserializarSegmentos(t_buffer* buffer, int* posicion) {
 
   memcpy(&(cantidadSegmentos), buffer->stream + *posicion, sizeof(int));
   *posicion += sizeof(int);
-
+  printf("Deserialize segmentos %d\n", cantidadSegmentos);
   for (int i = 0; i < cantidadSegmentos; i++) {
     Segmento* segmento = malloc(sizeof(Segmento));
 

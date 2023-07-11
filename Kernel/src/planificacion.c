@@ -371,6 +371,7 @@ void ejecutar(PCB* proceso) {
       printf("Respuesta memoria %d\n", respuestaMemoria);
       switch(respuestaMemoria) {
         case Pcb:
+          actualizarContexto(nuevoActualizado);
           sacarDeEjecutando(READY);
           agregarAListo(procesoDevuelto);
           break;

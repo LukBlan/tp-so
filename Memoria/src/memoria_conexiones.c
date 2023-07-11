@@ -110,14 +110,16 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
       if (puedoGuardar(tamanioSegmento)) {
         printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
-        Segmento* segmento = crearSegmento(idSegmento, tamanioSegmento);
-        printf("base nuevo segmento %d\n", segmento->base);
+        Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
+        t_list* listaSegmentos = contexto->tablaSegmentos;
+        list_add(listaSegmentos, segmentoNuevo);
+        printf("base nuevo segmento %d\n", segmentoNuevo->base);
         respuestaMemoria = Pcb;
       } else {
         puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
       }
-
+      printf("cantidad de segmentos %d", contexto->tablaSegmentos->elements_count);
       printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
       enviarContexto(contexto, socketCliente, respuestaMemoria);
       liberarContexto(contexto);
