@@ -62,19 +62,17 @@ Segmento* buscarCandidato(int tamanio) {
   Segmento* segmentoEncontrado;
   Segmento* segmentoNuevo = malloc(sizeof(Segmento));
   t_list* todosLosSegLibres;
-  t_list* segmentosCandidatos;
 
-  todosLosSegLibres = buscarSegmentosDisponibles();
-  segmentosCandidatos = puedenGuardar(todosLosSegLibres , tamanio);
+  todosLosSegLibres = buscarSegmentoSegunTamanio(tamanio);
 
-  if(list_is_empty(segmentosCandidatos)) {
+  if(list_is_empty(todosLosSegLibres)) {
     puts("Compactando... (En verdad no estamos haciendo nada, pero bueno yo q c)");
     //compactacion();
     //segmento = buscarCandidato(tamanio);
-  } else if (list_size(segmentosCandidatos) == 1) {
-    segmentoEncontrado = list_get(segmentosCandidatos, 0);
+  } else if (list_size(todosLosSegLibres) == 1) {
+    segmentoEncontrado = list_get(todosLosSegLibres, 0);
   } else {
-    segmentoEncontrado = elegirCriterio(segmentosCandidatos, tamanio);
+    segmentoEncontrado = elegirCriterio(todosLosSegLibres, tamanio);
   }
 
   segmentoNuevo->base = segmentoEncontrado->base;
@@ -92,7 +90,7 @@ int contarCantidadDe(int base, int numero) {
   return cantidad;
 }
 
-t_list* buscarSegmentosDisponibles() {
+t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
   t_list* segmentosDisponibles = list_create();
   int base = 0;
   int tamanio = 0 ;
@@ -109,7 +107,12 @@ t_list* buscarSegmentosDisponibles() {
     unSegmento->limite = tamanio;
     base += tamanio;
 
-    list_add(segmentosDisponibles, unSegmento);
+    if (tamanio >= tamanioMinimo) {
+      list_add(segmentosDisponibles, unSegmento);
+    } else {
+      free(unSegmento);
+    }
+
   }
 
   return segmentosDisponibles;
