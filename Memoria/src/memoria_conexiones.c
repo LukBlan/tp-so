@@ -57,6 +57,31 @@ void enviarSegmentoCero(int socketCliente) {
   free(posicion);
 }
 
+/* Chequear tipos
+void eliminarSegmentoDeBitArray(segmento) {
+  bitMapSegmento -> sobre lo que operamos -> es variable global
+  base -> la posicion en la memoria -> se obtiene del segmento
+  limite -> la cantidad de 1 -> se obtiene del segmento
+
+  for (int i = base; i < base + limite; i++) {
+    el i representa la posicion en el array de bits
+    bitarray_clean_bit(t_bitarray*, off_t bit_index);
+  }
+
+}
+*/
+
+/* Chequea tipos
+contexto eliminarSegmento(contexto, segmento, posicion) {
+  [] -> obtenes la lista del contexto
+
+  eliminarSegmentoDeBitArray(segmento); ->   Modificar el array de bits (sacar 1)
+  [Liberar el segmento en especifico de la tablaDeSegmentos global en memoria] <- Todavia no esta implementado (lo hace lucio)
+  Sacar segmento del contexto -> usas posicion + una funcion de list.h para sacar cosas de listas;
+  retorn contextoModificado;
+}
+*/
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   printf("Estoy procesando conexion %d\n", codigoOperacion);
@@ -86,6 +111,17 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       free(idSegmento);
       free(tamanioSegmento);
       liberarContexto(contexto);
+      break;
+    case DELETE_SEGMENT:
+      // Recibir contexto (Yo)
+      // Recibir el id <- (Yo)
+
+      // Buscar sobre la lista de segmentos el la posicion del id
+
+      // Fijate el tipo de retorno del list_get() [Es un puntero, asi que trabajas con punteros]
+      // Obtener el segmento apartir del id <- Funcion commons list.h [list_get(lista, posicion)] operas con la lista de segmentos del contexto
+      // EliminarSegmento(....);
+      // Se devuelve el contexto eliminado al kernel
       break;
     case EXIT:
       puts("Termino proceso");

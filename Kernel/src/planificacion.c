@@ -260,6 +260,11 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case DELETE_SEGMENT:
+      // recibir el id de la cpu (decodifico la instruccion)
+      //enviar el contexto a memoria (que recibio de cpu)
+      int socketMemoria = recursosKernel->conexiones->socketMemoria;
+      enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
+      // envia ese id a memoria (del segmento a eliminar)
       puts("Llego DELETE_SEGMENT");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
