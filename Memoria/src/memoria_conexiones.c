@@ -135,7 +135,12 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarContexto(contexto);
       break;
     case SUCCESS:
-      puts("Termino proceso");
+      puts("Termino proceso Exitosamente");
+      buffer = obtenerBuffer(socketCliente);
+      liberarBuffer(buffer);
+      break;
+    case OUT_OF_MEMORY:
+      puts("Termino proceso OUT OF MEMORY");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
       break;
