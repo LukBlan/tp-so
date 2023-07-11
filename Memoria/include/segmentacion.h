@@ -7,12 +7,10 @@
   #include <estructuras.h>
   #include <commons/bitarray.h>
 
-  extern void * memoriaPrincipal;
-
+  extern void* memoriaPrincipal;
   extern char* tablaDeHuecos;
   extern t_bitarray* bitMapSegmento;
   extern Segmento* segmentoCero;
-  extern char* arrayDeHuecos;
 
   void iniciarSegmentacion();
   Segmento* crearSegmentoCero();
