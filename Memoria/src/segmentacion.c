@@ -112,7 +112,6 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
     } else {
       free(unSegmento);
     }
-
   }
 
   return segmentosDisponibles;
@@ -142,17 +141,6 @@ int tamanioTotalDisponible(void) {
       desplazamiento ++;
     }
     return contador;
-}
-
-t_list* puedenGuardar(t_list* segmentos, int size) {
-    t_list* segmentosTamanioNecesario;
-
-    int puedoGuardarSeg(Segmento* segmento) {
-        return(segmento->limite >= size);
-    }
-
-    segmentosTamanioNecesario = list_filter(segmentos, (void*)puedoGuardarSeg);
-    return segmentosTamanioNecesario;
 }
 
 Segmento* elegirCriterio (t_list* segmentos, int tamanio) {
