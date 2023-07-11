@@ -327,9 +327,19 @@ void ejecutar(PCB* proceso) {
       enviarContexto(procesoDevuelto->contexto, socketMemoria, CREATE_SEGMENT);
       enviarEntero(idSegmento, socketMemoria);
       enviarEntero(tamanioSegmento, socketMemoria);
-
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
+      op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
+      switch(respuestaMemoria) {
+        case Pcb:
+          contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+          break;
+        case OUT_OF_MEMORY:
+          break;
+        default:
+          puts("Como carajo llegue al defaul de create segment");
+          break;
+      }
       break;
     default:
       puts("Entre por default");
