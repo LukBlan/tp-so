@@ -21,6 +21,13 @@ void planificador_corto_plazo_fifo() {
   }
 }
 
+int tiempoAhora() {
+  return time(NULL);
+}
+
+int calcular_tiempo_rafaga_real_anterior(PCB *proceso) {
+    return tiempoAhora() - proceso->llegadaReady;
+}
 float estimacion(PCB* proceso) {
   t_configuracion* config = recursosKernel->configuracion;
   float alfa = config->HRRN_ALFA;
@@ -29,6 +36,38 @@ float estimacion(PCB* proceso) {
   float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
   return resultado;
 }
+float calcularResponseRatio (PCB* proceso) {
+  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
+}
+bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
+  return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
+}
+
+PCB* sacarProcesoMayorHRRN() {
+  PCB* procesoAEjecutar;
+  pthread_mutex_lock(&mutexColaReady);
+  list_sort(colaReady, &ordenarSegunCalculoHRRN);
+  procesoAEjecutar = list_remove (colaReady,0);
+  pthread_mutex_unlock(&mutexColaReady);
+  return procesoAEjecutar;
+}
+
+void planificador_corto_plazo_HRRN() {
+  t_log* logger = recursosKernel->logger;
+  log_info(logger, "INICIO PLANIFICACION FIFO");
+  while (1) {
+    sem_wait(&semProcesoReady);
+    sem_wait(&semaforoCantidadProcesosExec);
+
+    PCB* procesoEjecutar = sacarProcesoMayorHRRN();
+
+    cambiarEstado(EXEC, procesoEjecutar);
+
+    ejecutar(procesoEjecutar);
+  }
+}
+
+
 
 PCB* sacarBloqueado() {
   t_log* logger = recursosKernel->logger;
@@ -90,16 +129,15 @@ void comenzarPlanificadores() {
     pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_fifo, NULL);
     pthread_detach(hiloCortoPlazo);
   }
+  else
+  {
+    pthread_create(&hiloCortoPlazo, NULL, (void*)planificador_corto_plazo_HRRN, NULL);
+    pthread_detach(hiloCortoPlazo);
+  }
 
   pthread_create(&hilo_dispositivo_io, NULL, io, NULL);
   pthread_detach(hilo_dispositivo_io);
-  /*
-  else
-  {
-    pthread_create(&hiloCortoPlazo, NULL, planificador_corto_plazo_HRRN, NULL);
-    pthread_detach(hiloCortoPlazo);
-  }
-  */
+
 }
 
 void planificador_largo_plazo() {
@@ -461,51 +499,6 @@ void disminuirRecurso(char* recurso){
   --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
 */
-int tiempoAhora() {
-  return time(NULL);
-}
-
-int calcular_tiempo_rafaga_real_anterior(PCB *proceso) {
-    return tiempoAhora() - proceso->llegadaReady;
-}
-float calcularResponseRatio (PCB* proceso) {
-  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
-}
-bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
-  return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
-}
-
-PCB* sacarProcesoMayorHRRN() {
-  PCB* procesoAEjecutar;
-  pthread_mutex_lock(&mutexColaReady);
-  list_sort(colaReady, &ordenarSegunCalculoHRRN);
-  procesoAEjecutar = list_remove (colaReady,0);
-  pthread_mutex_unlock(&mutexColaReady);
-  return procesoAEjecutar;
-}
-void planificador_corto_plazo_HRRN() {
-  t_log* logger = recursosKernel->logger;
-  log_info(logger, "INICIO PLANIFICACION FIFO");
-  while (1) {
-    sem_wait(&semProcesoReady);
-    sem_wait(&semaforoCantidadProcesosExec);
-
-    PCB* procesoEjecutar = sacarProcesoMayorHRRN();
-
-    cambiarEstado(EXEC, procesoEjecutar);
-
-    ejecutar(procesoEjecutar);
-  }
-}
-
-/*
-bool esProcesoNuevo(PCB *proceso) {
-    return proceso->estado == NEW;
-}
-
-bool sePuedeAgregarMasProcesos() {
-    return (cantidad_procesos_memoria() < recursosKernel->configuracion->GRADO_MAX_MULTIPROGRAMACION) && (lectura_cola_mutex(colaNew, &mutexColaNew) > 0 );
-}
 
 void liberar_semaforos() {
     pthread_mutex_destroy(&mutexNumeroProceso);
@@ -520,7 +513,7 @@ void liberar_semaforos() {
 
     sem_destroy(&semProcesoNew);
     sem_destroy(&semProcesoReady);
-    sem_destroy(&semProcesoExec);
+    sem_destroy(&semaProcesoExec);
     sem_destroy(&blockCounter);
     sem_destroy(&largoPlazo);
     sem_destroy(&semaforoCantidadProcesosExec);
@@ -534,8 +527,8 @@ void liberar_estructuras() {
 
     queue_destroy(colaBlock);
 
-    queue_destroy(colaExec);
+    //queue_destroy(colaExec);
 
     queue_destroy(colaEnd);
 }
-*/
+
