@@ -91,8 +91,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("Termino proceso");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
-      liberarRecursos();
-      exit(-1);
       break;
     default:
       puts("Cerre una conexion");
