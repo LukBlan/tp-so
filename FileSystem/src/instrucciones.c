@@ -13,7 +13,8 @@
 
     void fSeek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
         archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
-        fseek(arch, posicion, SEEK_SET);
+        fseek(arch->punteroArchivo, posicion, SEEK_SET);
     }
+
 
 */
