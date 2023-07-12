@@ -17,7 +17,6 @@
     char* PATH_BLOQUES;
     int RETARDO_ACCESO_BLOQUE;
   } t_configuracion;
-
   typedef struct {
     int BLOCK_SIZE;
     int BLOCK_COUNT;
@@ -45,6 +44,8 @@
 
   extern t_recursos* recursosFileSystem;
   extern void* copiaBloque;
+  extern pthread_mutex_t mutexBloques;
+  extern pthread_mutex_t mutexBitMap;
 
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);

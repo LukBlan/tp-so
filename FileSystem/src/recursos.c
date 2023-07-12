@@ -7,6 +7,8 @@
 
 t_recursos* recursosFileSystem;
 void* copiaBloque;
+pthread_mutex_t mutexBloques;
+pthread_mutex_t mutexBitMap;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
