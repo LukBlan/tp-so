@@ -479,12 +479,7 @@ int findElementPosition(char array[], int size, char* target) {
     return -1;  // Return -1 if the element is not found
 }
 
-/* t_list* f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
-      archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
-      fseek(arch->punteroArchivo, posicion, SEEK_SET);
-      return archivosAbiertos;
-  }
-*/
+
 /*
 
 bool kernelTieneRecurso(char* recurso){

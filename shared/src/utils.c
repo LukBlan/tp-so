@@ -9,6 +9,23 @@ void validarCantidadArgumentosMain(int cantidadArgumentos, int cantidadArgumenos
      exit(-1);
    }
  }
+archivoAbierto* buscarNombre(t_list* archivos, char* nombreArch){
+    archivoAbierto* archivo;
+    for (int i = 0; i < list_size(archivos); i++){
+        archivoAbierto* archivoActual = list_get(archivos, i);
+    if (strcmp(archivoActual->nombre, nombreArch) == 0) {
+        archivo = archivoActual;
+        break;
+    }
+}
+    return archivo;
+}
+t_list* f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
+      archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
+      fseek(arch->punteroArchivo, posicion, SEEK_SET);
+      return archivosAbiertos;
+  }
+
 
 void mostrarInstrucciones(t_list* listaInstrucciones) {
   int numeroInstrucciones = list_size(listaInstrucciones);
