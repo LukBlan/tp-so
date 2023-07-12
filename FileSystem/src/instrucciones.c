@@ -19,7 +19,8 @@
     FILE* fcreate(char* nomArchivo){
         fcbPath = string_new();
         string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
-        FILE* FCBdescriptor = fopen (filePath,"rb");
+        string_append(fcbPath,nomArchivo);
+        FILE* FCBdescriptor = fopen (fcbPath,"rb");
         
         if (descriptor != NULL) {
 			fclose(metadata_fd);
