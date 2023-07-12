@@ -7,6 +7,8 @@
 #include <conexiones.h>
 #include <utils.h>
 
+t_list* tablaGlobalDeArchivos;
+
 void planificador_corto_plazo_fifo() {
   t_log* logger = recursosKernel->logger;
   log_info(logger, "INICIO PLANIFICACION CORTO PLAZO FIFO");

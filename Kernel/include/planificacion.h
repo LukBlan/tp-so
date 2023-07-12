@@ -10,7 +10,8 @@
 
   #include <estructuras.h>
   #include <stdbool.h>
-
+  
+  extern t_list* tablaGlobalDeArchivos;
   void comenzarPlanificadores();
   void planificador_corto_plazo_fifo();
   void planificador_largo_plazo();

@@ -133,11 +133,16 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, MOV_OUT);
   } else if (strcmp("F_SEEK", identificador) == 0) {
+    int posicion = atoi(segundoParametro);
+    char* nombreArchivo = primerParametro;
     enviarContexto(contexto, socketKernel, F_SEEK);
+    enviarString(nombreArchivo,socketKernel);
+    enviarEntero(posicion,socketKernel);
     op_code respuestaKernel = obtenerCodigoOperacion(socketKernel);
     switch(respuestaKernel) {
         case SUCCESS:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketKernel);
+          
           break;
         default:
           puts("Como carajo llegue al default");
