@@ -11,11 +11,6 @@
         return archivo
     }
 
-    void fSeek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
-        archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
-        fseek(arch->punteroArchivo, posicion, SEEK_SET);
-    }
-
     FILE* fcreate(char* nomArchivo){
         fcbPath = string_new();
         string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);

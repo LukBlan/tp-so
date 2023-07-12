@@ -315,8 +315,11 @@ void ejecutar(PCB* proceso) {
       break;
     case F_SEEK:
       puts("Llego F_SEEK");
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
+      char* nomArchivo = recibirString(socketCpu);
+      int posicion = recibirEntero(socketCpu);
+      t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
+      f_seek(nomArchivo,archivosAbiertos,posicion);
+      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       break;
     case F_READ:
       puts("Llego F_READ");
@@ -475,6 +478,12 @@ int findElementPosition(char array[], int size, char* target) {
     }
     return -1;  // Return -1 if the element is not found
 }
+
+/*void f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
+      archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
+      fseek(arch->punteroArchivo, posicion, SEEK_SET);
+  }
+*/
 /*
 
 bool kernelTieneRecurso(char* recurso){
