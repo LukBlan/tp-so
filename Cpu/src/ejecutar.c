@@ -77,7 +77,9 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
     enviarEntero(idSegmento, socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
+    char* nombreArchivo = primerParametro;
     enviarContexto(contexto, socketKernel, F_OPEN);
+    enviarString(nombreArchivo,socketKernel);
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
   }
@@ -142,7 +144,6 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     switch(respuestaKernel) {
         case SUCCESS:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketKernel);
-          
           break;
         default:
           puts("Como carajo llegue al default");

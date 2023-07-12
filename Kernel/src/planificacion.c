@@ -267,7 +267,7 @@ void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
-
+  int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
@@ -298,6 +298,15 @@ void ejecutar(PCB* proceso) {
       break;
     case F_OPEN:
       puts("Llego F_OPEN");
+      char* nombreArchivo = recibirString(socketCpu);
+        /*if(estaEnTablaGlobal(nombreArchivo)){
+          bloquearEnCola(nombreArchivo,procesoDevuelto);
+        } else {
+          enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN)
+          enviarString(nombreArchivo,socketFileSystem);
+          esperarCodOperacion
+        }
+        */
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
