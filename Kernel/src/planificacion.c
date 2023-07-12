@@ -318,7 +318,7 @@ void ejecutar(PCB* proceso) {
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
-      f_seek(nomArchivo,archivosAbiertos,posicion);
+      procesoDevuelto->contexto->archivosAbiertos = f_seek(nomArchivo,archivosAbiertos,posicion);
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       break;
     case F_READ:
@@ -479,9 +479,10 @@ int findElementPosition(char array[], int size, char* target) {
     return -1;  // Return -1 if the element is not found
 }
 
-/*void f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
+/* t_list* f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion){
       archivoAbierto* arch = buscarNombre(archivosAbiertos, nomArchivo);
       fseek(arch->punteroArchivo, posicion, SEEK_SET);
+      return archivosAbiertos;
   }
 */
 /*
