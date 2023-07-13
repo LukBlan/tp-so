@@ -119,17 +119,17 @@ void setearRegistro(char* primerParametro, char* segundoParametro) {
 char* valorRegistro(char* primerParametro ) {
   char* segundoParametro;
   if (strcmp("AX", primerParametro) == 0) {
-    strcpy(segundoParametro, segundoParametrorecursosCpu->registros.AX);
+    strcpy(segundoParametro, recursosCpu->registros.AX);
   } else if (strcmp("BX", primerParametro) == 0) {
     strcpy(segundoParametro, recursosCpu->registros.BX);
   } else if (strcmp("CX", primerParametro) == 0) {
     strcpy(segundoParametro, recursosCpu->registros.CX);
   } else if (strcmp("DX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.DC);
+    strcpy(segundoParametro, recursosCpu->registros.DX);
   } else if (strcmp("EAX", primerParametro) == 0) {
     strcpy(segundoParametro, recursosCpu->registros.EAX);
   } else if (strcmp("EBX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.EBX;
+    strcpy(segundoParametro, recursosCpu->registros.EBX);
   } else if (strcmp("ECX", primerParametro) == 0) {
     strcpy(segundoParametro, recursosCpu->registros.ECX);
   } else if (strcmp("EDX", primerParametro) == 0) {
@@ -176,7 +176,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     char* valorDeRegistro = valorRegistro(segundoParametro);
     enviarContexto(contexto, socketMemoria, MOV_OUT);
     enviarEntero(direccionLogica,socketMemoria);
-    enviarString(valorDeRegistro)
+    enviarString(valorDeRegistro,socketMemoria);
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
     char* nombreArchivo = primerParametro;
