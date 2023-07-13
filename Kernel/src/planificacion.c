@@ -277,6 +277,22 @@ void agregarATabla (char* nombreArchivo) {
     t_queue* colaArchivo = queue_create();
     tabla1 -> colaBloqueado = colaArchivo;
 }
+tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
+  tablaGlobal* tabla;
+   for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
+	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
+        if (strcmp(nomArchivo, tablaActual->nomArchivo) == 0) {
+            tabla = tablaActual;
+            break;
+        }
+    }
+    return tabla;  
+}
+
+void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
+  tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
+  queue_push (tablaEncontrada -> colaBloqueado,proceso);
+}
 
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
@@ -314,17 +330,15 @@ void ejecutar(PCB* proceso) {
     case F_OPEN:
       puts("Llego F_OPEN");
       char* nombreArchivo = recibirString(socketCpu);
-        /*if(estaEnTablaGlobal(nombreArchivo)){
+        if(estaEnTablaGlobal(nombreArchivo)){
+          sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo,procesoDevuelto);
         } else {
           agregarATablaGlobal(nomArchivo)
           enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN)
           enviarString(nombreArchivo,socketFileSystem);
-          esperarCodOperacion
+          //esperarCodOperacion
         }
-        */
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
       break;
     case DELETE_SEGMENT:
       puts("Llego DELETE_SEGMENT");
