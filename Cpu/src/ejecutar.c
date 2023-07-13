@@ -161,7 +161,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_IN", identificador) == 0) {
-    int direccionLogica = atoi(segundoParametro);
+    /*int direccionLogica = atoi(segundoParametro);
     char* registro = primerParametro;
     //comprobacion MMU
     enviarContexto(contexto, socketMemoria, MOV_IN);
@@ -169,14 +169,20 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     char* parametro = recibirString(socketMemoria);
     setearRegistro(primerParametro,parametro);
     contexto->registros = recursosCpu->registros;
+    */
+	  continuarEjecutando = 0;
+	  enviarContexto(contexto, socketKernel, MOV_IN);
   } else if (strcmp("MOV_OUT", identificador) == 0) {
-    int direccionLogica = atoi (primerParametro);
+    /*int direccionLogica = atoi (primerParametro);
     //comprobacion MMU
     char* registro = segundoParametro;
     char* valorDeRegistro = valorRegistro(segundoParametro);
     enviarContexto(contexto, socketMemoria, MOV_OUT);
     enviarEntero(direccionLogica,socketMemoria);
     enviarString(valorDeRegistro,socketMemoria);
+    */
+	  continuarEjecutando = 0;
+	  enviarContexto(contexto, socketKernel, MOV_OUT);
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
     char* nombreArchivo = primerParametro;

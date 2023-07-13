@@ -318,12 +318,12 @@ int encontrarEnTablaGlobal(char* nombre ){
 }
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
-  int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo)
+  int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
   list_remove(procesoDevuelto -> contexto -> archivosAbiertos, posicion);
 }
 
 bool hayEnCola(char* nombre){
-  tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
+  tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombre);
   if(queue_size (tablaEncontrada -> colaBloqueado) >= 1 ){
     return true;
   }
@@ -397,12 +397,12 @@ void ejecutar(PCB* proceso) {
     case F_CLOSE:
       puts("Llego F_CLOSE");
       sacarDeEjecutando(READY);
-      char* nombreArchivo = recibirString(socketCpu);
-      eliminarDeTablaDeArchivos(nombreArchivo,procesoDevuelto);
-      if(hayEnCola(nombreArchivo)){
-        moverAListoColaDeArchivo(nombreArchivo);
+      char* nombrArchivo = recibirString(socketCpu);
+      eliminarDeTablaDeArchivos(nombrArchivo,procesoDevuelto);
+      if(hayEnCola(nombrArchivo)){
+        moverAListoColaDeArchivo(nombrArchivo);
       } else {
-        eliminarDeTablaGlobal(nombreArchivo);
+        eliminarDeTablaGlobal(nombrArchivo);
       }
       agregarAListo(procesoDevuelto);
       break;
