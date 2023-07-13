@@ -305,6 +305,17 @@ int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
     }
     return posicion;
 }
+int encontrarEnTablaGlobal(char* nombre ){
+  int posicion;  
+    for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++){
+      tablaGlobal* arch = list_get(tablaGlobalDeArchivos,i);
+      if(strcmp(nombre,arch->nomArchivo)==0){
+            posicion = i;
+            break;
+      }
+    }
+    return posicion;
+}
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo)
@@ -322,6 +333,10 @@ void moverAListoColaDeArchivo(char* nombreArchivo){
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
   PCB* procesoAListo = queue_pop (tablaEncontrada -> colaBloqueado);
   agregarAListo(procesoAListo);
+}
+void eliminarDeTablaGlobal(char* nombreArchivo){
+  int posicion = encontrarEnTablaGlobal(nombreArchivo);
+  list_remove(tablaGlobalDeArchivos,posicion);
 }
 
 void ejecutar(PCB* proceso) {
