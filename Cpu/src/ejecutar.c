@@ -123,16 +123,21 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   char* segundoParametro = instruccion->strings[2];
   int continuarEjecutando = 1;
   int socketKernel = recursosCpu->conexiones->socketKernel;
+  int socketMemoria = recursosCpu->conexiones->socketMemoria;
 
   log_info(logger, "Ejecutando %s %s %s", identificador, primerParametro, segundoParametro);
   if (strcmp("SET", identificador) == 0) {
+    //TODO Retardo de instruccion
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_IN", identificador) == 0) {
-    continuarEjecutando = 0;
-    enviarContexto(contexto, socketKernel, MOV_IN);
+    int direccionLogica = atoi(segundoParametro);
+    char* registro = primerParametro;
+    enviarContexto(contexto, socketMemoria, MOV_IN);
+    enviarEntero(direccionLogica,socketMemoria);
+    recibirString(socketMemoria);
   } else if (strcmp("MOV_OUT", identificador) == 0) {
-    continuarEjecutando = 0;
+    int direccionLogica = atoi ()
     enviarContexto(contexto, socketKernel, MOV_OUT);
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
