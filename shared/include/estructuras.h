@@ -90,6 +90,7 @@
     DELETE_SEGMENT,
     DESCONOCIDA,
     OUT_OF_MEMORY,
+    SEGMENTATION_FAULT;
     SUCCESS,
   } op_code;
 

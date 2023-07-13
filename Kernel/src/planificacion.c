@@ -429,6 +429,11 @@ void ejecutar(PCB* proceso) {
           break;
       }
       break;
+      case SEGMENTATION_FAULT;
+          sacarDeEjecutando(EXIT);
+          log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SEGMENTATION FAULT", proceso->pid);
+          finalizarProceso(procesoDevuelto, SEGMENTATION_FAULT);
+          break;
     default:
       puts("Entre por default");
       sacarDeEjecutando(READY);
