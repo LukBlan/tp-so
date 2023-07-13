@@ -318,6 +318,11 @@ bool hayEnCola(char* nombre){
   }
   return false;
 }
+void moverAListoColaDeArchivo(char* nombreArchivo){
+  tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
+  PCB* procesoAListo = queue_pop (tablaEncontrada -> colaBloqueado);
+  agregarAListo(procesoAListo);
+}
 
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
