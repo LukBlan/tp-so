@@ -308,7 +308,15 @@ int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo)
-  list_remove(procesoDevuelto -> contexto -> archivosAbiertos,posicion);
+  list_remove(procesoDevuelto -> contexto -> archivosAbiertos, posicion);
+}
+
+bool hayEnCola(char* nombre){
+  tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
+  if(queue_size (tablaEncontrada -> colaBloqueado) >= 1 ){
+    return true;
+  }
+  return false;
 }
 
 void ejecutar(PCB* proceso) {
