@@ -4,6 +4,7 @@
   #include <stdint.h>
   #include <commons/collections/list.h>
   #include <stdio.h>
+  #include <commons/collections/queue.h>
 
   typedef struct {
     int id;

@@ -264,15 +264,16 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
 }
 bool estaEnTablaGlobal (char* nomArchivo) {
   for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
-        if (strcmp(nomArchivo, tablaGlobalDeArchivos->nombre[i]) == 0) {
+	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
+        if (strcmp(nomArchivo, tablaActual->nomArchivo) == 0) {
             return true;  // Name found in the list
         }
     }
     return false;  
 }
 void agregarATabla (char* nombreArchivo) {
-    struct tablaGlobal tabla1;
-    strcpy(tabla1 -> nomArchivo,nombreArchivo);
+    tablaGlobal* tabla1 = malloc(sizeof(tablaGlobal));
+    tabla1 -> nomArchivo = nombreArchivo;
     t_queue* colaArchivo = queue_create();
     tabla1 -> colaBloqueado = colaArchivo;
 }
