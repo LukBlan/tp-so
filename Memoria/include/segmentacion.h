@@ -12,6 +12,11 @@
   extern t_bitarray* bitMapSegmento;
   extern Segmento* segmentoCero;
 
+  typedef struct {
+    int idSegmento;
+    void* contenido;
+  } contenidoSegmento;
+
   void iniciarSegmentacion();
   Segmento* crearSegmentoCero();
   Segmento* crearSegmento(int id, int size);

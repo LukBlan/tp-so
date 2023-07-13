@@ -58,14 +58,42 @@ void liberarListaSegmentos(t_list* segmentos) {
   list_destroy(segmentos);
 }
 
-t_list* obtenerContenidoSegmentos() {
-  t_list contenidoSegmentos;
+/*
+void obtenerContenidoPorProceso(int idProceso, tablaDeSegmento* contenidoProceso) {
+  tablaDeSegmento* segmentosProceso = list_get(tablaDeSegmentosPorProceso, idProceso);
+  contenidoProceso->segmentos_proceso = list_create();
+  t_list* listaSegmentos = segmentosProceso->segmentos_proceso;
+  int cantidadSegmentos = listaSegmentos->elements_count;
+  contenidoProceso->id = idProceso;
 
+  for (int i = 0; cantidadSegmentos; i++) {
+    contenidoSegmento* contenido = malloc(sizeof(contenidoSegmento));
+    Segmento* segmento = list_get(listaSegmentos, i);
+    void* contenidoMemoria = malloc(segmento->limite);
+    memcpy(contenidoMemoria, memoriaPrincipal + segmento->base, segmento->limite);
+
+    contenido->idSegmento = segmento->id;
+    contenido->contenido = contenidoMemoria;
+    list_add(contenidoProceso->segmentos_proceso, contenido);
+  }
+}
+
+t_list* obtenerContenidoSegmentos() {
+  int cantidadProcesos = tablaDeSegmentosPorProceso->elements_count;
+  t_list* contenidoSegmentos = list_create() ;
+  for (int i = 0; i < cantidadProcesos; i++) {
+    tablaDeSegmento* contenidoProceso = malloc(sizeof(tablaDeSegmento));
+    obtenerContenidoPorProceso(i, contenidoProceso);
+    list_add(contenidoSegmentos, contenidoProceso);
+  }
+  return contenidoSegmentos;
 }
 
 void compactacion() {
   t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
 }
+*/
+
 
 Segmento* buscarCandidato(int tamanio) {
   // Genero un segmento auxiliar para guardar la info antes de liberar listas
