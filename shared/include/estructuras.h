@@ -38,7 +38,10 @@
     BLOCK,
     EXITSTATE
   } estadoProceso;
-
+  typedef struct {
+    char* nomArchivo;
+    t_queue* colaBloqueado;
+  } tablaGlobal;
   typedef struct {
     char* nombre;
     FILE* punteroArchivo;

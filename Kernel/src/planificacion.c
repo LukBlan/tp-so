@@ -262,6 +262,20 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
   avisarProcesoFinalizado(socketMemoria, motivo);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
+bool estaEnTablaGlobal (char* nomArchivo) {
+  for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
+        if (strcmp(nomArchivo, tablaGlobalDeArchivos->nombre[i]) == 0) {
+            return true;  // Name found in the list
+        }
+    }
+    return false;  
+}
+void agregarATabla (char* nombreArchivo) {
+    struct tablaGlobal tabla1;
+    strcpy(tabla1 -> nomArchivo,nombreArchivo);
+    t_queue* colaArchivo = queue_create();
+    tabla1 -> colaBloqueado = colaArchivo;
+}
 
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
@@ -302,6 +316,7 @@ void ejecutar(PCB* proceso) {
         /*if(estaEnTablaGlobal(nombreArchivo)){
           bloquearEnCola(nombreArchivo,procesoDevuelto);
         } else {
+          agregarATablaGlobal(nomArchivo)
           enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN)
           enviarString(nombreArchivo,socketFileSystem);
           esperarCodOperacion
