@@ -11,6 +11,8 @@
 #include <segmentacion.h>
 #include <string.h>
 
+//int idProceso = 0;
+
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
   t_log* logger = recursosMemoria->logger;
@@ -82,6 +84,14 @@ contexto eliminarSegmento(contexto, segmento, posicion) {
 }
 */
 
+Segmento* generarSegmentoAuxiliar(Segmento* segmentoNuevo) {
+  Segmento* segmentoAuxiliar = malloc(sizeof(Segmento));
+  segmentoAuxiliar->base = segmentoNuevo->base;
+  segmentoAuxiliar->id = segmentoNuevo->id;
+  segmentoAuxiliar->limite = segmentoNuevo->limite;
+  return segmentoAuxiliar;
+}
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
@@ -97,6 +107,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
     case Pcb:
       puts("Entre pcb");
+      //tablaDeSegmento* nuevaTabla = malloc(sizeof(tablaDeSegmento));
+      //nuevaTabla->id = idProceso++;
+      //nuevaTabla->segmentos_proceso = list_create();
+      //list_add(tablaDeSegmentosPorProceso, nuevaTabla);
       buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
       liberarBuffer(buffer);
@@ -104,6 +118,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case CREATE_SEGMENT:
       puts("crear segmento");
       contexto = recibirContexto(socketCliente);
+      //int idProceso = recibirEntero(socketCliente);
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
       op_code respuestaMemoria;
@@ -111,7 +126,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       if (puedoGuardar(tamanioSegmento)) {
         printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
+        Segmento* auxiliar = generarSegmentoAuxiliar(segmentoNuevo);
         t_list* listaSegmentos = contexto->tablaSegmentos;
+        //tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
+        //list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
         list_add(listaSegmentos, segmentoNuevo);
         printf("base nuevo segmento %d\n", segmentoNuevo->base);
         respuestaMemoria = Pcb;

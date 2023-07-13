@@ -8,6 +8,7 @@
 Segmento* segmentoCero;
 char* arrayDeHuecos;
 t_bitarray* bitMapSegmento;
+t_list* tablaDeSegmentosPorProceso;
 
 void iniciarSegmentacion() {
     int tamanio = recursosMemoria->configuracion->TAM_MEMORIA;
@@ -55,6 +56,15 @@ void liberarListaSegmentos(t_list* segmentos) {
     free(segmentoNuevo);
   }
   list_destroy(segmentos);
+}
+
+t_list* obtenerContenidoSegmentos() {
+  t_list contenidoSegmentos;
+
+}
+
+void compactacion() {
+  t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
 }
 
 Segmento* buscarCandidato(int tamanio) {
