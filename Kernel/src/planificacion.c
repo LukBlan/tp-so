@@ -281,7 +281,7 @@ tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
   tablaGlobal* tabla;
    for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
 	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
-        if (strcmp(nomArchivo, tablaActual->nomArchivo) == 0) {
+        if (strcmp(nombreArchivo, tablaActual->nomArchivo) == 0) {
             tabla = tablaActual;
             break;
         }
@@ -334,8 +334,8 @@ void ejecutar(PCB* proceso) {
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo,procesoDevuelto);
         } else {
-          agregarATablaGlobal(nomArchivo)
-          enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN)
+          agregarATabla(nombreArchivo);
+          enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN);
           enviarString(nombreArchivo,socketFileSystem);
           //esperarCodOperacion
         }
