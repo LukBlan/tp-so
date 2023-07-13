@@ -294,6 +294,23 @@ void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
   queue_push (tablaEncontrada -> colaBloqueado,proceso);
 }
 
+int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
+  int posicion;  
+    for (int i = 0; i < list_size(tablaArchivos); i++){
+      archivoAbierto* arch = list_get(tablaArchivos,i);
+      if(strcmp(nombre,arch->nombre)==0){
+            posicion = i;
+            break;
+      }
+    }
+    return posicion;
+}
+
+void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
+  int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo)
+  list_remove(procesoDevuelto -> contexto -> archivosAbiertos,posicion);
+}
+
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
@@ -352,6 +369,13 @@ void ejecutar(PCB* proceso) {
     case F_CLOSE:
       puts("Llego F_CLOSE");
       sacarDeEjecutando(READY);
+      char* nombreArchivo = recibirString(socketCpu);
+      eliminarDeTablaDeArchivos(nombreArchivo,procesoDevuelto);
+      if(hayEnCola(nombreArchivo)){
+        moverAListoColaDeArchivo(nombreArchivo);
+      } else {
+        eliminarDeTablaGlobal(nombreArchivo);
+      }
       agregarAListo(procesoDevuelto);
       break;
     case F_SEEK:
