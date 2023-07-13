@@ -144,6 +144,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     switch(respuestaKernel) {
         case SUCCESS:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketKernel);
+          contexto = nuevoActualizado;
           break;
         default:
           puts("Como carajo llegue al default");
