@@ -116,6 +116,36 @@ void setearRegistro(char* primerParametro, char* segundoParametro) {
   }
 }
 
+char* valorRegistro(char* primerParametro ) {
+  char* segundoParametro;
+  if (strcmp("AX", primerParametro) == 0) {
+    strcpy(segundoParametro, segundoParametrorecursosCpu->registros.AX);
+  } else if (strcmp("BX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.BX);
+  } else if (strcmp("CX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.CX);
+  } else if (strcmp("DX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.DC);
+  } else if (strcmp("EAX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.EAX);
+  } else if (strcmp("EBX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.EBX;
+  } else if (strcmp("ECX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.ECX);
+  } else if (strcmp("EDX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.EDX);
+  } else if (strcmp("RAX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.RAX);
+  } else if (strcmp("RBX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.RBX);
+  } else if (strcmp("RCX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.RCX);
+  } else if (strcmp("RDX", primerParametro) == 0) {
+    strcpy(segundoParametro, recursosCpu->registros.RDX);
+  }
+  return segundoParametro;
+}
+
 int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
@@ -133,12 +163,20 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   } else if (strcmp("MOV_IN", identificador) == 0) {
     int direccionLogica = atoi(segundoParametro);
     char* registro = primerParametro;
+    //comprobacion MMU
     enviarContexto(contexto, socketMemoria, MOV_IN);
     enviarEntero(direccionLogica,socketMemoria);
-    recibirString(socketMemoria);
+    char* parametro = recibirString(socketMemoria);
+    setearRegistro(primerParametro,parametro);
+    contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_OUT", identificador) == 0) {
-    int direccionLogica = atoi ()
-    enviarContexto(contexto, socketKernel, MOV_OUT);
+    int direccionLogica = atoi (primerParametro);
+    //comprobacion MMU
+    char* registro = segundoParametro;
+    char* valorDeRegistro = valorRegistro(segundoParametro);
+    enviarContexto(contexto, socketMemoria, MOV_OUT);
+    enviarEntero(direccionLogica,socketMemoria);
+    enviarString(valorDeRegistro)
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
     char* nombreArchivo = primerParametro;
