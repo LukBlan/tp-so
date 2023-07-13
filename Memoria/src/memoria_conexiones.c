@@ -130,7 +130,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         t_list* listaSegmentos = contexto->tablaSegmentos;
         //tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
         //list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
-        list_add(listaSegmentos, segmentoNuevo);
+        list_add(listaSegmentos, auxiliar);
         printf("base nuevo segmento %d\n", segmentoNuevo->base);
         respuestaMemoria = Pcb;
       } else {
