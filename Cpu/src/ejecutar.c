@@ -189,6 +189,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketKernel, F_SEEK);
     enviarString(nombreArchivo,socketKernel);
     enviarEntero(posicion,socketKernel);
+    /*
     op_code respuestaKernel = obtenerCodigoOperacion(socketKernel);
     switch(respuestaKernel) {
         case SUCCESS:
@@ -199,6 +200,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
           puts("Como carajo llegue al default");
           break;
       }
+   */
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);

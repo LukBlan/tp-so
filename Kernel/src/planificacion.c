@@ -386,8 +386,11 @@ void ejecutar(PCB* proceso) {
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           agregarATabla(nombreArchivo);
-          enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
-          enviarString(nombreArchivo, socketFileSystem);
+          // Calculo que se agrega a ready luego
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+          //enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
+          //enviarString(nombreArchivo, socketFileSystem);
           //esperarCodOperacion
           //recibir contexto y enviarlo a CPU
         }
@@ -405,12 +408,14 @@ void ejecutar(PCB* proceso) {
       puts("Llego F_CLOSE");
       sacarDeEjecutando(READY);
       char* nombrArchivo = recibirString(socketCpu);
-      eliminarDeTablaDeArchivos(nombrArchivo,procesoDevuelto);
+      /*
+      eliminarDeTablaDeArchivos(nombrArchivo, procesoDevuelto);
       if(hayEnCola(nombrArchivo)){
         moverAListoColaDeArchivo(nombrArchivo);
       } else {
         eliminarDeTablaGlobal(nombrArchivo);
       }
+      */
       agregarAListo(procesoDevuelto);
       break;
     case F_SEEK:
@@ -418,8 +423,12 @@ void ejecutar(PCB* proceso) {
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
-      procesoDevuelto->contexto->archivosAbiertos = f_seek(nomArchivo,archivosAbiertos,posicion);
-      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
+      // Abria que tener el archivo para poder hacer fseek del mismo
+      //procesoDevuelto->contexto->archivosAbiertos = f_seek(nomArchivo, archivosAbiertos, posicion);
+      //enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
+      // Por ahora dejo que entre a ready
+      sacarDeEjecutando(READY);
+      agregarAListo(procesoDevuelto);
       break;
     case F_READ:
       puts("Llego F_READ");
