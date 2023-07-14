@@ -49,6 +49,7 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un cliente");
+    manejarConexion(socketCliente);
     close(socketCliente);
   }
   close(socketServidor);
@@ -65,4 +66,37 @@ void realizarHandshakeMemoria() {
   }
 }
 
+void procesarOperacion(op_code codigoOperacion, int socketCliente) {
+  t_buffer* buffer;
+  contextoEjecucion* contexto;
+
+  printf("Estoy procesando conexion %d\n", codigoOperacion);
+  switch (codigoOperacion) {
+    default:
+      puts("Cerre una conexion");
+      /*
+      close(socketCliente);
+      */
+      break;
+  }
+}
+
+void manejarConexion(int socketCliente) {
+  pthread_t hilo;
+  pthread_create(&hilo, NULL, (void*)procesarOperacionRecibida, (void*)socketCliente);
+  pthread_detach(hilo);
+}
+
+void procesarOperacionRecibida(int socketCliente) {
+  int conexionActiva = 1;
+  while(conexionActiva) {
+    int codigoOperacion;
+    if (recv(socketCliente, &codigoOperacion, sizeof(int), 0) <= 0) {
+      conexionActiva = 0;
+      close(socketCliente);
+    } else {
+      procesarOperacion(codigoOperacion, socketCliente);
+    }
+  }
+}
 
