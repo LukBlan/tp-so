@@ -59,7 +59,44 @@ void liberarListaSegmentos(t_list* segmentos) {
   list_destroy(segmentos);
 }
 
-/*
+void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoEnSegmento, int* base) {
+  memcpy(memoriaPrincipal, contenidoEnSegmento->contenido, segmento->limite);
+  *base += segmento->limite;
+  segmento->base = *base;
+  ocuparBitArray(segmento);
+}
+
+void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base) {
+  int cantidadSegmentos = contenidoProceso->segmentos_proceso->elements_count;
+  t_list* listaContenido = contenidoProceso->segmentos_proceso;
+  t_list* listaSegmentos = segmentosProceso->segmentos_proceso;
+
+  for (int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmento = list_get(listaSegmentos, i);
+    contenidoSegmento* contenido = list_get(listaContenido, i);
+    ocuparMemoriaSegmento(segmento, contenido, &base);
+  }
+}
+
+void ocuparMemoria(t_list* contenidoSegmentosPorProceso) {
+  int cantidadProcesos = contenidoSegmentosPorProceso->elements_count;
+  int base = recursosMemoria->configuracion->TAM_SEGMENTO_0 * 8;
+
+  for (int i = 0; i < cantidadProcesos; i++) {
+    tablaDeSegmento* contenidoProceso = list_get(contenidoSegmentosPorProceso, i);
+    tablaDeSegmento* segmentosProceso = list_get(tablaDeSegmentosPorProceso, i);
+    ocuparMemoriaProceso(contenidoProceso, segmentosProceso, &base);
+  }
+}
+
+void limpiarArrayBits() {
+  int tamanioMemoria = recursosMemoria->configuracion->TAM_MEMORIA * 8;
+
+  for(int i = 0; i < tamanioMemoria; i++) {
+    bitarray_clean_bit(bitMapSegmento, i);
+  }
+}
+
 void obtenerContenidoPorProceso(int idProceso, tablaDeSegmento* contenidoProceso) {
   tablaDeSegmento* segmentosProceso = list_get(tablaDeSegmentosPorProceso, idProceso);
   contenidoProceso->segmentos_proceso = list_create();
@@ -92,8 +129,10 @@ t_list* obtenerContenidoSegmentos() {
 
 void compactacion() {
   t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
+  limpiarArrayBits();
+  ocuparMemoria();
 }
-*/
+
 
 
 Segmento* buscarCandidato(int tamanio) {
