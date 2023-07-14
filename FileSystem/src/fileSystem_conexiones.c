@@ -50,7 +50,6 @@ void montarServidor() {
     int socketCliente = esperarCliente(socketServidor);
     log_info(logger, "Recibi un cliente");
     manejarConexion(socketCliente);
-    close(socketCliente);
   }
   close(socketServidor);
 }
