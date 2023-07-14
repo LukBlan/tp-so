@@ -65,6 +65,18 @@ void realizarHandshakeMemoria() {
   }
 }
 
+void procesarOperacionRecibida(int socketCliente) {
+  int conexionActiva = 1;
+  while(conexionActiva) {
+    int codigoOperacion;
+    if (recv(socketCliente, &codigoOperacion, sizeof(int), 0) <= 0) {
+      conexionActiva = 0;
+      close(socketCliente);
+    } else {
+      procesarOperacion(codigoOperacion, socketCliente);
+    }
+  }
+}
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
@@ -94,16 +106,4 @@ void manejarConexion(int socketCliente) {
   pthread_detach(hilo);
 }
 
-void procesarOperacionRecibida(int socketCliente) {
-  int conexionActiva = 1;
-  while(conexionActiva) {
-    int codigoOperacion;
-    if (recv(socketCliente, &codigoOperacion, sizeof(int), 0) <= 0) {
-      conexionActiva = 0;
-      close(socketCliente);
-    } else {
-      procesarOperacion(codigoOperacion, socketCliente);
-    }
-  }
-}
 
