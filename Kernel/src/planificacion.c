@@ -319,6 +319,7 @@ int encontrarEnTablaGlobal(char* nombre ){
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
+  //ver de hacer fclose aca
   list_remove(procesoDevuelto -> contexto -> archivosAbiertos, posicion);
 }
 
@@ -383,6 +384,7 @@ void ejecutar(PCB* proceso) {
           enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN);
           enviarString(nombreArchivo,socketFileSystem);
           //esperarCodOperacion
+          //recibir contexto y enviarlo a CPU
         }
       break;
     case DELETE_SEGMENT:

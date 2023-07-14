@@ -71,6 +71,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
+    case F_OPEN:
+      puts ("Llego FOpen");
+      contexto = recibirContexto(socketCliente);
+      char* nomArchivo = recibirString(socketCliente);
+      //fcreate(contexto,nomArchivo);
+      //enviarContexto(contexto,socketCliente,SUCCESS);
+      //liberarContexto(contexto);
+    break;
     default:
       puts("Cerre una conexion");
       /*
