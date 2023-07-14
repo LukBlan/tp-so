@@ -1,7 +1,7 @@
 #include <recursos.h>
 
 /*
-TODO Lista de bloques unidos a cada archivo
+
 void ocuparBloque(int cantidadDeBloques, char cosaAEscribir) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;

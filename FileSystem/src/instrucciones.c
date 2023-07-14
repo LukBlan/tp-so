@@ -24,13 +24,19 @@
 			// return;
 		}
         log_info(recursosFileSystem->logger, "FCB no encontrado");
-        FCB* fcbArchivo = malloc(sizeof(FCB));
         //int ocuparBloques;
-        /*config_set_value(fcbArchivo, "nombre_archivo", nomArchivo);
-		config_set_value(fcbArchivo, "file_size", "0");
-		config_set_value(fcbArchivo, "punteroDirecto", ""); //TODO Ver punteros
-		config_set_value(fcbArchivo, "punteroIndirecto", "");
-        config_save(fcbArchivo);*/
+        t_config* fcbArchivo = malloc(sizeof(t_config));
+		fcbArchivo->path = fcbPath;
+		fcbArchivo->properties = dictionary_create();
+
+		dictionary_put(fcbArchivo->properties, "nombre_archivo", nomArchivo);
+		dictionary_put(fcbArchivo->properties, "file_size", "0");
+		dictionary_put(fcbArchivo->properties, "punteroDirecto", ""); 
+		dictionary_put(fcbArchivo->properties, "punteroIndirecto", "");
+        config_save(fcbArchivo);
+        dictionary_destroy(fcbArchivo->properties);
+		fclose(FCBdescriptor);
+
         return contexto;
     }
 
