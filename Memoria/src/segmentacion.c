@@ -55,6 +55,7 @@ void liberarListaSegmentos(t_list* segmentos) {
     Segmento* segmentoNuevo = list_get(segmentos, i);
     free(segmentoNuevo);
   }
+
   list_destroy(segmentos);
 }
 

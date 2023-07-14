@@ -340,6 +340,10 @@ void eliminarDeTablaGlobal(char* nombreArchivo){
   list_remove(tablaGlobalDeArchivos,posicion);
 }
 
+void iniciarTablaGlobal() {
+  tablaGlobalDeArchivos = list_create();
+}
+
 void ejecutar(PCB* proceso) {
   procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
@@ -376,13 +380,14 @@ void ejecutar(PCB* proceso) {
     case F_OPEN:
       puts("Llego F_OPEN");
       char* nombreArchivo = recibirString(socketCpu);
+      printf("Recibi archivo con nombre %s\n", nombreArchivo);
         if(estaEnTablaGlobal(nombreArchivo)){
           sacarDeEjecutando(BLOCK);
-          bloquearEnCola(nombreArchivo,procesoDevuelto);
+          bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           agregarATabla(nombreArchivo);
-          enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_OPEN);
-          enviarString(nombreArchivo,socketFileSystem);
+          enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
+          enviarString(nombreArchivo, socketFileSystem);
           //esperarCodOperacion
           //recibir contexto y enviarlo a CPU
         }

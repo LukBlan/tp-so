@@ -11,6 +11,8 @@ int main(int argc, char* argv[]) {
   cargarLogger("kernel.log");
   cargarConfiguracion(argv[1]);
   cargarConexiones();
+
+  iniciarTablaGlobal();
   iniciarColas();
   iniciarSemaforos();
   comenzarPlanificadores();
