@@ -46,7 +46,8 @@
   extern void* copiaBloque;
   extern pthread_mutex_t mutexBloques;
   extern pthread_mutex_t mutexBitMap;
-
+  extern int bytesDelBitarray;
+  
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathArchivoConfiguracion);

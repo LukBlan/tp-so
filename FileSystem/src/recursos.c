@@ -9,6 +9,7 @@ t_recursos* recursosFileSystem;
 void* copiaBloque;
 pthread_mutex_t mutexBloques;
 pthread_mutex_t mutexBitMap;
+int bytesDelBitarray;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -64,7 +65,7 @@ void cargarSuperbloque() {
 
 void cargarBitMap() {
   int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
-  int bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
+  bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
   ftruncate(fileDescriptor, bytesDelBitarray );
   void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
   t_bitarray* bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);

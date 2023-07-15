@@ -3,7 +3,12 @@
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
-
+    char* generarPathFCB(char* nomArchivo){
+        char* fcbPath = string_new();
+        string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
+        string_append(fcbPath,nomArchivo);
+        return fcbPath
+    }
     archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
         archivoAbierto* archivo = malloc(sizeof(archivoAbierto));
         archivo -> nombre = nomArchivo;
@@ -11,9 +16,7 @@
         return archivo;
     }
     contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
-        char* fcbPath = string_new();
-        string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
-        string_append(fcbPath,nomArchivo);
+        char* fcbPath = generarPathFCB(nomArchivo);
         FILE* FCBdescriptor = fopen (fcbPath,"rb");
         FILE* fileDescriptor = fopen("nomArchivo","rb");
         archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
@@ -38,5 +41,19 @@
 		fclose(FCBdescriptor);
 
         return contexto;
+    }
+
+    void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
+        char* fcbPath = generarPathFCB(nomArchivo);
+        t_config* fcb = config_create(fcbPath);
+        config_set_value(fcb,"file_size",(char)nuevoTamanio);
+    }
+
+    contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
+        FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
+        cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
+        //agregarBloques(nomArchivo,nuevoTamanio);
+        return contexto;
+
     }
 
