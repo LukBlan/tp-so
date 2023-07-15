@@ -161,26 +161,39 @@ int sePuedeAgregarMasProcesos() {
   return (config->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
 }
 
+char* asignarStringLiteral(char* stringLiteral) {
+  int cantidadCaracteres = strlen(stringLiteral) + 1;
+  char* stringAllocated = malloc(cantidadCaracteres);
+  strcpy(stringAllocated, stringLiteral);
+  stringAllocated[cantidadCaracteres - 1] = '\0';
+  return stringAllocated;
+}
+
 char* estadoAsString(estadoProceso estado) {
   char* estadoAsString;
   switch(estado) {
     case NEW:
-      estadoAsString = "New";
+      estadoAsString = asignarStringLiteral("New");
       break;
+
     case READY:
-      estadoAsString = "Ready";
+      estadoAsString = asignarStringLiteral("Ready");
       break;
+
     case EXEC:
-      estadoAsString = "Execute";
+      estadoAsString = asignarStringLiteral("Execute");
       break;
+
     case BLOCK:
-      estadoAsString = "Block";
+      estadoAsString = asignarStringLiteral("Block");
       break;
+
     case EXITSTATE:
-      estadoAsString = "Exit";
+      estadoAsString = asignarStringLiteral("Exit");
       break;
+
     default:
-      estadoAsString = "Sin Estado";
+      estadoAsString = asignarStringLiteral("Sin Estado");
       break;
   }
   return estadoAsString;
@@ -196,6 +209,8 @@ void cambiarEstado(estadoProceso estado, PCB* proceso) {
       "Cambio de Estado: PID: [%d] - Estado Anterior: %s - Estado Actual: %s",
       proceso->pid, estadoAnterior, estadoNuevo
   );
+  free(estadoAnterior);
+  free(estadoNuevo);
 }
 
 void agregarAListo(PCB* proceso) {
@@ -392,6 +407,7 @@ void ejecutar(PCB* proceso) {
           //esperarCodOperacion
           //recibir contexto y enviarlo a CPU
         }
+        free(nombreArchivo);
       break;
     case DELETE_SEGMENT:
       puts("-------------------- Llego DELETE_SEGMENT --------------------");
@@ -417,6 +433,7 @@ void ejecutar(PCB* proceso) {
       }
       */
       agregarAListo(procesoDevuelto);
+      free(nombrArchivo);
       break;
     case F_SEEK:
       puts("-------------------- Llego F_SEEK --------------------");
@@ -429,6 +446,7 @@ void ejecutar(PCB* proceso) {
       // Por ahora dejo que entre a ready
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
+      free(nomArchivo);
       break;
     case F_READ:
       puts("-------------------- Llego F_READ --------------------");
@@ -452,7 +470,10 @@ void ejecutar(PCB* proceso) {
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
       finalizarProceso(procesoTerminado, SUCCESS);
+      enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
       //liberarPcb(procesoTerminado);
+      liberarRecursos();
+      exit(-1);
       break;
     case WAIT:
       puts("-------------------- Llego WAIT --------------------");

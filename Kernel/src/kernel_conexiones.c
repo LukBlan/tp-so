@@ -15,9 +15,9 @@ int idProceso = 0;
 
 void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
-  sem_post(&largoPlazo);
   cambiarEstado(NEW, pcb);
   log_info(recursosKernel->logger, "Proceso [%d] se movio a Nuevo", pcb->pid);
+  sem_post(&largoPlazo);
 }
 
 void crearSocketKernel() {
@@ -58,8 +58,7 @@ void agregarConsolaALista(PCB* pcb, int socketCliente) {
 }
 
 void recibirSegementoMemoria(PCB* pcb) {
-  int* posicion = malloc(sizeof(int));
-  *posicion = 0;
+  int posicion = 0;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
   t_buffer* buffer = generarBuffer(4);
   t_paquete* paquete = crearPaquete(buffer, Pcb);
@@ -67,7 +66,9 @@ void recibirSegementoMemoria(PCB* pcb) {
   enviar_paquete(paquete, socketMemoria);
   obtenerCodigoOperacion(socketMemoria);
   t_buffer* bufferRecibido = obtenerBuffer(socketMemoria);
-  pcb->contexto->tablaSegmentos = deserializarSegmentos(bufferRecibido, posicion);
+  pcb->contexto->tablaSegmentos = deserializarSegmentos(bufferRecibido, &posicion);
+  liberarPaquete(paquete);
+  liberarBuffer(bufferRecibido);
 }
 
 void terminoProceso() {
@@ -94,6 +95,7 @@ void montarServidor() {
 
 PCB* crearPcb(t_list* listaInstrucciones) {
   PCB* pcb = malloc(sizeof(PCB));
+  memset(pcb, 0, sizeof(PCB));
   pcb->contexto = malloc(sizeof(contextoEjecucion));
   memset(pcb->contexto, 0, sizeof(contextoEjecucion));
 
