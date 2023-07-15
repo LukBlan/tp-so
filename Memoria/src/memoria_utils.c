@@ -9,5 +9,6 @@ void iniciarEstructurasMemoria() {
   memoriaPrincipal = (void*) malloc(recursosMemoria->configuracion->TAM_MEMORIA);
   memset(memoriaPrincipal, '0', recursosMemoria->configuracion->TAM_MEMORIA);
   iniciarSegmentacion();
+  tablaDeSegmentosPorProceso = list_create();
   segmentoCero = crearSegmentoCero();
 }

@@ -78,9 +78,9 @@ void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* se
   }
 }
 
-void ocuparMemoria(t_list* contenidoSegmentosPorProceso) {
+void ocuparMemoriaPrincipal(t_list* contenidoSegmentosPorProceso) {
   int cantidadProcesos = contenidoSegmentosPorProceso->elements_count;
-  int base = recursosMemoria->configuracion->TAM_SEGMENTO_0 * 8;
+  int base = recursosMemoria->configuracion->TAM_SEGMENTO_0;
 
   for (int i = 0; i < cantidadProcesos; i++) {
     tablaDeSegmento* contenidoProceso = list_get(contenidoSegmentosPorProceso, i);
@@ -130,10 +130,8 @@ t_list* obtenerContenidoSegmentos() {
 void compactacion() {
   t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
   limpiarArrayBits();
-  ocuparMemoria();
+  ocuparMemoriaPrincipal(contenidoDeSegmentoPorProceso);
 }
-
-
 
 Segmento* buscarCandidato(int tamanio) {
   // Genero un segmento auxiliar para guardar la info antes de liberar listas
