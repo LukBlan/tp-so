@@ -15,8 +15,8 @@ int idProceso = 0;
 
 void agregarANew(PCB* pcb) {
   queue_push(colaNew, pcb);
-  cambiarEstado(NEW, pcb);
   log_info(recursosKernel->logger, "Proceso [%d] se movio a Nuevo", pcb->pid);
+  cambiarEstado(NEW, pcb);
   sem_post(&largoPlazo);
 }
 
@@ -104,6 +104,7 @@ PCB* crearPcb(t_list* listaInstrucciones) {
   pthread_mutex_unlock(&mutexNumeroProceso);
 
   strcpy(pcb->contexto->registros.AX, "Add");
+  pcb->estado = -1;
   pcb->estimadoRafaga = recursosKernel->configuracion->ESTIMACION_INICIAL;
   pcb->llegadaReady = 0;
   pcb->contexto->programCounter = 0;

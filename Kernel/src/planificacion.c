@@ -17,8 +17,6 @@ void planificador_corto_plazo_fifo() {
     sem_wait(&semaforoCantidadProcesosExec);
     //TODO ver lista
     procesoEjecutandose = list_remove(colaReady, 0);
-
-    cambiarEstado(EXEC, procesoEjecutandose);
     ejecutar(procesoEjecutandose);
   }
 }
@@ -149,8 +147,8 @@ void planificador_largo_plazo() {
     sem_wait(&largoPlazo);
     if (sePuedeAgregarMasProcesos()) {
       PCB *procesoSaliente = queue_pop(colaNew);
-      cambiarEstado(READY, procesoSaliente);
       agregarAListo(procesoSaliente);
+      cambiarEstado(READY, procesoSaliente);
     }
     log_info(logger, "[LARGO-PLAZO] Procesos en Memoria: %d", list_size(colaReady));
   }
@@ -363,6 +361,7 @@ void ejecutar(PCB* proceso) {
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
   int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
+  cambiarEstado(EXEC, procesoEjecutandose);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
