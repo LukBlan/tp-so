@@ -34,6 +34,17 @@ int darUltimoPuntero(char* nomArchivo){
     return ultimoPuntero;
 }
 
+void agregarABloquePunteros(char* nomArchivo, int nuevoPuntero){
+     char puntero = (char)nuevoPuntero;
+     char* fcbPath = generarPathFCB(nomArchivo);
+     t_config* fcb = config_create(fcbPath);
+     char** arrayDeBlocks = config_get_array_value(fcb,"punteroIndirecto");
+     int numStrings = sizeof(arrayDeBlocks) / sizeof(arrayDeBlocks[0]);
+     strcpy((*arrayDeBlocks)[(*numStrings) - 1], puntero);
+     config_set_value(fcb,)
+     config_destroy(fcb,"punteroIndirecto",arrayDeBlocks);
+}
+
 void ocuparBloque( char* nomArchivo,int cantidadDeBloques) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
