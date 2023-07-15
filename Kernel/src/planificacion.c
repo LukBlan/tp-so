@@ -475,6 +475,7 @@ void ejecutar(PCB* proceso) {
       int tamanioSegmento = recibirEntero(socketCpu);
 
       enviarContexto(procesoDevuelto->contexto, socketMemoria, CREATE_SEGMENT);
+      enviarEntero(procesoEjecutandose->pid, socketMemoria);
       enviarEntero(idSegmento, socketMemoria);
       enviarEntero(tamanioSegmento, socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
