@@ -141,7 +141,7 @@ int recibirEntero(int socket) {
 }
 
 void enviarString(char* valorAEnviar, int socket) {
-  int cantidadCaracters = string_length(valorAEnviar)  + 1;
+  int cantidadCaracters = string_length(valorAEnviar) + 1;
   t_buffer* buffer = generarBuffer(sizeof(int) + cantidadCaracters);
 
   memcpy(buffer->stream, &(cantidadCaracters), sizeof(int));
