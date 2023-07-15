@@ -3,12 +3,62 @@
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
+
     char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
         string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
         string_append(fcbPath,nomArchivo);
         return fcbPath
     }
+
+/*
+t_list* buscarBloque(char* nomArchivo)
+void ocuparBloque( char* nomArchivo,int cantidadDeBloques) {
+    int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
+    int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
+    int puntero = darUltimoPuntero(nomArchivo);
+        for(int j = puntero+1 ; j<cantidadDeBloques; j++) {
+    	    	for(int i= puntero+1; i<bloquesDelSist; i++) {
+                    pthread_mutex_lock(&mutexBitMap);
+                    if(bitarray_test_bit(bitmap, i) == 0) {
+                        bloqueAUsar = i;
+                        bitarray_set_bit(bitmap,i);
+                        msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+                        agregarABloquePuntero(i);
+                        i++;
+                    }
+                    pthread_mutex_unlock(&mutexBitMap);
+                }
+            }
+            pthread_mutex_lock(&mutexBloques);
+           // memcpy(copiaBloque + bloqueAUsar * tamanioBloque + (bytesAEscribir % tamanioBloque), cosaAEscribir , sizeof(char));
+            // escribir en archivo de punteros los bloques del fs
+            pthread_mutex_unlock(&mutexBloques);
+            config_set_value(fileUsado,"file_size",tamanioAnterior + bytesAEscribir);
+}
+
+void desocuparBloque (char* nomArchivo,int cantidadDeBloques) {
+    int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
+    int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
+    t_list* bloquesUsados = buscarBloque(nomArchivo);
+    int cantidadBloquesUsados = list_size(bloquesUsados);
+        for(int j=cantidadBloquesUsados; j<cantidadDeBloques ; j--) {
+                    pthread_mutex_lock(&mutexBitMap);
+                        int posicion = bloquesUsados[j];
+                        bitarray_clean_bit(bitmap,posicion);
+                        msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+                        sacarBloquePuntero(j);
+                    pthread_mutex_unlock(&mutexBitMap);
+                }
+            }
+            pthread_mutex_lock(&mutexBloques);
+           // memcpy(copiaBloque + bloqueAUsar * tamanioBloque + (bytesAEscribir % tamanioBloque), cosaAEscribir , sizeof(char));
+            pthread_mutex_unlock(&mutexBloques);
+            config_set_value(fileUsado,"file_size",tamanioAnterior + bytesAEscribir);
+}
+
+*/
+
     archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
         archivoAbierto* archivo = malloc(sizeof(archivoAbierto));
         archivo -> nombre = nomArchivo;
@@ -47,12 +97,24 @@
         char* fcbPath = generarPathFCB(nomArchivo);
         t_config* fcb = config_create(fcbPath);
         config_set_value(fcb,"file_size",(char)nuevoTamanio);
+        config_destroy(fcb);
     }
-
+    int tamanioDeFCB(char* nomArchivo){
+        int tamanio
+        char* fcbPath = generarPathFCB(nomArchivo);
+        t_config* fcb = config_create(fcbPath);
+        int tamanio = config_get_int_value(fcb, "file_size");
+        return tamanio;
+    }
     contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
         FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
+        int tamanioViejo = tamanioDeFCB(nomArchivo);
+        /*if(nuevoTamanio > tamanioViejo){
+            ocuparBloque(nomArchivo,nuevoTamanio);
+        } else{
+            desocuparBloque(nomArchivo,nuevoTamanio);
+        }*/
         cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
-        //agregarBloques(nomArchivo,nuevoTamanio);
         return contexto;
 
     }
