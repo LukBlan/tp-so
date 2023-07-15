@@ -196,8 +196,8 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
 
 void ocuparMemoria(void* tareas, int base, int size) {
 	//pthread_mutex_lock(&mutexMemoria);
-    memcpy(memoriaPrincipal+base, tareas, size);
-    //pthread_mutex_unlock(&mutexMemoria);
+  memcpy(memoriaPrincipal+base, tareas, size);
+  //pthread_mutex_unlock(&mutexMemoria);
 }
 
 int puedoGuardar(int quieroGuardar) {

@@ -92,6 +92,18 @@ Segmento* generarSegmentoAuxiliar(Segmento* segmentoNuevo) {
   return segmentoAuxiliar;
 }
 
+void agregarSegmentoATabla(Segmento* segmentoNuevo, int idProceso) {
+  tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
+  list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
+  printf("El proceso %d tiene %d segmentos", idProceso, nuevaTabla->segmentos_proceso->elements_count);
+}
+
+void agregarSegmentoAContexto(contextoEjecucion* contexto, Segmento* segmentoNuevo) {
+  Segmento* auxiliar = generarSegmentoAuxiliar(segmentoNuevo);
+  t_list* listaSegmentos = contexto->tablaSegmentos;
+  list_add(listaSegmentos, auxiliar);
+}
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
@@ -99,14 +111,15 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case HANDSHAKE:
-      puts("Entre handshake");
+      puts("------------- Entre handshake -------------");
       int valorRecibido = 0;
       log_info(recursosMemoria->logger, "Recibido Pedido de Handshake, Respondiendo");
       recv(socketCliente, &valorRecibido, sizeof(int), 0);
       send(socketCliente, &valorRecibido, sizeof(int), 0);
       break;
+
     case Pcb:
-      puts("Entre pcb");
+      puts("------------ Entre pcb ----------------");
       tablaDeSegmento* nuevaTabla = malloc(sizeof(tablaDeSegmento));
       nuevaTabla->id = idProceso++;
       nuevaTabla->segmentos_proceso = list_create();
@@ -116,10 +129,11 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarSegmentoCero(socketCliente);
       liberarBuffer(buffer);
       break;
+
     case CREATE_SEGMENT:
-      puts("crear segmento");
+      puts("----------- Entre Create_Segmento ---------------");
       contexto = recibirContexto(socketCliente);
-      //int idProceso = recibirEntero(socketCliente);
+      int idProceso = recibirEntero(socketCliente);
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
       op_code respuestaMemoria;
@@ -127,25 +141,23 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       if (puedoGuardar(tamanioSegmento)) {
         printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
-        Segmento* auxiliar = generarSegmentoAuxiliar(segmentoNuevo);
-        t_list* listaSegmentos = contexto->tablaSegmentos;
-        //tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
-        //list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
-        list_add(listaSegmentos, auxiliar);
+        agregarSegmentoATabla(segmentoNuevo, idProceso);
+        agregarSegmentoAContexto(contexto, segmentoNuevo);
         printf("base nuevo segmento %d\n", segmentoNuevo->base);
         respuestaMemoria = Pcb;
       } else {
         puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
       }
+
       printf("cantidad de segmentos %d", contexto->tablaSegmentos->elements_count);
       printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
       enviarContexto(contexto, socketCliente, respuestaMemoria);
       liberarContexto(contexto);
       break;
-    case DELETE_SEGMENT:
-      puts("Llego delete Segment");
 
+    case DELETE_SEGMENT:
+      puts("--------------- Entre Delete_Segment -------------");
       contexto = recibirContexto(socketCliente);
       int idSeg = recibirEntero(socketCliente);
       printf("Segmento %d\n", idSeg);
@@ -157,20 +169,23 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       // Se devuelve el contexto eliminado al kernel
       liberarContexto(contexto);
       break;
+
     case SUCCESS:
-      puts("Termino proceso Exitosamente");
+      puts("------------- Entre Success ----------------");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
       //liberarRecursos();
       //exit(-1);
       break;
+
     case OUT_OF_MEMORY:
-      puts("Termino proceso OUT OF MEMORY");
+      puts("------------- Entre OUT OF MEMORY -------------");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
       break;
+
     default:
-      puts("Cerre una conexion");
+      puts("------------- Entre Default -------------");
       /*
       close(socketCliente);
       */
