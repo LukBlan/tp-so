@@ -11,7 +11,7 @@
 #include <segmentacion.h>
 #include <string.h>
 
-//int idProceso = 0;
+int idProceso = 0;
 
 void cargarConexiones() {
   t_configuracion* config = recursosMemoria->configuracion;
@@ -107,10 +107,11 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
     case Pcb:
       puts("Entre pcb");
-      //tablaDeSegmento* nuevaTabla = malloc(sizeof(tablaDeSegmento));
-      //nuevaTabla->id = idProceso++;
-      //nuevaTabla->segmentos_proceso = list_create();
-      //list_add(tablaDeSegmentosPorProceso, nuevaTabla);
+      tablaDeSegmento* nuevaTabla = malloc(sizeof(tablaDeSegmento));
+      nuevaTabla->id = idProceso++;
+      nuevaTabla->segmentos_proceso = list_create();
+      list_add(tablaDeSegmentosPorProceso, nuevaTabla);
+      printf("cantidad de procesos %d\n", tablaDeSegmentosPorProceso->elements_count);
       buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
       liberarBuffer(buffer);
@@ -160,8 +161,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("Termino proceso Exitosamente");
       buffer = obtenerBuffer(socketCliente);
       liberarBuffer(buffer);
-      liberarRecursos();
-      exit(-1);
+      //liberarRecursos();
+      //exit(-1);
       break;
     case OUT_OF_MEMORY:
       puts("Termino proceso OUT OF MEMORY");

@@ -11,6 +11,7 @@
   extern char* tablaDeHuecos;
   extern t_bitarray* bitMapSegmento;
   extern Segmento* segmentoCero;
+  extern t_list* tablaDeSegmentosPorProceso;
 
   typedef struct {
     int idSegmento;
