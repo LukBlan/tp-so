@@ -77,9 +77,11 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
     enviarEntero(idSegmento, socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
+    printf("Nombre Archivo %s\n", primerParametro);
     char* nombreArchivo = primerParametro;
+    printf("Nombre Archivo %s\n", nombreArchivo);
     enviarContexto(contexto, socketKernel, F_OPEN);
-    enviarString(nombreArchivo,socketKernel);
+    enviarString(nombreArchivo, socketKernel);
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
     enviarString(primerParametro, socketKernel);
