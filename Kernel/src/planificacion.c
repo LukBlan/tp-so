@@ -358,27 +358,27 @@ void ejecutar(PCB* proceso) {
 
   switch (codigoOperacion) {
     case YIELD:
-      puts("Llego YIELD");
+      puts("-------------------- Llego YIELD --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case MOV_IN:
-      puts("Llego MOV_IN");
+      puts("-------------------- Llego MOV_IN --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case F_TRUNCATE:
-      puts("Llego F_TRUNCATE");
+      puts("-------------------- Llego F_TRUNCATE --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case MOV_OUT:
-      puts("Llego MOV_OUT");
+      puts("-------------------- Llego MOV_OUT --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case F_OPEN:
-      puts("Llego F_OPEN");
+      puts("-------------------- Llego F_OPEN --------------------");
       char* nombreArchivo = recibirString(socketCpu);
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
         if(estaEnTablaGlobal(nombreArchivo)){
@@ -396,7 +396,7 @@ void ejecutar(PCB* proceso) {
         }
       break;
     case DELETE_SEGMENT:
-      puts("Llego DELETE_SEGMENT");
+      puts("-------------------- Llego DELETE_SEGMENT --------------------");
       int idSeg = recibirEntero(socketCpu);
 
       enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
@@ -405,7 +405,7 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case F_CLOSE:
-      puts("Llego F_CLOSE");
+      puts("-------------------- Llego F_CLOSE --------------------");
       sacarDeEjecutando(READY);
       char* nombrArchivo = recibirString(socketCpu);
       /*
@@ -419,7 +419,7 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case F_SEEK:
-      puts("Llego F_SEEK");
+      puts("-------------------- Llego F_SEEK --------------------");
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
@@ -431,23 +431,23 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       break;
     case F_READ:
-      puts("Llego F_READ");
+      puts("-------------------- Llego F_READ --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case F_WRITE:
-      puts("Llego F_WRITE");
+      puts("-------------------- Llego F_WRITE --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
     case IO:
-      puts("Llego IO");
+      puts("-------------------- Llego IO --------------------");
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
       break;
     case EXIT:
-      puts("Llego Exit");
+      puts("-------------------- Llego Exit --------------------");
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
@@ -455,21 +455,21 @@ void ejecutar(PCB* proceso) {
       //liberarPcb(procesoTerminado);
       break;
     case WAIT:
-      puts("Llego WAIT");
+      puts("-------------------- Llego WAIT --------------------");
       char* recursoWait = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       free(recursoWait);
       break;
     case SIGNAL:
-      puts("Llego SIGNAL");
+      puts("-------------------- Llego SIGNAL --------------------");
       char* recursoSignal = recibirString(socketCpu);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       free(recursoSignal);
       break;
     case CREATE_SEGMENT:
-      puts("Llego CREATE_SEGMENT");
+      puts("-------------------- Llego CREATE_SEGMENT --------------------");
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       int idSegmento = recibirEntero(socketCpu);
       int tamanioSegmento = recibirEntero(socketCpu);
@@ -504,7 +504,7 @@ void ejecutar(PCB* proceso) {
           finalizarProceso(procesoDevuelto, SEGMENTATION_FAULT);
           break;
     default:
-      puts("Entre por default");
+      puts("-------------------- Entre por default --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
