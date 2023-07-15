@@ -82,6 +82,7 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarString(nombreArchivo,socketKernel);
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
+    enviarString(primerParametro, socketKernel);
   }
     
   return continuarEjecutando;
@@ -201,6 +202,8 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
           break;
       }
    */
+    // Dejo que aca de ejecutar
+    continuarEjecutando = 0;
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);

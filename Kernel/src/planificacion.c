@@ -408,6 +408,7 @@ void ejecutar(PCB* proceso) {
       puts("-------------------- Llego F_CLOSE --------------------");
       sacarDeEjecutando(READY);
       char* nombrArchivo = recibirString(socketCpu);
+      printf("Nombre archivo %s\n", nombrArchivo);
       /*
       eliminarDeTablaDeArchivos(nombrArchivo, procesoDevuelto);
       if(hayEnCola(nombrArchivo)){
