@@ -8,7 +8,7 @@
         char* fcbPath = string_new();
         string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
         string_append(fcbPath,nomArchivo);
-        return fcbPath
+        return fcbPath;
     }
 
 /*
@@ -121,14 +121,15 @@ void desocuparBloque (char* nomArchivo,int cantidadDeBloques) {
         config_destroy(fcb);
     }
     int tamanioDeFCB(char* nomArchivo){
-        int tamanio
+        //int tamanio
         char* fcbPath = generarPathFCB(nomArchivo);
         t_config* fcb = config_create(fcbPath);
         int tamanio = config_get_int_value(fcb, "file_size");
         return tamanio;
     }
+
     contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
-        FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
+        //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
         int tamanioViejo = tamanioDeFCB(nomArchivo);
         /*if(nuevoTamanio > tamanioViejo){
             ocuparBloque(nomArchivo,nuevoTamanio);

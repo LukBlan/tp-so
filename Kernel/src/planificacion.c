@@ -69,8 +69,6 @@ void planificador_corto_plazo_HRRN() {
   }
 }
 
-
-
 PCB* sacarBloqueado() {
   t_log* logger = recursosKernel->logger;
   PCB *pcbSaliente;
@@ -400,6 +398,7 @@ void ejecutar(PCB* proceso) {
       int idSeg = recibirEntero(socketCpu);
 
       enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
+      enviarEntero(procesoEjecutandose->pid, socketMemoria);
       enviarEntero(idSeg, socketMemoria);
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);

@@ -95,7 +95,7 @@ Segmento* generarSegmentoAuxiliar(Segmento* segmentoNuevo) {
 void agregarSegmentoATabla(Segmento* segmentoNuevo, int idProceso) {
   tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
   list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
-  printf("El proceso %d tiene %d segmentos", idProceso, nuevaTabla->segmentos_proceso->elements_count);
+  printf("El proceso %d tiene %d segmentos\n", idProceso, nuevaTabla->segmentos_proceso->elements_count);
 }
 
 void agregarSegmentoAContexto(contextoEjecucion* contexto, Segmento* segmentoNuevo) {
@@ -150,7 +150,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         respuestaMemoria = OUT_OF_MEMORY;
       }
 
-      printf("cantidad de segmentos %d", contexto->tablaSegmentos->elements_count);
+      printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
       printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
       enviarContexto(contexto, socketCliente, respuestaMemoria);
       liberarContexto(contexto);
@@ -159,8 +159,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case DELETE_SEGMENT:
       puts("--------------- Entre Delete_Segment -------------");
       contexto = recibirContexto(socketCliente);
+      int idPro = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int idSeg = recibirEntero(socketCliente);
-      printf("Segmento %d\n", idSeg);
+      printf("Segmento Id %d\n", idSeg);
+      printf("Proceso Id %d\n", idPro);
       // Buscar sobre la lista de segmentos el la posicion del id
 
       // Fijate el tipo de retorno del list_get() [Es un puntero, asi que trabajas con punteros]
