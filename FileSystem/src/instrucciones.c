@@ -12,7 +12,28 @@
     }
 
 /*
-t_list* buscarBloque(char* nomArchivo)
+t_list* generarListaDeBloques(char* nomArchivo){
+     char* fcbPath = generarPathFCB(nomArchivo);
+     t_config* fcb = config_create(fcbPath);
+     int punteroDirecto = config_get_int_value(fcb,"punteroDirecto")
+     char** arrayDeBlocks = config_get_array_value(fcb,"punteroIndirecto");
+     int numStrings = sizeof(arrayDeBlocks) / sizeof(arrayDeBlocks[0]);
+     t_list* listaDeBlocks = list_create(); 
+     list_add(listaDeBlock,punteroDirecto);
+     for (int i = 0; i < numStrings; i++) {
+        int bloque = atoi(arrayDeBlocks[i]); 
+        list_add(listaDeBlocks,bloque); 
+    }
+     config_destroy(fcb);
+     return listaDeBlocks
+}
+
+int darUltimoPuntero(char* nomArchivo){
+    t_list* listaDePuntero = generarListaDeBloques(nomArchivo);
+    int ultimoPuntero = list_get(listaDePuntero, (list_size(listaDePuntero)-1));
+    return ultimoPuntero;
+}
+
 void ocuparBloque( char* nomArchivo,int cantidadDeBloques) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
