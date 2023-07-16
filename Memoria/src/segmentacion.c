@@ -173,7 +173,7 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
   int tamanio = 0 ;
 
   //mutex a bitarray
-  while(base < (recursosMemoria->configuracion->TAM_MEMORIA)) {
+  while((base / 8) < (recursosMemoria->configuracion->TAM_MEMORIA)) {
     Segmento* unSegmento = malloc(sizeof(Segmento));
 
     int desplazamiento = contarCantidadDe(base, 1);
@@ -181,9 +181,12 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
     tamanio = contarCantidadDe(base, 0);
     unSegmento->base = base / 8;
     unSegmento->limite = tamanio / 8;
+
     base += tamanio;
 
-    if (tamanio >= tamanioMinimo) {
+    if ((tamanio / 8) >= tamanioMinimo) {
+      printf("Busco segmento de tamanio %d\n", tamanioMinimo);
+      printf("Encontre segmento base %d tamanio %d\n", unSegmento->base, unSegmento->limite);
       list_add(segmentosDisponibles, unSegmento);
     } else {
       free(unSegmento);
