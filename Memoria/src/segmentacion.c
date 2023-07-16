@@ -59,33 +59,40 @@ void liberarListaSegmentos(t_list* segmentos) {
   list_destroy(segmentos);
 }
 
-void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoEnSegmento, int* base) {
-  memcpy(memoriaPrincipal, contenidoEnSegmento->contenido, segmento->limite);
-  *base += segmento->limite;
+void ocuparMemoriaSegmento(Segmento* segmento, int* base) {
+  //memcpy(memoriaPrincipal, contenidoEnSegmento->contenido, segmento->limite);
+  printf("Segmento %d base %d pasa a ", segmento->id, segmento->base);
   segmento->base = *base;
+  *base += segmento->limite;
+  printf("base %d\n", segmento->base);
   ocuparBitArray(segmento);
 }
 
-void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base) {
-  int cantidadSegmentos = contenidoProceso->segmentos_proceso->elements_count;
-  t_list* listaContenido = contenidoProceso->segmentos_proceso;
+void ocuparMemoriaProceso(tablaDeSegmento* segmentosProceso, int* base) {
+  int cantidadSegmentos = segmentosProceso->segmentos_proceso->elements_count;
+  printf("Cantidad de segmentos %d\n", cantidadSegmentos);
+  //t_list* listaContenido = contenidoProceso->segmentos_proceso;
   t_list* listaSegmentos = segmentosProceso->segmentos_proceso;
 
   for (int i = 0; i < cantidadSegmentos; i++) {
     Segmento* segmento = list_get(listaSegmentos, i);
-    contenidoSegmento* contenido = list_get(listaContenido, i);
-    ocuparMemoriaSegmento(segmento, contenido, &base);
+    //contenidoSegmento* contenido = list_get(listaContenido, i);
+    ocuparMemoriaSegmento(segmento, base);
+    //ocuparMemoriaSegmento(segmento, contenido, &base);
   }
 }
 
-void ocuparMemoriaPrincipal(t_list* contenidoSegmentosPorProceso) {
-  int cantidadProcesos = contenidoSegmentosPorProceso->elements_count;
+void ocuparMemoriaPrincipal() {
+  int cantidadProcesos = tablaDeSegmentosPorProceso->elements_count;
   int base = recursosMemoria->configuracion->TAM_SEGMENTO_0;
+  ocuparBitArray(segmentoCero);
 
   for (int i = 0; i < cantidadProcesos; i++) {
-    tablaDeSegmento* contenidoProceso = list_get(contenidoSegmentosPorProceso, i);
+    //tablaDeSegmento* contenidoProceso = list_get(contenidoSegmentosPorProceso, i);
     tablaDeSegmento* segmentosProceso = list_get(tablaDeSegmentosPorProceso, i);
-    ocuparMemoriaProceso(contenidoProceso, segmentosProceso, &base);
+    //ocuparMemoriaProceso(contenidoProceso, segmentosProceso, &base);
+    printf("Proceso id %d\n", segmentosProceso->id);
+    ocuparMemoriaProceso(segmentosProceso, &base);
   }
 }
 
@@ -128,9 +135,10 @@ t_list* obtenerContenidoSegmentos() {
 }
 
 void compactacion() {
-  t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
+  //t_list* contenidoDeSegmentoPorProceso = obtenerContenidoSegmentos();
   limpiarArrayBits();
-  ocuparMemoriaPrincipal(contenidoDeSegmentoPorProceso);
+  //ocuparMemoriaPrincipal(contenidoDeSegmentoPorProceso);
+  ocuparMemoriaPrincipal();
 }
 
 Segmento* buscarCandidato(int tamanio) {
@@ -142,9 +150,9 @@ Segmento* buscarCandidato(int tamanio) {
   todosLosSegLibres = buscarSegmentoSegunTamanio(tamanio);
 
   if(list_is_empty(todosLosSegLibres)) {
-    puts("Estamos Compactando ......");
-    //compactacion();
-    //segmento = buscarCandidato(tamanio);
+    puts("....... Estamos Compactando ......");
+    compactacion();
+    segmentoEncontrado = buscarCandidato(tamanio);
   } else if (list_size(todosLosSegLibres) == 1) {
     segmentoEncontrado = list_get(todosLosSegLibres, 0);
   } else {
