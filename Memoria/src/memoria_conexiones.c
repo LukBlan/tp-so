@@ -187,7 +187,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
       eliminarSegmentoDeContexto(contexto, posicionEnContexto);
 
-
+      enviarContexto(contexto, socketCliente, DELETE_SEGMENT);
       liberarContexto(contexto);
       break;
 
