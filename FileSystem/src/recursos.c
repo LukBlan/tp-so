@@ -75,7 +75,7 @@ void cargarBitMap() {
   close(fileDescriptor);
 }
 
-void cargarBloques(){
+void cargarBloques() {
   copiaBloque = malloc(recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
   int fileDescriptor = open(recursosFileSystem->configuracion->PATH_BLOQUES, O_CREAT | O_RDWR,0664);
   ftruncate(fileDescriptor, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);

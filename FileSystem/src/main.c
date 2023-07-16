@@ -13,10 +13,9 @@ int main(int argc, char* argv[]) {
 	cargarConexiones();
 
 	realizarHandshakeMemoria();
-	montarServidor();
-
 	cargarSuperbloque();
-	cargarBitMap();
+	  cargarBitMap();
+	montarServidor();
 
 	/* pthread_t manejo_bloque;
 			pthread_create(&manejo_bloque, NULL, (void*) crearYmanejar_blocks, NULL);
