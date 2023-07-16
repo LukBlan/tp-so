@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <commons/config.h>
 #include <unistd.h>
+#include <math.h>
 
 t_recursos* recursosCpu;
 
@@ -40,6 +41,16 @@ void cargarConfiguracion(char* pathConfiguracin) {
 
 void cargarLogger(char* pathLogger) {
   recursosCpu->logger = log_create(pathLogger, "CPU", 1, LOG_LEVEL_INFO);;
+}
+
+void llamarAMmu(int direccion_logica){
+    int tamanioMaxSegmento = recursosCpu->configuracion->TAM_MAX_SEGMENTO;
+    int numero_segmento = floor(direccion_logica / tamanioMaxSegmento);
+    int desplazamiento_segmento = direccion_logica - (numero_segmento * tamanioMaxSegmento);
+
+    if((desplazamiento_segmento +  5) > tamanioMaxSegmento){ // si la suma del desplazamiento del segmento mas el tamaño de leer o escribir es mayor al tamaño de la memoria
+        // debe devolver al kernel el contexto y elmsg Error: Segmentation Fault (SEG_FAULT).
+    }
 }
 
 void liberarRecursos() {

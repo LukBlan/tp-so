@@ -6,14 +6,15 @@
 t_list* cargarListaDeRecursos(void){
   t_list* listaRecursos = list_create();
 
-  t_configuracion* recursos;
-  int cantRecursos = list_size(recursos->RECURSOS);
+  t_list* recursosDeLaConfig = recursosKernel->configuracion->RECURSOS;
+
+  int cantRecursos = list_size(recursosDeLaConfig);
   recursoSolicitados* recurso;
 
   for (size_t i = 0; i < cantRecursos; i++) {
 
-    char* auxRecursos = list_get(recursos->RECURSOS, i);
-    int auxInstancias = list_get(recursos->INSTANCIAS_RECURSOS, i);
+    char* auxRecursos = list_get(recursosDeLaConfig, i);
+    int auxInstancias = list_get(recursosKernel->configuracion->INSTANCIAS_RECURSOS, i);
 
     recurso->recurso = auxRecursos;
     recurso->cantidad_inst_recurso = auxInstancias;
@@ -110,7 +111,7 @@ void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido) 
   }
 }
 
-void procesarRecursoExistenteSignal( recursoSolicitados* registroRecurso,t_queue* colaBloqueados){
+void procesarRecursoExistenteSignal(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {
   registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso + 1;//sumo 1 a la cantidad de recursos disponibles
   queue_pop(registroRecurso);// desbloqueo el primer elemento de la cola de bloqeados d ese recurso.
   // se devuelve la ejecución al proceso que peticionó el SIGNAL.

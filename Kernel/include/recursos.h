@@ -24,8 +24,8 @@
     int ESTIMACION_INICIAL;
     int HRRN_ALFA;
     int GRADO_MAX_MULTIPROGRAMACION;
-    int RECURSOS;//es una lista de char
-    int INSTANCIAS_RECURSOS;// es una lista de int
+    t_list* RECURSOS;//es una lista de char
+    t_list* INSTANCIAS_RECURSOS;// es una lista de int
   } t_configuracion;
 
   typedef struct {
