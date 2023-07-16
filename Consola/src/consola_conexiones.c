@@ -53,6 +53,9 @@ void esperarResultado() {
     case OUT_OF_MEMORY:
       log_error(logger, "OUT_OF_MEMORY");
       break;
+    case INVALID_RESOURCE:
+      log_error(logger, "INVALID_RESOURCE");
+      break;
     case DESCONEXION:
       log_error(logger, "Perdi la conexion con el Kernel?");
       break;
