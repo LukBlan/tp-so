@@ -421,6 +421,11 @@ void ejecutar(PCB* proceso) {
       enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
       enviarEntero(procesoEjecutandose->pid, socketMemoria);
       enviarEntero(idSeg, socketMemoria);
+
+      obtenerCodigoOperacion(socketMemoria);
+      nuevoContexto = recibirContexto(socketMemoria);
+      actualizarContexto(nuevoContexto);
+
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
