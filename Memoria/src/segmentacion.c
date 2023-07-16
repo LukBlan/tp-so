@@ -142,6 +142,7 @@ Segmento* buscarCandidato(int tamanio) {
   todosLosSegLibres = buscarSegmentoSegunTamanio(tamanio);
 
   if(list_is_empty(todosLosSegLibres)) {
+    puts("Estamos Compactando ......");
     //compactacion();
     //segmento = buscarCandidato(tamanio);
   } else if (list_size(todosLosSegLibres) == 1) {
@@ -200,22 +201,23 @@ void ocuparMemoria(void* tareas, int base, int size) {
 
 int puedoGuardar(int quieroGuardar) {
     int tamanioLibre = tamanioTotalDisponible();
+    printf("Hay disponible %d de memoria", tamanioLibre);
     return (quieroGuardar <= tamanioLibre)? 1 : 0;
 }
 
 int tamanioTotalDisponible(void) {
-    int contador = 0;
+    int cantidadDisponible = 0;
     int desplazamiento = 0 ;
 
-    while (desplazamiento < recursosMemoria->configuracion->TAM_MEMORIA) {
+    while (desplazamiento < recursosMemoria->configuracion->TAM_MEMORIA * 8) {
     	//pthread_mutex_lock(&mutexBitMapSegment);
       if((bitarray_test_bit(bitMapSegmento, desplazamiento) == 0)) {
-        contador ++;
+        cantidadDisponible ++;
       }
       //pthread_mutex_unlock(&mutexBitMapSegment);
       desplazamiento ++;
     }
-    return contador;
+    return cantidadDisponible / 8;
 }
 
 Segmento* elegirCriterio (t_list* segmentos, int tamanio) {
