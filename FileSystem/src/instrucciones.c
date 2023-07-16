@@ -4,7 +4,7 @@
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
 
-    char* generarPathFCB(char* nomArchivo){
+char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
         string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
         string_append(fcbPath,nomArchivo);
@@ -34,59 +34,112 @@ int darUltimoPuntero(char* nomArchivo){
     return ultimoPuntero;
 }
 
-void agregarABloquePunteros(char* nomArchivo, int nuevoPuntero){
-     char puntero = (char)nuevoPuntero;
-     char* fcbPath = generarPathFCB(nomArchivo);
-     t_config* fcb = config_create(fcbPath);
-     char** arrayDeBlocks = config_get_array_value(fcb,"punteroIndirecto");
-     int numStrings = sizeof(arrayDeBlocks) / sizeof(arrayDeBlocks[0]);
-     strcpy((*arrayDeBlocks)[(*numStrings) - 1], puntero);
-     config_set_value(fcb,)
-     config_destroy(fcb,"punteroIndirecto",arrayDeBlocks);
-}
 
-void ocuparBloque( char* nomArchivo,int cantidadDeBloques) {
+void ocuparBloque( char* nomArchivo,int tamanioNuevo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
     int puntero = darUltimoPuntero(nomArchivo);
+
+    char* fcbPath = generarPathFCB(nomArchivo);
+    t_config* fcb = config_create(fcbPath);
+    char** bloquesUsados = config_get_array_value(fcb, "bloques");
+    char* bloquesNuevos  = string_new();
+    int tamanio = config_get_int_value(fcb, "file_size");
+    int punteroDirecto = config_get_int_value(fcb, "punteroDirecto");
+    string_append(&actualizarBloques,"[");
+
+    int cantidadDeBloques = generarCantidad(tamanioNuevo);
+    int blockCount = sizeof(bloquesUsados) / sizeof(bloquesUsados[0]);
+
+    if(tamanio = 0){
+        bitarray_set_bit(bitmap,punteroDirecto);
+        char* bloqueDirecto = string_itoa(punteroDirecto);
+        string_append(&bloquesNuevos, bloqueDirecto);
+        cantidadDeBloques --;
+    }
         for(int j = puntero+1 ; j<cantidadDeBloques; j++) {
     	    	for(int i= puntero+1; i<bloquesDelSist; i++) {
                     pthread_mutex_lock(&mutexBitMap);
                     if(bitarray_test_bit(bitmap, i) == 0) {
-                        bloqueAUsar = i;
+                        int bloqueAUsar = i;
+                        cantBloquesActualiz ++;
+                        char* bloqueNuevo = string_itoa(i);
+                           if(cantBloquesActualiz==1)
+                            string_append(&bloquesNuevos, bloqueNuevo);
+                            else{
+                        string_append(&bloquesNuevos, ",");
+                        string_append(&bloquesNuevos, bloqueNuevo);
+                        }
+                        free(bloqueNuevo);
+                        
                         bitarray_set_bit(bitmap,i);
                         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-                        agregarABloquePuntero(i);
-                        i++;
+                        
+                        pthread_mutex_lock(&mutexBloques);
+                        memcpy(copiaBlock + (punteroIndirecto * tamanioBloque) + ((blockCount-1)*4), bloqueAUsar, sizeof(uint32_t));
+                        pthread_mutex_unlock(&mutexBloques); 
                     }
                     pthread_mutex_unlock(&mutexBitMap);
                 }
             }
             pthread_mutex_lock(&mutexBloques);
-           // memcpy(copiaBloque + bloqueAUsar * tamanioBloque + (bytesAEscribir % tamanioBloque), cosaAEscribir , sizeof(char));
-            // escribir en archivo de punteros los bloques del fs
+            
             pthread_mutex_unlock(&mutexBloques);
-            config_set_value(fileUsado,"file_size",tamanioAnterior + bytesAEscribir);
+            for(int i=0; i<blockCount; i++) {
+        	if(i==0)
+        	string_append(&actualizarBloques,bloquesUsados[i]);
+        	else{
+        		string_append(&actualizarBloques,",");
+        		string_append(&actualizarBloques,bloquesUsados[i]);
+        	}
+
+        }
+        string_append(&actualizarBloques,bloquesNuevos);
+        string_append(&actualizarBloques,"]");
+
+            config_set_value(fileUsado,"file_size", tamanioNuevo);
+            config_set_value(fcb,"bloques",actualizarBloques);
 }
 
-void desocuparBloque (char* nomArchivo,int cantidadDeBloques) {
+void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
-    t_list* bloquesUsados = buscarBloque(nomArchivo);
-    int cantidadBloquesUsados = list_size(bloquesUsados);
-        for(int j=cantidadBloquesUsados; j<cantidadDeBloques ; j--) {
+    
+    char* fcbPath = generarPathFCB(nomArchivo);
+    t_config* fcb = config_create(fcbPath);
+    char** bloquesUsados = config_get_array_value(oxigeno_file, "bloques");
+    char* bloquesNew  = string_new();
+
+    int blockCount = sizeof(bloquesUsados) / sizeof(bloquesUsados[0]);
+    int cantidadDeBloques = generarCantidad(tamanioNuevo);
+    int bloquesAEliminar = blockCount - cantidadDeBloques;
+
+        for(int j=cantidadBloquesUsados; j<bloquesAEliminar ; j--) {
                     pthread_mutex_lock(&mutexBitMap);
-                        int posicion = bloquesUsados[j];
+                        int posicion = bloquesUsados[j-1];
                         bitarray_clean_bit(bitmap,posicion);
                         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-                        sacarBloquePuntero(j);
+                        pthread_mutex_lock(&mutexBloques);
+        			memcpy(copiaBlock + (punteroIndirecto * tamanioBloque) + (j*4), "0000", sizeof(uint32_t));
+        			pthread_mutex_unlock(&mutexBloques);
                     pthread_mutex_unlock(&mutexBitMap);
                 }
             }
-            pthread_mutex_lock(&mutexBloques);
-           // memcpy(copiaBloque + bloqueAUsar * tamanioBloque + (bytesAEscribir % tamanioBloque), cosaAEscribir , sizeof(char));
-            pthread_mutex_unlock(&mutexBloques);
-            config_set_value(fileUsado,"file_size",tamanioAnterior + bytesAEscribir);
+        string_append(&nuevosBloques,"[");
+    			for(int i=0;i<cantidadDeBloques;i++){
+    				if (i==0){
+    					string_append(&nuevosBloques,bloquesUsados[i]);
+    				}
+
+    				else{
+    					string_append(&nuevosBloques,",");
+    					string_append(&nuevosBloques,bloquesUsados[i]);
+				 
+    			}
+				 }
+                 string_append(&nuevosBloques,"]");
+            config_set_value(fcb,"file_size",tamanioNuevo);
+            config_set_value(fcb,"bloques",nuevosBloques);
 }
 
 */
@@ -118,6 +171,7 @@ void desocuparBloque (char* nomArchivo,int cantidadDeBloques) {
 		dictionary_put(fcbArchivo->properties, "file_size", "0");
 		dictionary_put(fcbArchivo->properties, "punteroDirecto", ""); 
 		dictionary_put(fcbArchivo->properties, "punteroIndirecto", "");
+        dictionary_put(fcbArchivo->properties, "bloques", "");
         config_save(fcbArchivo);
         dictionary_destroy(fcbArchivo->properties);
 		fclose(FCBdescriptor);
