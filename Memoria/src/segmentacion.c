@@ -32,7 +32,7 @@ void ocuparBitArray(Segmento* segmento) {
   int base = segmento->base;
   int tamanio = segmento->limite;
 
-  for (int i = base; i < base + tamanio; i++) {
+  for (int i = base * 8; i < (base + tamanio) * 8; i++) {
     bitarray_set_bit(bitMapSegmento, i);
   }
 }
@@ -178,8 +178,8 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
     int desplazamiento = contarCantidadDe(base, 1);
     base += desplazamiento;
     tamanio = contarCantidadDe(base, 0);
-    unSegmento->base = base;
-    unSegmento->limite = tamanio;
+    unSegmento->base = base / 8;
+    unSegmento->limite = tamanio / 8;
     base += tamanio;
 
     if (tamanio >= tamanioMinimo) {

@@ -117,7 +117,7 @@ void elimnarSegmentoDeBitArray(contextoEjecucion* contexto, int posicionEnContex
   int baseSegmento = segmentoAEliminar->base;
   int tamanioSegmento = segmentoAEliminar->limite;
 
-  for (int i = baseSegmento; i < baseSegmento + tamanioSegmento; i++) {
+  for (int i = baseSegmento * 8; i < (baseSegmento + tamanioSegmento) * 8; i++) {
     bitarray_clean_bit(bitMapSegmento, i);
   }
 }
