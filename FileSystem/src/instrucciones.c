@@ -44,7 +44,7 @@ int darUltimoPuntero(char* nomArchivo){
 
 int generarCantidad (int tamanioEnBytes){
 	int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
-	int cantidadDeBloques = (int)ceil((double)tamanioEnBytes/tamanioBloque);
+	int cantidadDeBloques = (int)ceil(tamanioEnBytes/tamanioBloque);
 	return cantidadDeBloques;
 
 }
