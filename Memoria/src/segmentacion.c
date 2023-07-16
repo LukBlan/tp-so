@@ -142,7 +142,6 @@ Segmento* buscarCandidato(int tamanio) {
   todosLosSegLibres = buscarSegmentoSegunTamanio(tamanio);
 
   if(list_is_empty(todosLosSegLibres)) {
-    puts("Compactando... (En verdad no estamos haciendo nada, pero bueno yo q c)");
     //compactacion();
     //segmento = buscarCandidato(tamanio);
   } else if (list_size(todosLosSegLibres) == 1) {
@@ -161,7 +160,7 @@ int contarCantidadDe(int base, int numero) {
   int tamanioMemoria = recursosMemoria->configuracion->TAM_MEMORIA;
   int cantidad = 0;
 
-  while((base + cantidad < tamanioMemoria) && bitarray_test_bit(bitMapSegmento, base + cantidad) == numero) {
+  while((base + cantidad < tamanioMemoria * 8) && bitarray_test_bit(bitMapSegmento, base + cantidad) == numero) {
     cantidad++;
   }
   return cantidad;
@@ -178,7 +177,6 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
 
     int desplazamiento = contarCantidadDe(base, 1);
     base += desplazamiento;
-
     tamanio = contarCantidadDe(base, 0);
     unSegmento->base = base;
     unSegmento->limite = tamanio;

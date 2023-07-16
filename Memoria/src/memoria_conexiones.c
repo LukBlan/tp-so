@@ -59,31 +59,6 @@ void enviarSegmentoCero(int socketCliente) {
   free(posicion);
 }
 
-/* Chequear tipos
-void eliminarSegmentoDeBitArray(segmento) {
-  bitMapSegmento -> sobre lo que operamos -> es variable global
-  base -> la posicion en la memoria -> se obtiene del segmento
-  limite -> la cantidad de 1 -> se obtiene del segmento
-
-  for (int i = base; i < base + limite; i++) {
-    el i representa la posicion en el array de bits
-    bitarray_clean_bit(t_bitarray*, off_t bit_index);
-  }
-
-}
-*/
-
-/* Chequea tipos
-contexto eliminarSegmento(contexto, segmento, posicion) {
-  [] -> obtenes la lista del contexto
-
-  eliminarSegmentoDeBitArray(segmento); ->   Modificar el array de bits (sacar 1)
-  [Liberar el segmento en especifico de la tablaDeSegmentos global en memoria] <- Todavia no esta implementado (lo hace lucio)
-  Sacar segmento del contexto -> usas posicion + una funcion de list.h para sacar cosas de listas;
-  retorn contextoModificado;
-}
-*/
-
 Segmento* generarSegmentoAuxiliar(Segmento* segmentoNuevo) {
   Segmento* segmentoAuxiliar = malloc(sizeof(Segmento));
   segmentoAuxiliar->base = segmentoNuevo->base;
@@ -135,6 +110,16 @@ void eliminarSegmentoDeContexto(contextoEjecucion* contexto, int posicionEnConte
   t_list* listaSegmentos = contexto->tablaSegmentos;
   Segmento* segmento = list_remove(listaSegmentos, posicionEnContexto);
   free(segmento);
+}
+
+void elimnarSegmentoDeBitArray(contextoEjecucion* contexto, int posicionEnContexto) {
+  Segmento* segmentoAEliminar = list_get(contexto->tablaSegmentos, posicionEnContexto);
+  int baseSegmento = segmentoAEliminar->base;
+  int tamanioSegmento = segmentoAEliminar->limite;
+
+  for (int i = baseSegmento; i < baseSegmento + tamanioSegmento; i++) {
+    bitarray_clean_bit(bitMapSegmento, i);
+  }
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
@@ -198,9 +183,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       printf("Proceso Id %d\n", idPro);
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
 
+      elimnarSegmentoDeBitArray(contexto, posicionEnContexto);
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
       eliminarSegmentoDeContexto(contexto, posicionEnContexto);
-      //elimnarSegmentoDeBitArray();
+
 
       liberarContexto(contexto);
       break;
