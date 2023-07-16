@@ -115,6 +115,7 @@ int obtenerPosicionSegmento(contextoEjecucion* contexto, int idSeg) {
       posicion = i;
     }
   }
+
   if (posicion == -1) {
     log_error(recursosMemoria->logger, "El segmento a elimnar NO esta en el contexto");
   }
@@ -125,8 +126,15 @@ void eliminarSegmentoDeTabla(int idProceso, int posicionEnContexto) {
   tablaDeSegmento* tablaSegmento = list_get(tablaDeSegmentosPorProceso, idProceso);
   t_list* listaSegmentos = tablaSegmento->segmentos_proceso;
   printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
-  list_remove(listaSegmentos, posicionEnContexto - 1);
+  Segmento* segmento = list_remove(listaSegmentos, posicionEnContexto - 1);
   printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
+  free(segmento);
+}
+
+void eliminarSegmentoDeContexto(contextoEjecucion* contexto, int posicionEnContexto) {
+  t_list* listaSegmentos = contexto->tablaSegmentos;
+  Segmento* segmento = list_remove(listaSegmentos, posicionEnContexto);
+  free(segmento);
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
@@ -191,7 +199,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
 
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
-      //eliminarSegmentoDeContexto();
+      eliminarSegmentoDeContexto(contexto, posicionEnContexto);
       //elimnarSegmentoDeBitArray();
 
       liberarContexto(contexto);

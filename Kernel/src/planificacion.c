@@ -28,6 +28,7 @@ int tiempoAhora() {
 int calcular_tiempo_rafaga_real_anterior(PCB *proceso) {
     return tiempoAhora() - proceso->llegadaReady;
 }
+
 float estimacion(PCB* proceso) {
   t_configuracion* config = recursosKernel->configuracion;
   float alfa = config->HRRN_ALFA;
@@ -273,6 +274,7 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
   avisarProcesoFinalizado(socketMemoria, motivo);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
+
 bool estaEnTablaGlobal (char* nomArchivo) {
   for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
 	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
@@ -282,6 +284,7 @@ bool estaEnTablaGlobal (char* nomArchivo) {
     }
     return false;  
 }
+
 void agregarATabla (char* nombreArchivo) {
     tablaGlobal* tabla1 = malloc(sizeof(tablaGlobal));
     tabla1 -> nomArchivo = nombreArchivo;
@@ -316,6 +319,7 @@ int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
     }
     return posicion;
 }
+
 int encontrarEnTablaGlobal(char* nombre ){
   int posicion;  
     for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++){
@@ -341,11 +345,13 @@ bool hayEnCola(char* nombre){
   }
   return false;
 }
+
 void moverAListoColaDeArchivo(char* nombreArchivo){
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
   PCB* procesoAListo = queue_pop (tablaEncontrada -> colaBloqueado);
   agregarAListo(procesoAListo);
 }
+
 void eliminarDeTablaGlobal(char* nombreArchivo){
   int posicion = encontrarEnTablaGlobal(nombreArchivo);
   list_remove(tablaGlobalDeArchivos,posicion);
