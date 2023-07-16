@@ -93,6 +93,7 @@
     OUT_OF_MEMORY,
     SEGMENTATION_FAULT,
     SUCCESS,
+    INVALID_RESOURCE,
   } op_code;
 
   typedef struct {

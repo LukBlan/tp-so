@@ -19,5 +19,6 @@
   int sePuedeAgregarMasProcesos();
   void cambiarEstado(estadoProceso estado, PCB* proceso);
   void ejecutar(PCB* proceso);
+  void finalizarProceso(PCB* procesoFinalizado, op_code motivo);
 
 #endif
