@@ -104,6 +104,31 @@ void agregarSegmentoAContexto(contextoEjecucion* contexto, Segmento* segmentoNue
   list_add(listaSegmentos, auxiliar);
 }
 
+int obtenerPosicionSegmento(contextoEjecucion* contexto, int idSeg) {
+  t_list* listaSegmentos = contexto->tablaSegmentos;
+  int cantidadDeSegmentos = listaSegmentos->elements_count;
+  int posicion = -1;
+
+  for (int i = 0; i < cantidadDeSegmentos; i++) {
+    Segmento* segmento = list_get(listaSegmentos, i);
+    if (segmento->id == idSeg) {
+      posicion = i;
+    }
+  }
+  if (posicion == -1) {
+    log_error(recursosMemoria->logger, "El segmento a elimnar NO esta en el contexto");
+  }
+  return posicion;
+}
+
+void eliminarSegmentoDeTabla(int idProceso, int posicionEnContexto) {
+  tablaDeSegmento* tablaSegmento = list_get(tablaDeSegmentosPorProceso, idProceso);
+  t_list* listaSegmentos = tablaSegmento->segmentos_proceso;
+  printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
+  list_remove(listaSegmentos, posicionEnContexto - 1);
+  printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
+}
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
@@ -163,12 +188,12 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int idSeg = recibirEntero(socketCliente);
       printf("Segmento Id %d\n", idSeg);
       printf("Proceso Id %d\n", idPro);
-      // Buscar sobre la lista de segmentos el la posicion del id
+      int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
 
-      // Fijate el tipo de retorno del list_get() [Es un puntero, asi que trabajas con punteros]
-      // Obtener el segmento apartir del id <- Funcion commons list.h [list_get(lista, posicion)] operas con la lista de segmentos del contexto
-      // EliminarSegmento(....);
-      // Se devuelve el contexto eliminado al kernel
+      eliminarSegmentoDeTabla(idPro, posicionEnContexto);
+      //eliminarSegmentoDeContexto();
+      //elimnarSegmentoDeBitArray();
+
       liberarContexto(contexto);
       break;
 
