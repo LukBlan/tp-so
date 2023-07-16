@@ -47,6 +47,7 @@
   extern pthread_mutex_t mutexBloques;
   extern pthread_mutex_t mutexBitMap;
   extern int bytesDelBitarray;
+  extern t_bitarray* bitMapBloque;
   
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);
