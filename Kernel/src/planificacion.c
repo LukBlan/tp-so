@@ -480,7 +480,7 @@ void ejecutar(PCB* proceso) {
       sacarDeEjecutando(EXITSTATE);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
       finalizarProceso(procesoTerminado, SUCCESS);
-      //liberarPcb(procesoTerminado);
+      liberarPcb(procesoTerminado);
       break;
     case WAIT:
       puts("-------------------- Llego WAIT --------------------");

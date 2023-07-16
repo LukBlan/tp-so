@@ -45,3 +45,8 @@ void liberarContexto(contextoEjecucion* contexto) {
   liberarArchivosAbiertos(contexto->archivosAbiertos);
   free(contexto);
 }
+
+void liberarPcb(PCB* pcb) {
+  liberarContexto(pcb->contexto);
+  free(pcb);
+}

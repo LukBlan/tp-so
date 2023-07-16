@@ -112,5 +112,6 @@
 
   void liberarInstrucciones(t_list* instrucciones);
   void liberarContexto(contextoEjecucion* contexto);
+  void liberarPcb(PCB* pcb);
 
 #endif
