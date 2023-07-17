@@ -261,4 +261,61 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
         cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
         return contexto;}
 
+/*
+
+
+void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
+
+    char* fcbPath = generarPathFCB(nomArchivo);
+    t_config* fcb = config_create(fcbPath);
+
+	div_t comienzoEscritura = div(posicion, recursosFileSystem->BLOCK_SIZE);
+	int bloque = comienzoEscritura.quot;
+	int offset = comienzoEscritura.rem;
+	int restoAEscribir = recursosFileSystem->BLOCK_SIZE - offset;
+	int excedente = tamanio - restoAEscribir;
+
+	int tamanioAEscribirEnPrimerBloque = restoAEscribir;
+	if(tamanio < restoAEscribir){
+		tamanioAEscribirEnPrimerBloque = tamanio_a_escribir;
+	}
+
+	uint32_t* arrayDePunteros; //--
+
+	if(bloque != 0 || excedente > 0){
+		arrayDePunteros = malloc(recursosFileSystem->BLOCK_SIZE); //--
+		int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
+		int punteroIndirecto = puntero_indirecto*BLOCK_SIZE;
+		//retardo
+		memcpy(arrayDePunteros, copiaBloque + punteroIndirecto, recursosFileSystem->BLOCK_SIZE);
+	}
+
+	int posicion_array_bloques_bloque_a_buscar = buscar_bloque(archivo_fcb, bloque_a_escribir, array_bloque_de_punteros); //--
+	
+	//retardo
+	memcpy(copiaBloque+posicion_array_bloques_bloque_a_buscar + offset_bloque, datos_a_escribir, tamanioAEscribirEnPrimerBloque);
+
+	if(excedente_escritura > 0){
+		log_info(logger, "el excedente escritura es %d", excedente_escritura);
+		div_t bloques_a_escribir = div(excedente_escritura, recursosFileSystem->BLOCK_SIZE);
+		int bloques_a_escribir_completos = bloques_a_escribir.quot;
+		int offset_ultimo_bloque = bloques_a_escribir.rem;
+
+		log_info(logger, "hay que escribir %d bloques completos", bloques_a_escribir_completos);
+		log_info(logger, "el offset del ultimo bloque es %d", offset_ultimo_bloque);
+
+		int bloques_extra;
+		int desplazamiento_datos_a_escribir = restante_bloque_comienzo;
+		for(bloques_extra = 1; bloques_extra < bloques_a_escribir_completos + 1; bloques_extra++){
+			int pos_bloque_actual = buscar_bloque(archivo_fcb, bloque_a_escribir + bloques_extra, array_bloque_de_punteros);
+			memcpy(copiaBloque+pos_bloque_actual, datos_a_escribir + desplazamiento_datos_a_escribir, recursosFileSystem->BLOCK_SIZE);
+			desplazamiento_datos_a_escribir += recursosFileSystem->BLOCK_SIZE;
+		}
+		int pos_ultimo_bloque = buscar_bloque(archivo_fcb, bloque_a_escribir + bloques_extra, array_bloque_de_punteros); //--
+
+		memcpy(copiaBloque+pos_ultimo_bloque, datos_a_escribir + desplazamiento_datos_a_escribir, offset_ultimo_bloque);
+
+		
+	}
+}*/
 
