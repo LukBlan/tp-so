@@ -281,16 +281,16 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
         return contexto;}
 
 int darNumeroDeBloques(int bytes){
-    div_t division = div(bytes, recursosFileSystem->BLOCK_SIZE);
+    div_t division = div(bytes, recursosFileSystem->superBloque->BLOCK_COUNT);
 	int bloque = division.quot;
-    return bloque
+    return bloque;
 }
 
 
 int darOffset(int bytes){
-    div_t division = div(bytes, recursosFileSystem->BLOCK_SIZE);
+    div_t division = div(bytes, recursosFileSystem->superBloque->BLOCK_SIZE);
 	int offset = division.rem;
-    return offset
+    return offset;
 }
 /*
 uint32_t* darArrayDePunteros(t_config* fcb){
