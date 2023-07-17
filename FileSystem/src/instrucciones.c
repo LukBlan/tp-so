@@ -170,35 +170,31 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         return archivo;
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
-	puts("aca llego");
-	char* fcbPath = generarPathFCB(nomArchivo);
-        puts("aca llego");
-        FILE* fcbDescriptor = fopen (fcbPath,"rb");
-        FILE* fileDescriptor = fopen("nomArchivo","rb");
-        archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
-        list_add(contexto -> archivosAbiertos,arch);
-        if (fcbDescriptor != NULL) {
-			fclose(fcbDescriptor);
-				log_info(recursosFileSystem->logger, "FCB encontrada");
-			 return contexto;
-		}
-        log_info(recursosFileSystem->logger, "FCB no encontrado");
-        //int ocuparBloques;
-        fcbDescriptor = fopen (fcbPath,"w");
-        t_config* fcbArchivo = malloc(sizeof(t_config));
-		fcbArchivo->path = fcbPath;
-		fcbArchivo->properties = dictionary_create();
+	log_info(logger_obligatorio, "Creando Archivo: %s", nomArchivo);
+	char* path_archivo = generarPathFCB(nomArchivo);
 
-		dictionary_put(fcbArchivo->properties, "nombre_archivo", nomArchivo);
-		dictionary_put(fcbArchivo->properties, "file_size", "0");
-		dictionary_put(fcbArchivo->properties, "punteroDirecto", ""); 
-		dictionary_put(fcbArchivo->properties, "punteroIndirecto", "");
-        dictionary_put(fcbArchivo->properties, "bloques", "");
-        config_save(fcbArchivo);
-        dictionary_destroy(fcbArchivo->properties);
-		fclose(fcbDescriptor);
+	FCB* nuevaFCB = malloc(sizeof(FCB));
+	nuevaFCB->nombre_archivo = malloc(strlen(nomArchivo));
+	strcpy(nuevaFCB->nombre_archivo, nomArchivo);
+	nuevaFCB->tamanio_archivo = 0;
+	char* text_tamanio_archivo = malloc(10);
+    FILE* fileDescriptor = fopen("nomArchivo","rb");
+    archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
+    list_add(contexto -> archivosAbiertos,arch);
 
-        return contexto;
+	FILE* f_fcb = fopen(path_archivo, "a+");
+
+	t_config* archivoFCB = malloc(sizeof(t_config));
+    archivoFCB->path=path_archivo;
+
+	config_set_value(archivoFCB->properties, "nombre_archivo", nuevaFCB->nombre_archivo);
+	config_set_value(archivoFCB->properties, "file_size", "0");
+    config_set_value(archivoFCB->properties, "bloques", "");
+
+	config_save(archivoFCB);
+	fclose(f_fcb);
+
+    return contexto;
     }
 
     void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
