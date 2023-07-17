@@ -170,11 +170,13 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         return archivo;
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
-	puts("aca llego");
 	char* fcbPath = generarPathFCB(nomArchivo);
-        puts("aca llego");
+    char* filePath = string_new();
+    string_append(&filepath,nomArchivo);
+    string_append(&filepath,".txt");
+
         FILE* fcbDescriptor = fopen (fcbPath,"rb");
-        FILE* fileDescriptor = fopen("nomArchivo","rb");
+        FILE* fileDescriptor = fopen(filepath,"rb");
         archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
         list_add(contexto -> archivosAbiertos,arch);
         if (fcbDescriptor != NULL) {
@@ -194,8 +196,10 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 		dictionary_put(fcbArchivo->properties, "punteroDirecto", ""); 
 		dictionary_put(fcbArchivo->properties, "punteroIndirecto", "");
         dictionary_put(fcbArchivo->properties, "bloques", "");
+        
         config_save(fcbArchivo);
         dictionary_destroy(fcbArchivo->properties);
+        free(fcbArchivo);
 		fclose(fcbDescriptor);
 
         return contexto;
