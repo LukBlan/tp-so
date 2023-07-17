@@ -1,9 +1,11 @@
 #include <commons/string.h>
 #include <commons/config.h>
+#include <commons/collections/dictionary.h>
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
 #include <string.h>
+#include <stdlib.h>
 
 char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
@@ -184,22 +186,32 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
     archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
     list_add(contexto -> archivosAbiertos,arch);
 */
+	/*
+	FILE* fcb = fopen(fcbPath, "rb");
 
-	nuevaFCB = fopen(path_archivo, "a+");
+  if (fcb != NULL) { //VER SI ESTE IF ESTA BIEN
+    fclose(fcb);
+      log_info(logger, "FCB encontrada");
+    return;
+
+  }
+  */
+
 	puts("0");
 	t_config* archivoFCB = malloc(sizeof(t_config));
   archivoFCB->path = path_archivo;
   archivoFCB->properties = dictionary_create();
   puts("1");
+
+  dictionary_put(archivoFCB->properties, "file_size", 0);
 	dictionary_put(archivoFCB->properties, "nombre_archivo", nuevaFCB->nombre_archivo);
-	dictionary_put(archivoFCB->properties, "file_size", 0);
 	dictionary_put(archivoFCB->properties, "punteroDirecto", "");
 	dictionary_put(archivoFCB->properties, "punteroIndirecto", "");
 	dictionary_put(archivoFCB->properties, "bloques", "");
   puts("2");
 	config_save(archivoFCB);
 	dictionary_destroy(archivoFCB->properties);
-	fclose(nuevaFCB);
+	//fclose(nuevaFCB);
 
     return contexto;
     }
