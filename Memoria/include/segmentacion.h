@@ -31,9 +31,9 @@
   t_list* obtenerContenidoSegmentos();
   int tamanioTotalDisponible(void);
   void liberarListaSegmentos(t_list* segmentos);
-  void ocuparMemoriaSegmento(Segmento* segmento, int* base);
-  void ocuparMemoriaProceso(tablaDeSegmento* segmentosProceso, int* base);
-  void ocuparMemoriaPrincipal();
+  void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base);
+  void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base);
+  void ocuparMemoriaPrincipal(t_list* listaDeProcesosConContenido);
   void compactacion();
   int contarCantidadDe(int base, int numero);
   void obtenerContenidoPorProceso(int idProceso, tablaDeSegmento* contenidoProceso);
@@ -42,4 +42,5 @@
   Segmento* elegirCriterio (t_list* segmentos, int tamanio);
   Segmento* segmentoBest(t_list* segmentos, int tamanio);
   Segmento* segmentoWorst(t_list* segmentos, int tamanio);
+
 #endif
