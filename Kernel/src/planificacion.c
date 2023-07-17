@@ -404,14 +404,22 @@ void ejecutar(PCB* proceso) {
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           agregarATabla(nombreArchivo);
+
           // Calculo que se agrega a ready luego
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
-          //enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
-          //enviarString(nombreArchivo, socketFileSystem);
-          //esperarCodOperacion
+          enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
+          enviarString(nombreArchivo, socketFileSystem);
+          op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
+          contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
+          switch(respuestaFS) {
+                  case SUCCESS:
+                    actualizarContexto(nuevoFS);
+                    sacarDeEjecutando(READY);
+                    agregarAListo(procesoDevuelto);
+                    break;
+          }
           //recibir contexto y enviarlo a CPU
         }
+
         free(nombreArchivo);
       break;
     case DELETE_SEGMENT:

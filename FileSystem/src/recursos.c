@@ -35,6 +35,7 @@ void cargarConfiguracion(char* pathConfiguracin) {
     config->PATH_SUPERBLOQUE = string_duplicate(config_get_string_value(fileConfig, "PATH_SUPERBLOQUE"));
     config->PATH_BITMAP = string_duplicate(config_get_string_value(fileConfig, "PATH_BITMAP"));
     config->PATH_BLOQUES = string_duplicate(config_get_string_value(fileConfig, "PATH_BLOQUES"));
+    config->PATH_FCB = string_duplicate(config_get_string_value(fileConfig, "PATH_FCB"));
     config->RETARDO_ACCESO_BLOQUE = config_get_int_value(fileConfig, "RETARDO_ACCESO_BLOQUE");
   } else {
     log_error(recursosFileSystem->logger, "No se pudo Encontrar el Archivo de configuracion");
@@ -80,15 +81,15 @@ void cargarBloques() {
   int fileDescriptor = open(recursosFileSystem->configuracion->PATH_BLOQUES, O_CREAT | O_RDWR,0664);
   ftruncate(fileDescriptor, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
   void* bloque = mmap(NULL, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
-  //pthread_mutex_lock(&sincro_block);
+  pthread_mutex_lock(&mutexBloques);
 		memcpy(copiaBloque,bloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
-		//pthread_mutex_unlock(&sincro_block);
+		pthread_mutex_unlock(&mutexBloques);
 		while(1){ 
 
 			sleep(recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE);
-			//pthread_mutex_lock(&sincro_block);
+			pthread_mutex_lock(&mutexBloques);
 			memcpy(bloque,copiaBloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
-			//pthread_mutex_unlock(&sincro_block);
+			pthread_mutex_unlock(&mutexBloques);
 			int sincronizacion = msync(bloque, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, MS_SYNC);
 			if(sincronizacion == -1){
         

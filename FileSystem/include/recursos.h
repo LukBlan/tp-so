@@ -6,6 +6,7 @@
   #include <utils.h>
   #include <fcntl.h>
   #include <sys/mman.h>
+#include <instrucciones.h>
 
   typedef struct {
     char* IP_MEMORIA;
@@ -15,6 +16,7 @@
     char* PATH_SUPERBLOQUE;
     char* PATH_BITMAP;
     char* PATH_BLOQUES;
+    char* PATH_FCB;
     int RETARDO_ACCESO_BLOQUE;
   } t_configuracion;
   typedef struct {
@@ -53,5 +55,8 @@
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathArchivoConfiguracion);
   void liberarRecursos();
+  void cargarBloques();
+  void cargarBitMap();
+  void cargarSuperbloque();
 
 #endif

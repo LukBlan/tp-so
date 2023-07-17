@@ -6,8 +6,9 @@
 
 char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
-        string_append(fcbPath,recursosFileSystem->configuracion->PATH_BLOQUES);
-        string_append(fcbPath,nomArchivo);
+        string_append(&fcbPath,recursosFileSystem->configuracion->PATH_FCB);
+        string_append(&fcbPath,nomArchivo);
+        string_append(&fcbPath,".data");
         return fcbPath;
     }
 int tamanioDeArray(char** array){
@@ -114,6 +115,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo) {
 
             config_set_value(fcb,"file_size", tamanioNuevo);
             config_set_value(fcb,"bloques",actualizarBloques);
+            config_destroy(fcb);
 }
 
 void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
@@ -156,6 +158,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
                  string_append(&bloquesNew,"]");
             config_set_value(fcb,"file_size",tamanioNuevo);
             config_set_value(fcb,"bloques",bloquesNew);
+            config_destroy(fcb);
 }
 
 
@@ -166,19 +169,22 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         archivo -> punteroArchivo = fd;
         return archivo;
     }
-    contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
-        char* fcbPath = generarPathFCB(nomArchivo);
-        FILE* FCBdescriptor = fopen (fcbPath,"rb");
+contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
+	puts("aca llego");
+	char* fcbPath = generarPathFCB(nomArchivo);
+        puts("aca llego");
+        FILE* fcbDescriptor = fopen (fcbPath,"rb");
         FILE* fileDescriptor = fopen("nomArchivo","rb");
         archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
         list_add(contexto -> archivosAbiertos,arch);
-        if (FCBdescriptor != NULL) {
-			fclose(FCBdescriptor);
+        if (fcbDescriptor != NULL) {
+			fclose(fcbDescriptor);
 				log_info(recursosFileSystem->logger, "FCB encontrada");
-			// return;
+			 return contexto;
 		}
         log_info(recursosFileSystem->logger, "FCB no encontrado");
         //int ocuparBloques;
+        fcbDescriptor = fopen (fcbPath,"w");
         t_config* fcbArchivo = malloc(sizeof(t_config));
 		fcbArchivo->path = fcbPath;
 		fcbArchivo->properties = dictionary_create();
@@ -190,7 +196,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         dictionary_put(fcbArchivo->properties, "bloques", "");
         config_save(fcbArchivo);
         dictionary_destroy(fcbArchivo->properties);
-		fclose(FCBdescriptor);
+		fclose(fcbDescriptor);
 
         return contexto;
     }
@@ -208,17 +214,55 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         int tamanio = config_get_int_value(fcb, "file_size");
         return tamanio;
     }
+void generarPunteroDirecto(char* nomArchivo){
+	char* fcbPath = generarPathFCB(nomArchivo);
+	t_config* fcb = config_create(fcbPath);
+	int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
+	int puntero = 0;
+	for(int i=0; puntero<2 && i<bloquesDelSist; i++) {
+	       pthread_mutex_lock(&mutexBitMap);
+	          if(bitarray_test_bit(bitMapBloque, i) == 0){
+	          bitarray_set_bit(bitMapBloque,i);
+	          msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+	          config_set_value(fcb,"punteroDirecto",i);
+	          puntero ++;
+	          }
+	}
+	          config_destroy(fcb);
+}
 
-    contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
+void generarPunteroIndirecto(char* nomArchivo){
+		char* fcbPath = generarPathFCB(nomArchivo);
+		t_config* fcb = config_create(fcbPath);
+		int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
+		int puntero = 0;
+		for(int i=0; puntero<2 && i<bloquesDelSist; i++) {
+		       pthread_mutex_lock(&mutexBitMap);
+		          if(bitarray_test_bit(bitMapBloque, i) == 0){
+		          bitarray_set_bit(bitMapBloque,i);
+		          msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+		          config_set_value(fcb,"punteroIndirecto",i);
+		          puntero ++;
+		          }
+		}
+		          config_destroy(fcb);
+	}
+
+
+contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
         //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
         int tamanioViejo = tamanioDeFCB(nomArchivo);
+        if(tamanioViejo == 0){
+        	generarPunteroDirecto(nomArchivo);
+        	generarPunteroIndirecto(nomArchivo);
+        }
         if(nuevoTamanio > tamanioViejo){
             ocuparBloque(nomArchivo,nuevoTamanio);
         } else{
             desocuparBloque(nomArchivo,nuevoTamanio);
         }
-        cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
-        return contexto;
 
-    }
+        cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
+        return contexto;}
+
 

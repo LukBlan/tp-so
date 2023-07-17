@@ -15,11 +15,12 @@ int main(int argc, char* argv[]) {
 	realizarHandshakeMemoria();
 	cargarSuperbloque();
 	  cargarBitMap();
+	  pthread_t manejo_bloque;
+			pthread_create(&manejo_bloque, NULL, (void*) cargarBloques, NULL);
+			pthread_detach(manejo_bloque);
 	montarServidor();
 
-	/* pthread_t manejo_bloque;
-			pthread_create(&manejo_bloque, NULL, (void*) crearYmanejar_blocks, NULL);
-			pthread_detach(manejo_bloque);*/
+
 
 	liberarRecursos();
 	return EXIT_SUCCESS;
