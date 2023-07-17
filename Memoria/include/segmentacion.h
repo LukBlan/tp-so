@@ -30,5 +30,6 @@
   int tamanioTotalDisponible(void);
   t_list* puedenGuardar(t_list* segmentos, int size);
   Segmento* elegirCriterio (t_list* segmentos, int tamanio);
-
+  Segmento* segmentoBest(t_list* segmentos, int tamanio);
+  Segmento* segmentoWorst(t_list* segmentos, int tamanio);
 #endif
