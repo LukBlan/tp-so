@@ -87,9 +87,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts ("Llego F_open");
       contexto = recibirContexto(socketCliente);
       char* nomArchivo = recibirString(socketCliente);
-      puts("aca llego");
-      contexto = fcreate(nomArchivo,contexto);
-      puts("aca llego");
+      printf("Recibi archivo con nombre %s\n", nomArchivo);
+      puts("a");
+      contexto = fcreate(nomArchivo, contexto);
+      puts("b");
       enviarContexto(contexto,socketCliente,SUCCESS);
       liberarContexto(contexto);
     break;
