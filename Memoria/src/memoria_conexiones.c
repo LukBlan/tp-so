@@ -216,7 +216,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
 void manejarConexion(int socketCliente) {
   pthread_t hilo;
-  pthread_create(&hilo, NULL, (void*)procesarOperacionRecibida, (void*)socketCliente);
+  pthread_create(&hilo, NULL, (void*) procesarOperacionRecibida, (void*) socketCliente);
   pthread_detach(hilo);
 }
 
