@@ -32,5 +32,5 @@
   void cargarConfiguracion(char* pathConfiguracin);
   void cargarLogger(char* pathLogger);
   void liberarRecursos();
-
+  void llamarAMmu(int direccion_logica);
 #endif
