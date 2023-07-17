@@ -3,6 +3,7 @@
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
 #include <recursos.h>
+#include <string.h>
 
 char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
@@ -170,11 +171,14 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
         return archivo;
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
+  puts("-3");
 	char* path_archivo = generarPathFCB(nomArchivo);
-
+	puts("-2.2");
 	FCB* nuevaFCB = malloc(sizeof(FCB));
-	nuevaFCB->nombre_archivo = malloc(strlen(nomArchivo));
+	nuevaFCB->nombre_archivo = malloc(strlen(nomArchivo) + 1);
+	puts("-2");
 	strcpy(nuevaFCB->nombre_archivo, nomArchivo);
+	puts("-1");
 	nuevaFCB->file_size = 0;
     /*FILE* fileDescriptor = fopen("nomArchivo","rb");
     archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
@@ -182,17 +186,17 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 */
 
 	nuevaFCB = fopen(path_archivo, "a+");
-
+	puts("0");
 	t_config* archivoFCB = malloc(sizeof(t_config));
-    archivoFCB->path=path_archivo;
-    archivoFCB->properties = dictionary_create();
-    puts("aca llego");
+  archivoFCB->path = path_archivo;
+  archivoFCB->properties = dictionary_create();
+  puts("1");
 	dictionary_put(archivoFCB->properties, "nombre_archivo", nuevaFCB->nombre_archivo);
 	dictionary_put(archivoFCB->properties, "file_size", 0);
 	dictionary_put(archivoFCB->properties, "punteroDirecto", "");
 	dictionary_put(archivoFCB->properties, "punteroIndirecto", "");
 	dictionary_put(archivoFCB->properties, "bloques", "");
-
+  puts("2");
 	config_save(archivoFCB);
 	dictionary_destroy(archivoFCB->properties);
 	fclose(nuevaFCB);
