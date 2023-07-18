@@ -390,8 +390,18 @@ void ejecutar(PCB* proceso) {
       break;
     case F_TRUNCATE:
       puts("-------------------- Llego F_TRUNCATE --------------------");
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
+       char* nombreArchivoATruncar = recibirString(socketCpu);
+      int tamanioNuevo = recibirEntero(socketCpu);
+      sacarDeEjecutando(BLOCK);
+      enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_TRUNCATE);
+      enviarString(nombreArchivoATruncar,socketFileSystem);
+      enviarEntero(tamanioNuevo,socketFileSystem);
+      op_code respuestaTruncado = obtenerCodigoOperacion(socketFileSystem);
+      contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
+          switch(respuestaTruncado) {
+                  case SUCCESS:
+                    actualizarContexto(nuevoFS);
+                  agregarAListo(procesoDevuelto);
       break;
     case MOV_OUT:
       puts("-------------------- Llego MOV_OUT --------------------");

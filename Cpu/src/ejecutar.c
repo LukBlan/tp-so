@@ -202,7 +202,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
+    int tamanioNuevo = atoi(segundoParametro);
+    char* nombreArchivoATruncar = primerParametro;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
+    enviarString(nombreArchivoATruncar,socketKernel);
+    enviarEntero(tamanioNuevo,socketKernel);
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
     int idSegmento = atoi(primerParametro);
     int tamainoSegmento = atoi(segundoParametro);
