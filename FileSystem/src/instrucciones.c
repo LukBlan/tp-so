@@ -241,27 +241,30 @@ void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
 
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
-        //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
-        char* fcbPath = generarPathFCB(nomArchivo);
-		t_config* fcb = config_create(fcbPath);
-        int tamanioViejo = tamanioDeFCB(nomArchivo);
-        int tamanioRestante;
-        if(tamanioViejo == 0){
-        	generarPunteroDirecto(nomArchivo,fcb);
-        	generarPunteroIndirecto(nomArchivo,fcb);
-            int punteroDirecto = config_get_int_value(fcb,"punteroDirecto");
-            bitarray_set_bit(bitMapBloque,punteroDirecto);
-            tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
-        }
-        if(tamanioRestante > tamanioViejo){
-            ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
-        } else{
-            desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
-        }
+  //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
+  char* fcbPath = generarPathFCB(nomArchivo);
+  t_config* fcb = config_create(fcbPath);
+  int tamanioViejo = tamanioDeFCB(nomArchivo);
+  int tamanioRestante;
 
-        cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
-        config_destroy(fcb);
-        return contexto;}
+  if(tamanioViejo == 0) {
+    generarPunteroDirecto(nomArchivo,fcb);
+    generarPunteroIndirecto(nomArchivo,fcb);
+    int punteroDirecto = config_get_int_value(fcb,"punteroDirecto");
+    bitarray_set_bit(bitMapBloque,punteroDirecto);
+    tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
+  }
+
+  if(tamanioRestante > tamanioViejo) {
+  ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
+  } else {
+  desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
+  }
+
+  cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
+  config_destroy(fcb);
+  return contexto;
+}
 
 int darNumeroDeBloques(int bytes){
     div_t division = div(bytes, recursosFileSystem->superBloque->BLOCK_COUNT);

@@ -95,20 +95,20 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarContexto(contexto,socketCliente,SUCCESS);
       liberarContexto(contexto);
     break;
-    switch (codigoOperacion) {
+
     case F_TRUNCATE:
       puts ("Llego F_truncate");
       contexto = recibirContexto(socketCliente);
-      char* nomArchivo = recibirString(socketCliente);
+      char* nombreArchivo = recibirString(socketCliente);
       int tamanio = recibirEntero(socketCliente);
-      printf("Recibi archivo con nombre %s\n", nomArchivo);
+      printf("Recibi archivo con nombre %s\n", nombreArchivo);
       puts("a");
-      contexto = ftruncar(nomArchivo, contexto,tamanio);
+      contexto = ftruncar(nombreArchivo, contexto,tamanio);
       puts("b");
       enviarContexto(contexto,socketCliente,SUCCESS);
       liberarContexto(contexto);
-    }
     break;
+
     default:
       puts("Cerre una conexion");
       /*

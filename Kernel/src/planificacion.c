@@ -415,11 +415,12 @@ void recibirInstruccion() {
 
     case F_TRUNCATE:
       puts("-------------------- Llego F_TRUNCATE --------------------");
-       char* nombreArchivoATruncar = recibirString(socketCpu);
+      char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
-      enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_TRUNCATE);
+
+      enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_TRUNCATE);
       enviarString(nombreArchivoATruncar,socketFileSystem);
       enviarEntero(tamanioNuevo,socketFileSystem);
 
@@ -429,6 +430,7 @@ void recibirInstruccion() {
         case SUCCESS:
         actualizarContexto(nuevoTruncado);
         agregarAListo(procesoDevuelto);
+        break;
 
         default:
           puts("Entre por el default");
