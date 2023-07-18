@@ -413,8 +413,7 @@ void ejecutar(PCB* proceso) {
           switch(respuestaFS) {
                   case SUCCESS:
                     actualizarContexto(nuevoFS);
-                    sacarDeEjecutando(READY);
-                    agregarAListo(procesoDevuelto);
+                    enviarContexto(nuevoFS,socketCpu,SUCCESS);
                     break;
           }
           //recibir contexto y enviarlo a CPU
@@ -439,18 +438,15 @@ void ejecutar(PCB* proceso) {
       break;
     case F_CLOSE:
       puts("-------------------- Llego F_CLOSE --------------------");
-      sacarDeEjecutando(READY);
       char* nombrArchivo = recibirString(socketCpu);
       printf("Nombre archivo %s\n", nombrArchivo);
-      /*
       eliminarDeTablaDeArchivos(nombrArchivo, procesoDevuelto);
       if(hayEnCola(nombrArchivo)){
         moverAListoColaDeArchivo(nombrArchivo);
       } else {
         eliminarDeTablaGlobal(nombrArchivo);
       }
-      */
-      agregarAListo(procesoDevuelto);
+      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       free(nombrArchivo);
       break;
     case F_SEEK:
@@ -458,12 +454,10 @@ void ejecutar(PCB* proceso) {
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
-      // Abria que tener el archivo para poder hacer fseek del mismo
-      //procesoDevuelto->contexto->archivosAbiertos = f_seek(nomArchivo, archivosAbiertos, posicion);
-      //enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
-      // Por ahora dejo que entre a ready
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
+      int posicionEnTabla = encontrarEnTablaDeArchivos(archivosAbiertos,nomArchivo);
+      archivoAbierto* arch = list_get(archivosAbiertos,posicionEnTabla);
+      fseek(arch->punteroArchivo, posicion, SEEK_SET);
+      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       free(nomArchivo);
       break;
     case F_READ:

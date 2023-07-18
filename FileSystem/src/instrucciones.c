@@ -25,7 +25,7 @@ int tamanioDeArray(char** array){
 }
 int buscar_bloque(t_config* archivo_fcb, int bloque, uint32_t* arrayDePunteros){ //--
 
-	if(bloque_a_buscar == 0){
+	if(bloque == 0){
 		int puntero_directo = config_get_int_value(archivo_fcb, "punteroDirecto");
 		return puntero_directo*recursosFileSystem->superBloque->BLOCK_SIZE;
 	}
@@ -33,7 +33,6 @@ int buscar_bloque(t_config* archivo_fcb, int bloque, uint32_t* arrayDePunteros){
 		uint32_t* punteroABuscar = malloc(sizeof(uint32_t));
 		int posicionPunteroABuscar = (bloque)*sizeof(uint32_t);
 		memcpy(punteroABuscar, arrayDePunteros+posicionPunteroABuscar, sizeof(uint32_t));
-		int log_punteroABuscar = *punteroABuscar;
 		return (*punteroABuscar)*recursosFileSystem->superBloque->BLOCK_SIZE;
 	}
 }
@@ -309,13 +308,11 @@ int darOffset(int bytes){
 
 uint32_t* darArrayDePunteros(t_config* fcb){
     uint32_t* arrayDePunteros;
-    if(bloque != 0 || excedente > 0){
 		arrayDePunteros = malloc(recursosFileSystem->superBloque->BLOCK_SIZE); //--
 		int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
 		int punteroIndirecto = puntero_indirecto*recursosFileSystem->superBloque->BLOCK_SIZE;
 		//retardo
 		memcpy(arrayDePunteros, copiaBloque + punteroIndirecto, recursosFileSystem->superBloque->BLOCK_SIZE);
-	}
     return arrayDePunteros;
 }
 void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
@@ -333,7 +330,6 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	}
 
 	uint32_t* arrayDePunteros = darArrayDePunteros(fcb); //--
-
 
 	int bloqueAEscribir = buscar_bloque(fcb, bloque, arrayDePunteros); //--
 	

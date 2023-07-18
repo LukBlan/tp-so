@@ -82,9 +82,16 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     printf("Nombre Archivo %s\n", nombreArchivo);
     enviarContexto(contexto, socketKernel, F_OPEN);
     enviarString(nombreArchivo, socketKernel);
+    op_code respuestaFS = obtenerCodigoOperacion(socketKernel);
+    switch(respuestaFS) {
+                      case SUCCESS:
+                        contexto = recibirContexto(socketKernel);
+                        break;
+              }
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
     enviarString(primerParametro, socketKernel);
+    contexto = recibirContexto(socketKernel);
   }
     
   return continuarEjecutando;
@@ -192,20 +199,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketKernel, F_SEEK);
     enviarString(nombreArchivo,socketKernel);
     enviarEntero(posicion,socketKernel);
-    /*
-    op_code respuestaKernel = obtenerCodigoOperacion(socketKernel);
-    switch(respuestaKernel) {
-        case SUCCESS:
-          contextoEjecucion* nuevoActualizado = recibirContexto(socketKernel);
-          contexto = nuevoActualizado;
-          break;
-        default:
-          puts("Como carajo llegue al default");
-          break;
-      }
-   */
-    // Dejo que aca de ejecutar
-    continuarEjecutando = 0;
+    contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
