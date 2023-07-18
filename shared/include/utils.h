@@ -10,5 +10,7 @@
   int bitsToBytes(int bits);
   char* generarArray(int bytes);
   t_list* f_seek(char* nomArchivo, t_list* archivosAbiertos, int posicion);
+  archivoAbierto* buscarNombre(t_list* archivos, char* nombreArch);
+  void mostrarRegistros(t_registros registros);
 
 #endif
