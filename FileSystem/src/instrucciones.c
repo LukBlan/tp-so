@@ -242,55 +242,53 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
         int tamanio = config_get_int_value(fcb, "file_size");
         return tamanio;
     }
-void generarPunteroDirecto(char* nomArchivo){
-	char* fcbPath = generarPathFCB(nomArchivo);
-	t_config* fcb = config_create(fcbPath);
-	int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
-	int puntero = 0;
-	for(int i=0; puntero<2 && i<bloquesDelSist; i++) {
-	       pthread_mutex_lock(&mutexBitMap);
-	          if(bitarray_test_bit(bitMapBloque, i) == 0){
-	          bitarray_set_bit(bitMapBloque,i);
-	          msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-	          config_set_value(fcb,"punteroDirecto",i);
-	          puntero ++;
-	          }
+uint32_t buscar_bloque_libre(){ //busca un bloque libre y lo ocupa
+int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;	
+    for(int i = 0; i < bloquesDelSist; i++){
+		pthread_mutex_lock(&mutexBitMap);
+        log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 0", i);
+        if(bitarray_test_bit(bitMapBloque, i)== 0){
+			bitarray_set_bit(bitMapBloque, i);
+			log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
+			msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+            pthread_mutex_unlock(&mutexBitMap);
+            return i;
+		}
 	}
-	          config_destroy(fcb);
+
+	return 0;
+}
+void generarPunteroDirecto(char* nomArchivo,t_config* fcb){
+	int i = buscar_bloque_libre();
+	config_set_value(fcb,"punteroDirecto",i);
+	       
 }
 
-void generarPunteroIndirecto(char* nomArchivo){
-		char* fcbPath = generarPathFCB(nomArchivo);
-		t_config* fcb = config_create(fcbPath);
-		int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
-		int puntero = 0;
-		for(int i=0; puntero<2 && i<bloquesDelSist; i++) {
-		       pthread_mutex_lock(&mutexBitMap);
-		          if(bitarray_test_bit(bitMapBloque, i) == 0){
-		          bitarray_set_bit(bitMapBloque,i);
-		          msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-		          config_set_value(fcb,"punteroIndirecto",i);
-		          puntero ++;
-		          }
-		}
-		          config_destroy(fcb);
+void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
+		int i = buscar_bloque_libre();
+	    config_set_value(fcb,"punteroDirecto",i);
 	}
 
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
         //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
+        char* fcbPath = generarPathFCB(nomArchivo);
+		t_config* fcb = config_create(fcbPath);
         int tamanioViejo = tamanioDeFCB(nomArchivo);
+        int tamanioRestante;
         if(tamanioViejo == 0){
-        	generarPunteroDirecto(nomArchivo);
-        	generarPunteroIndirecto(nomArchivo);
+        	generarPunteroDirecto(nomArchivo,fcb);
+        	generarPunteroIndirecto(nomArchivo,fcb);
+            tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
         }
-        if(nuevoTamanio > tamanioViejo){
+        if(tamanioRestante > tamanioViejo){
             ocuparBloque(nomArchivo,nuevoTamanio);
         } else{
             desocuparBloque(nomArchivo,nuevoTamanio);
         }
 
         cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
+        config_destroy(fcb);
         return contexto;}
 
 int darNumeroDeBloques(int bytes){
