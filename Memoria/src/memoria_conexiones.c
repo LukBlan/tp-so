@@ -162,14 +162,15 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         agregarSegmentoATabla(segmentoNuevo, idProceso);
         agregarSegmentoAContexto(contexto, segmentoNuevo);
         printf("base nuevo segmento %d\n", segmentoNuevo->base);
-        respuestaMemoria = Pcb;
       } else {
         puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
       }
 
       if (respuestaMemoria == COMPACTACION) {
+        puts("EEEEEEEEEEnviado Tabla");
         enviarTablaDeSegmentos(tablaDeSegmentosPorProceso, socketCliente, COMPACTACION);
+        enviarContexto(contexto, socketCliente, Pcb);
       } else {
         printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
         printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
