@@ -74,69 +74,40 @@ int generarCantidad (int tamanioEnBytes){
 void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
-    int puntero = darUltimoPuntero(nomArchivo);
 
     char* fcbPath = generarPathFCB(nomArchivo);
     t_config* fcb = config_create(fcbPath);
-    char** bloquesUsados = config_get_array_value(fcb, "bloques");
-    char* bloquesNuevos  = string_new();
-    int tamanio = config_get_int_value(fcb, "file_size");
     int punteroDirecto = config_get_int_value(fcb, "punteroDirecto");
     int punteroIndirecto = config_get_int_value(fcb, "punteroIndirecto");
-    string_append(&bloquesNuevos,"[");
+    uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
+    int cantidad = darCantidadDePuntero(arrayPunteros);
+    int bloquesViejos = darNumeroDeBloques(tamanioViejo);
+    int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
+    int bloquesAAgregar = bloquesNuevos - bloquesViejos;
+    int posicionAAgregar = (cantidad+ 1)*sizeof(uint32_t);
 
-    int cantidadDeBloques = generarCantidad(tamanioNuevo);
-    int blockCount = tamanioDeArray(bloquesUsados);
-
-    if(tamanio == 0){
-    	pthread_mutex_lock(&mutexBitMap);
-    	bitarray_set_bit(bitMapBloque,punteroDirecto);
-    	pthread_mutex_unlock(&mutexBitMap);
-        char* bloqueDirecto = string_itoa(punteroDirecto);
-        string_append(&bloquesNuevos, bloqueDirecto);
-        cantidadDeBloques --;
-    }
-        for(int j = puntero+1 ; j<cantidadDeBloques; j++) {
-    	    	for(int i= puntero+1; i<bloquesDelSist; i++) {
+        for(int j = bloquesAAgregar ; j>0; j--) {
+    	    	for(int i= 0; i<(bloquesDelSist*tamanioBloque); i++) {
                     pthread_mutex_lock(&mutexBitMap);
                     if(bitarray_test_bit(bitMapBloque, i) == 0) {
-                        int bloqueAUsar = i;
-                        cantidadDeBloques ++;
-                        char* bloqueNuevo = string_itoa(i);
-                           if(cantidadDeBloques==1)
-                            string_append(&bloquesNuevos, bloqueNuevo);
-                            else{
-                        string_append(&bloquesNuevos, ",");
-                        string_append(&bloquesNuevos, bloqueNuevo);
-                        }
-                        free(bloqueNuevo);
-                        
+                        uint32_t bloqueAUsar = i;
+                        uint32_t* puntero = malloc(sizeof(uint32_t));
+		                *puntero = bloqueAUsar;
+                        memccpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
                         bitarray_set_bit(bitMapBloque,i);
                         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-                        
-                        pthread_mutex_lock(&mutexBloques);
-                        memcpy(copiaBloque + (punteroIndirecto * tamanioBloque) + ((blockCount-1)*4), bloqueAUsar, sizeof(uint32_t));
-                        pthread_mutex_unlock(&mutexBloques); 
+                        posicionAAgregar += sizeof(uint32_t);
+                        cantidad++;
+                       
                     }
                     pthread_mutex_unlock(&mutexBitMap);
                 }
             }
-        	char* actualizarBloques = string_new();
-        	string_append(&actualizarBloques, "[");
-            for(int i=0; i<blockCount; i++) {
-        	if(i==0)
-        	string_append(&actualizarBloques,bloquesUsados[i]);
-        	else{
-        		string_append(&actualizarBloques,",");
-        		string_append(&actualizarBloques,bloquesUsados[i]);
-        	}
-
-        }
-        string_append(&actualizarBloques,bloquesNuevos);
-        string_append(&actualizarBloques,"]");
-
+            memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
+ pthread_mutex_lock(&mutexBloques);
+                        memcpy(copiaBloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, sizeof(uint32_t));
+                        pthread_mutex_unlock(&mutexBloques); 
             config_set_value(fcb,"file_size", tamanioNuevo);
-            config_set_value(fcb,"bloques",actualizarBloques);
             config_destroy(fcb);
 }
 
@@ -278,6 +249,8 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
         if(tamanioViejo == 0){
         	generarPunteroDirecto(nomArchivo,fcb);
         	generarPunteroIndirecto(nomArchivo,fcb);
+            int punteroDirecto = config_get_int_value(fcb,"punteroDirecto");
+            bitarray_set_bit(bitMapBloque,punteroDirecto);
             tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
         }
         if(tamanioRestante > tamanioViejo){
