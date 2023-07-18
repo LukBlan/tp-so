@@ -442,10 +442,14 @@ void ejecutar(PCB* proceso) {
           op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
           contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
           switch(respuestaFS) {
-                  case SUCCESS:
-                    actualizarContexto(nuevoFS);
-                    enviarContexto(nuevoFS,socketCpu,SUCCESS);
-                    break;
+            case SUCCESS:
+              puts("Entre en SUCCESS");
+              actualizarContexto(nuevoFS);
+              enviarContexto(nuevoFS, socketCpu, SUCCESS);
+              break;
+            default:
+              puts("Entre por el default de F_OPEN");
+              break;
           }
           //recibir contexto y enviarlo a CPU
         }
