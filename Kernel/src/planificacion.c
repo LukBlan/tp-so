@@ -381,15 +381,22 @@ void iniciarTablaGlobal() {
 }
 
 void ejecutar(PCB* proceso) {
+  // Esta parte envia a cpu
   procesoEjecutandose = proceso;
   int socketCpu = recursosKernel->conexiones->socketCpu;
-  int socketMemoria = recursosKernel->conexiones->socketMemoria;
-  int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   cambiarEstado(EXEC, procesoEjecutandose);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
+  recibirInstruccion();
+}
+
+void recibirInstruccion() {
+  PCB* proceso = procesoEjecutandose;
+  int socketCpu = recursosKernel->conexiones->socketCpu;
   op_code codigoOperacion = obtenerCodigoOperacion(socketCpu);
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
+  int socketMemoria = recursosKernel->conexiones->socketMemoria;
+  int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
   actualizarContexto(nuevoContexto);
   PCB* procesoDevuelto = procesoEjecutandose;
 
@@ -399,58 +406,76 @@ void ejecutar(PCB* proceso) {
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case MOV_IN:
       puts("-------------------- Llego MOV_IN --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case F_TRUNCATE:
       puts("-------------------- Llego F_TRUNCATE --------------------");
-       char* nombreArchivoATruncar = recibirString(socketCpu);
+      char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
-      enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_TRUNCATE);
+
+      enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_TRUNCATE);
       enviarString(nombreArchivoATruncar,socketFileSystem);
       enviarEntero(tamanioNuevo,socketFileSystem);
+
       op_code respuestaTruncado = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
-          switch(respuestaTruncado) {
-                  case SUCCESS:
-                  actualizarContexto(nuevoTruncado);
-                  agregarAListo(procesoDevuelto);
+      switch(respuestaTruncado) {
+        case SUCCESS:
+        actualizarContexto(nuevoTruncado);
+        agregarAListo(procesoDevuelto);
+        break;
+
+        default:
+          puts("Entre por el default");
+          break;
+      }
       break;
+
     case MOV_OUT:
       puts("-------------------- Llego MOV_OUT --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case F_OPEN:
       puts("-------------------- Llego F_OPEN --------------------");
       char* nombreArchivo = recibirString(socketCpu);
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
-        if(estaEnTablaGlobal(nombreArchivo)){
+        if(estaEnTablaGlobal(nombreArchivo)) {
+          enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           agregarATabla(nombreArchivo);
-
-          // Calculo que se agrega a ready luego
           enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
           enviarString(nombreArchivo, socketFileSystem);
+
           op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
           contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
           switch(respuestaFS) {
-                  case SUCCESS:
-                    actualizarContexto(nuevoFS);
-                    enviarContexto(nuevoFS,socketCpu,SUCCESS);
-                    break;
+            case SUCCESS:
+              puts("Entre en SUCCESS");
+              actualizarContexto(nuevoFS);
+              enviarContexto(nuevoFS, socketCpu, SUCCESS);
+              recibirInstruccion();
+              break;
+            default:
+              puts("Entre por el default de F_OPEN");
+              break;
           }
           //recibir contexto y enviarlo a CPU
         }
 
         free(nombreArchivo);
       break;
+
     case DELETE_SEGMENT:
       puts("-------------------- Llego DELETE_SEGMENT --------------------");
       int idSeg = recibirEntero(socketCpu);
@@ -466,6 +491,7 @@ void ejecutar(PCB* proceso) {
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case F_CLOSE:
       puts("-------------------- Llego F_CLOSE --------------------");
       char* nombrArchivo = recibirString(socketCpu);
@@ -479,6 +505,7 @@ void ejecutar(PCB* proceso) {
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       free(nombrArchivo);
       break;
+
     case F_SEEK:
       puts("-------------------- Llego F_SEEK --------------------");
       char* nomArchivo = recibirString(socketCpu);
@@ -490,22 +517,26 @@ void ejecutar(PCB* proceso) {
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       free(nomArchivo);
       break;
+
     case F_READ:
       puts("-------------------- Llego F_READ --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
+
     case IO:
       puts("-------------------- Llego IO --------------------");
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado_io(procesoDevuelto);
       break;
+
     case EXIT:
       puts("-------------------- Llego Exit --------------------");
       PCB* procesoTerminado = procesoDevuelto;
@@ -514,6 +545,7 @@ void ejecutar(PCB* proceso) {
       finalizarProceso(procesoTerminado, SUCCESS);
       liberarPcb(procesoTerminado);
       break;
+
     case WAIT:
       puts("-------------------- Llego WAIT --------------------");
       char* recursoWait = recibirString(socketCpu);
@@ -521,6 +553,7 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       free(recursoWait);
       break;
+
     case SIGNAL:
       puts("-------------------- Llego SIGNAL --------------------");
       char* recursoSignal = recibirString(socketCpu);
@@ -528,6 +561,7 @@ void ejecutar(PCB* proceso) {
       agregarAListo(procesoDevuelto);
       free(recursoSignal);
       break;
+
     case CREATE_SEGMENT:
       puts("-------------------- Llego CREATE_SEGMENT --------------------");
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
@@ -563,74 +597,13 @@ void ejecutar(PCB* proceso) {
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SEGMENTATION FAULT", proceso->pid);
           finalizarProceso(procesoDevuelto, SEGMENTATION_FAULT);
           break;
+
     default:
       puts("-------------------- Entre por default --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
   }
-       //sacarDeEjecutando(procesoRecibido);
-       //agregarFinalizado(procesoRecibido)
-       //pid = procesoRecibido->pid;
-       //paquete = crear_paquete(FINALIZAR);
-       //agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
-       //semwait(&comunicacionMemoria);
-       //enviar_paquete_a_servidor(paquete, socketMemoria);
-       //log_info(logger, "Se envio el proceso %d a la memoria para finalizar", pid);
-       //confirmar que llego a memoria
-       //sem_post(&comunicacionMemoria);
-
-  /*
-    Pcb *procesoRecibido;
-    procesoRecibido = deserializar_pcb(socketCPU);
-    switch (codOperacion) {
-    case YIELD:
-        sacarDeEjecutando(procesoRecibido);
-        agregarAListo(procesoRecibido)
-        break;
-    case SIGNAL:
-        char* recurso = obtenerRecursoDePaquete(socketCPU);
-        if(kernelTieneRecurso(recurso)){
-          aumentarRecurso(recurso);
-          enviarMensaje("Signal ejecutado correctamente", socket CPU)
-        }
-        else{
-          enviarMensaje("Error, recurso no encontrado", socket CPU)
-        }
-        break;
-    case WAIT:
-
-        char* recurso = obtenerRecursoDePaquete(socketCPU);
-        if(kernelTieneRecurso(recurso) && hayRecursoDisponible(recurso)){
-          disminuirRecurso(recurso);
-          enviarMensaje("Wait ejecutado correctamente", socket CPU)
-        }
-        else{
-          enviarMensaje("Error", socket CPU)
-        }
-        break;
-
-    case EXIT:
-    sacarDeEjecutando(procesoRecibido);
-        agregarFinalizado(procesoRecibido)
-        pid = procesoRecibido->pid;
-        paquete = crear_paquete(FINALIZAR);
-        agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
-        semwait(&comunicacionMemoria);
-        enviar_paquete_a_servidor(paquete, socketMemoria);
-        log_info(logger, "Se envio el proceso %d a la memoria para finalizar", pid);
-        //confirmar que llego a memoria
-        sem_post(&comunicacionMemoria);
-        break;
-    case DESCONEXION:
-        log_info(logger, "Se desconectó el CPU-Dispatch. %d", codOperacion);
-        break;
-
-    default:
-        log_warning(logger, "Operación desconocida.");
-        break;
-    }
-  */
 }
 
 
@@ -683,6 +656,7 @@ void disminuirRecurso(char* recurso){
   --recursosKernel->configuracion->INSTANCIAS_RECURSOS[position];
 }
 */
+
 
 void liberar_semaforos() {
     pthread_mutex_destroy(&mutexNumeroProceso);

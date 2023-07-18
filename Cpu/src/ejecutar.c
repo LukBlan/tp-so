@@ -2,13 +2,14 @@
 #include <conexiones.h>
 #include <estructuras.h>
 #include <recursos.h>
+#include <utils.h>
 
 void ejecutarContexto(contextoEjecucion* contexto) {
-  t_list* listaInstrucciones = contexto->instrucciones;
   int continuarEjecutando = 1;
 
   while(continuarEjecutando) {
-      t_instruccion* instruccion = list_get(listaInstrucciones, contexto->programCounter);
+    mostrarContexto(contexto);
+      t_instruccion* instruccion = list_get(contexto->instrucciones, contexto->programCounter);
       contexto->programCounter++;
       recursosCpu->registros = contexto->registros;
       continuarEjecutando = ejecutarInstruccion(contexto, instruccion);
@@ -83,11 +84,25 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, F_OPEN);
     enviarString(nombreArchivo, socketKernel);
     op_code respuestaFS = obtenerCodigoOperacion(socketKernel);
+
     switch(respuestaFS) {
-                      case SUCCESS:
-                        contexto = recibirContexto(socketKernel);
-                        break;
-              }
+      case SUCCESS:
+        puts("Entre en el switch");
+        liberarContexto(contexto);
+        puts("1");
+        puts("2");
+        contexto = recibirContexto(socketKernel);
+        puts("3");
+        continuarEjecutando = 1;
+        break;
+      case BLOCK:
+         // DO NOTHING
+        break;
+      default:
+        puts("Entre por default en F_Open");
+        break;
+    }
+
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
     enviarString(primerParametro, socketKernel);

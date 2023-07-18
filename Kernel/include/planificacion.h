@@ -7,6 +7,7 @@
   #include <string.h>
   #include <commons/log.h>
   #include <estructuras.h>
+#include <recursos.h>
 
   extern t_list* tablaGlobalDeArchivos;
   void comenzarPlanificadores();
@@ -50,4 +51,5 @@
   int findElementPosition(char array[], int size, char* target);
   void liberar_semaforos();
   void liberar_estructuras();
+  void recibirInstruccion();
 #endif

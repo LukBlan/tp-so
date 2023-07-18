@@ -62,6 +62,23 @@ void mostrarContexto(contextoEjecucion* contexto) {
   puts("----------------------------------------");
 }
 
+void mostrarTablaDeSegmentos(t_list* tablaDeSegmentosPorProceso) {
+  int cantidadProcesos = tablaDeSegmentosPorProceso->elements_count;
+  puts("--------------------- Tabla de Segmentos ------------------");
+  printf("Cantidad de Procesos %d\n", cantidadProcesos);
+  for (int i = 0; i < cantidadProcesos; i++) {
+    tablaDeSegmento* tabla = list_get(tablaDeSegmentosPorProceso, i);
+    printf("Proceso Id: %d\n", tabla->id);
+
+    int cantidadSegmentos = tabla->segmentos_proceso->elements_count;
+    printf("-------- Segmentos %d --------\n", cantidadSegmentos);
+    for (int j = 0; j < cantidadSegmentos; j++) {
+      Segmento* segmento = list_get(tabla->segmentos_proceso, j);
+      printf("id: %d base: %d limite: %d\n", segmento->id, segmento->base, segmento->limite);
+    }
+  }
+}
+
 int bitsToBytes(int bits) {
 	return (int) ceil(bits / 8.0);
 }

@@ -8,6 +8,7 @@
 #include <serializacion/buffer.h>
 #include <serializacion/tablaDeSegmentos.h>
 #include <commons/string.h>
+#include <utils.h>
 
 int crearConexionServidor(char *ip, char* puerto) {
   struct addrinfo hints;
@@ -167,9 +168,10 @@ char* recibirString(int socket) {
 void enviarTablaDeSegmentos(t_list* tablaDeSegmentos, int socketCpu, op_code codigoOperacion) {
   int tamanioTablaDeSegmentos = tamanioBytesTablaDeSegmentos(tablaDeSegmentos);
   printf("El Tamaño de la tabla de segmentos es %d\n", tamanioTablaDeSegmentos);
-  //t_buffer* buffer = generarBuffer(tamanioContexto);
-
-  //serializarContexto(buffer, contexto);
+  t_buffer* buffer = generarBuffer(tamanioTablaDeSegmentos);
+  serializarTablaDeSegmentos(buffer, tablaDeSegmentos);
+  t_list* tablaDeSegmentosRecibida = deserializarTablaDeSegmentos(buffer);
+  mostrarTablaDeSegmentos(tablaDeSegmentosRecibida);
   //t_paquete* paquete = crearPaquete(buffer, codigoOperacion);
   //enviar_paquete(paquete, socketCpu);
   //liberarPaquete(paquete);
