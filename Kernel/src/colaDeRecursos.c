@@ -55,7 +55,7 @@ void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido) {
 
   if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
     PCB* procesoTerminado = procesoEjecutandose;
-    sacarDeEjecutando();
+    sacarDeEjecutando(EXIT);
     log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
     finalizarProceso(procesoTerminado, INVALID_RESOURCE);
     liberarPcb(procesoTerminado);
@@ -105,7 +105,7 @@ void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido) 
 
   if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
     PCB* procesoTerminado = procesoEjecutandose;
-    sacarDeEjecutando();
+    sacarDeEjecutando(EXIT);
     log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
     finalizarProceso(procesoTerminado, INVALID_RESOURCE);
     liberarPcb(procesoTerminado);

@@ -7,6 +7,7 @@
   #include <string.h>
   #include <commons/log.h>
   #include <estructuras.h>
+#include <recursos.h>
 
   extern t_list* tablaGlobalDeArchivos;
   void comenzarPlanificadores();
