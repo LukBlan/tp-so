@@ -53,6 +53,12 @@ t_list* generarListaDeBloques(char* nomArchivo){
      return listaDeBlocks;
 }
 
+int darCantidadDePuntero(uint32_t* array){
+	uint32_t* cantidadDePunteros = malloc(sizeof(uint32_t));
+	memcpy(cantidadDePunteros, array, sizeof(uint32_t));
+	return *cantidadDePunteros;
+}
+
 int darUltimoPuntero(char* nomArchivo){
     t_list* listaDePuntero = generarListaDeBloques(nomArchivo);
     int ultimoPuntero = list_get(listaDePuntero, (list_size(listaDePuntero)-1));
@@ -134,46 +140,39 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo) {
             config_destroy(fcb);
 }
 
-void desocuparBloque (char* nomArchivo,int tamanioNuevo) {
+void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
     
     char* fcbPath = generarPathFCB(nomArchivo);
     t_config* fcb = config_create(fcbPath);
-    char** bloquesUsados = config_get_array_value(fcb, "bloques");
-    char* bloquesNew  = string_new();
     int punteroIndirecto = config_get_int_value(fcb,"punteroIndirecto");
-
-    int blockCount = tamanioDeArray(bloquesUsados);
-    int cantidadDeBloques = generarCantidad(tamanioNuevo);
-    int bloquesAEliminar = blockCount - cantidadDeBloques;
-
-        for(int j=blockCount; j<bloquesAEliminar ; j--) {
+    int posicionIndirecta = punteroIndirecto*tamanioBloque;
+    int bloquesViejos = darNumeroDeBloques(tamanioViejo);
+    int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
+    int bloquesAEliminar = bloquesViejos - bloquesNuevos;
+    uint32_t* arrayPunteros = darArrayDePunteros(fcb);
+    uint32_t* posicionAEliminar = malloc(sizeof(uint32_t));
+    int cantidad = cantidadDePunteros(arrayPunteros);
+    uint32_t* posicionEnBitMap = malloc(sizeof(uint32_t));
+    uint32_t* valorAModificar = malloc(sizeof(uint32_t));
+    *valorAModificar = 0;
+        for(int j=bloquesAEliminar; j>0 ; j--) {
+                    int posicionBloqueAEliminar = cantidad * sizeof(uint32_t);
                     pthread_mutex_lock(&mutexBitMap);
-                        int posicion = bloquesUsados[j-1];
-                        bitarray_clean_bit(bitMapBloque,posicion);
+                        memcpy(posicionEnBitMap, arrayPunteros + posicionBloqueAEliminar, sizeof(uint32_t));
+                        bitarray_clean_bit(bitMapBloque,*posicionEnBitMap);
                         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
                         pthread_mutex_lock(&mutexBloques);
-        			memcpy(copiaBloque + (punteroIndirecto * tamanioBloque) + (j*4), "0000", sizeof(uint32_t));
-        			pthread_mutex_unlock(&mutexBloques);
+        			memcpy(copiaBloque +  posicionBloqueAEliminar,valorAModificar , sizeof(uint32_t));
+                    pthread_mutex_unlock(&mutexBloques);
                     pthread_mutex_unlock(&mutexBitMap);
+                    cantidad--;
                 }
-
-        string_append(&bloquesNew,"[");
-    			for(int i=0;i<cantidadDeBloques;i++){
-    				if (i==0){
-    					string_append(&bloquesNew,bloquesUsados[i]);
-    				}
-
-    				else{
-    					string_append(&bloquesNew,",");
-    					string_append(&bloquesNew,bloquesUsados[i]);
-				 
-    			}
-				 }
-                 string_append(&bloquesNew,"]");
+            	free(posicionEnBitMap);
+                memcpy(arrayPunteros,&cantidad,sizeof(uint32_t));
             config_set_value(fcb,"file_size",tamanioNuevo);
-            config_set_value(fcb,"bloques",bloquesNew);
+            memcpy(copiaBloque+posicionIndirecta,arrayPunteros,tamanioBloque);
             config_destroy(fcb);
 }
 
@@ -282,9 +281,9 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
             tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
         }
         if(tamanioRestante > tamanioViejo){
-            ocuparBloque(nomArchivo,nuevoTamanio);
+            ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
         } else{
-            desocuparBloque(nomArchivo,nuevoTamanio);
+            desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
         }
 
         cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
