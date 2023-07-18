@@ -23,6 +23,20 @@ int tamanioDeArray(char** array){
 	}
 		return tamanio;
 }
+int buscar_bloque(t_config* archivo_fcb, int bloque, uint32_t* arrayDePunteros){ //--
+
+	if(bloque_a_buscar == 0){
+		int puntero_directo = config_get_int_value(archivo_fcb, "punteroDirecto");
+		return puntero_directo*recursosFileSystem->superBloque->BLOCK_SIZE;
+	}
+	else{
+		uint32_t* punteroABuscar = malloc(sizeof(uint32_t));
+		int posicionPunteroABuscar = (bloque)*sizeof(uint32_t);
+		memcpy(punteroABuscar, arrayDePunteros+posicionPunteroABuscar, sizeof(uint32_t));
+		int log_punteroABuscar = *punteroABuscar;
+		return (*punteroABuscar)*recursosFileSystem->superBloque->BLOCK_SIZE;
+	}
+}
 
 t_list* generarListaDeBloques(char* nomArchivo){
      char* fcbPath = generarPathFCB(nomArchivo);
@@ -292,15 +306,15 @@ int darOffset(int bytes){
 	int offset = division.rem;
     return offset;
 }
-/*
+
 uint32_t* darArrayDePunteros(t_config* fcb){
     uint32_t* arrayDePunteros;
     if(bloque != 0 || excedente > 0){
-		arrayDePunteros = malloc(recursosFileSystem->BLOCK_SIZE); //--
+		arrayDePunteros = malloc(recursosFileSystem->superBloque->BLOCK_SIZE); //--
 		int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
-		int punteroIndirecto = puntero_indirecto*recursosFileSystem->BLOCK_SIZE;
+		int punteroIndirecto = puntero_indirecto*recursosFileSystem->superBloque->BLOCK_SIZE;
 		//retardo
-		memcpy(arrayDePunteros, copiaBloque + punteroIndirecto, recursosFileSystem->BLOCK_SIZE);
+		memcpy(arrayDePunteros, copiaBloque + punteroIndirecto, recursosFileSystem->superBloque->BLOCK_SIZE);
 	}
     return arrayDePunteros;
 }
@@ -310,7 +324,7 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
     t_config* fcb = config_create(fcbPath);
 	int bloque = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
-	int restoAEscribir = recursosFileSystem->BLOCK_SIZE - offset;
+	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
 	int excedente = tamanio - restoAEscribir;
 
 	int tamanioAEscribirEnPrimerBloque = restoAEscribir;
@@ -333,8 +347,8 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
         int i;
 		for( i = 1; i < bloquesCompletos + 1; i++){
 			int pos_bloque_actual = buscar_bloque(fcb, bloque + i, arrayDePunteros);
-			memcpy(copiaBloque+pos_bloque_actual, datos + desplazamiento, recursosFileSystem->BLOCK_SIZE);
-			desplazamiento += recursosFileSystem->BLOCK_SIZE;
+			memcpy(copiaBloque+pos_bloque_actual, datos + desplazamiento, recursosFileSystem->superBloque->BLOCK_SIZE);
+			desplazamiento += recursosFileSystem->superBloque->BLOCK_SIZE;
 		}
 		int ultimaPosicion = buscar_bloque(fcb, bloque + i, arrayDePunteros); //--
 
@@ -343,4 +357,4 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		
 	}
 }
-*/
+
