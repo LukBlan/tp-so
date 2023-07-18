@@ -156,6 +156,34 @@ char* valorRegistro(char* primerParametro ) {
   return segundoParametro;
 }
 
+int tamanioRegistro(char* primerParametro ) {
+  if (strcmp("AX", primerParametro) == 0 ||strcmp("BX", primerParametro) == 0 ||
+ strcmp("CX", primerParametro) == 0 || strcmp("DX", primerParametro) == 0  ) {
+    return 4;
+  } else if (strcmp("EAX", primerParametro) == 0 || strcmp("EBX", primerParametro) == 0 || 
+  strcmp("ECX", primerParametro) == 0 || strcmp("EDX", primerParametro) == 0) {
+    return 8;
+  } else if (strcmp("RAX", primerParametro) == 0 || strcmp("RBX", primerParametro) == 0 || 
+  strcmp("RCX", primerParametro) == 0 || strcmp("RDX", primerParametro) == 0) {
+    return 16;
+  }
+}
+Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos,int id){
+  Segmento* seg;
+  for(int i = 0, i>list_size(listaDeSegmentos),i++){
+    if(listaDeSegmentos[i]->id == id){
+      seg = &listaDeSegmentos[i];
+      return seg;
+    }
+  }
+}
+int posicionEnMemoria(int numeroSegmento,int numeroDesplazamiento,contextoEjecucion* contexto){
+  t_lits* listaDeSegmento = contexto -> tablaSegmentos;
+  Segmento* segmentoEncontrado = buscarSegmentoPorId(numeroSegmento);
+  int baseSegmento = segmentoEncontrado -> base;
+  return baseSegmento + numeroDesplazamiento ;
+}
+
 int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
@@ -171,28 +199,53 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
   } else if (strcmp("MOV_IN", identificador) == 0) {
-    /*int direccionLogica = atoi(segundoParametro);
+    /*int direccionLogica = atoi (segundoParametro);
+    int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
+    int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = primerParametro;
-    //comprobacion MMU
-    enviarContexto(contexto, socketMemoria, MOV_IN);
-    enviarEntero(direccionLogica,socketMemoria);
-    char* parametro = recibirString(socketMemoria);
-    setearRegistro(primerParametro,parametro);
-    contexto->registros = recursosCpu->registros;
+    int tamanioALeer = darTamanioSegunRegistro(registro);
+    if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+      enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
+    }
+    int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
+    char* registro = segundoParametro;
+    enviarContexto(contexto, socketMemoria, MOV_OUT);
+    enviarEntero(posicionEnMemoria,socketMemoria);
+    enviarEntero(tamanioALeer,socketMemoria);
+    op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
+    switch(respuestaFS) {
+                      case SUCCESS:
+                        char* parametro = recibirString(socketMemoria);
+                        setearRegistro(primerParametro,parametro);
+                        contexto->registros = recursosCpu->registros;
+                        break;
+              }
+  }
     */
-	  continuarEjecutando = 0;
-	  enviarContexto(contexto, socketKernel, MOV_IN);
+	  continuarEjecutando = 1;
   } else if (strcmp("MOV_OUT", identificador) == 0) {
     /*int direccionLogica = atoi (primerParametro);
-    //comprobacion MMU
+    int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
+    int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
+    char* registro = segundoParametro;
+    int tamanioALeer = darTamanioSegunRegistro(registro);
+    if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+      enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
+    }
+    int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
     char* registro = segundoParametro;
     char* valorDeRegistro = valorRegistro(segundoParametro);
     enviarContexto(contexto, socketMemoria, MOV_OUT);
-    enviarEntero(direccionLogica,socketMemoria);
+    enviarEntero(posicionEnMemoria,socketMemoria);
     enviarString(valorDeRegistro,socketMemoria);
+     op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
+    switch(respuestaFS) {
+                      case SUCCESS:
+                        break;
+              }
+              
     */
-	  continuarEjecutando = 0;
-	  enviarContexto(contexto, socketKernel, MOV_OUT);
+	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
     char* nombreArchivo = primerParametro;
