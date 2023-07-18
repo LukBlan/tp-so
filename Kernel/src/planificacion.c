@@ -419,6 +419,7 @@ void ejecutar(PCB* proceso) {
                   case SUCCESS:
                   actualizarContexto(nuevoTruncado);
                   agregarAListo(procesoDevuelto);
+          }
       break;
     case MOV_OUT:
       puts("-------------------- Llego MOV_OUT --------------------");
