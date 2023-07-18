@@ -1,11 +1,11 @@
 #include <commons/string.h>
-#include <commons/config.h>
 #include <commons/collections/dictionary.h>
 #include <conexiones.h>
 #include <fileSystem_conexiones.h>
-#include <recursos.h>
 #include <string.h>
 #include <stdlib.h>
+#include <instrucciones.h>
+
 
 char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
@@ -71,7 +71,7 @@ int generarCantidad (int tamanioEnBytes){
 	return cantidadDeBloques;
 
 }
-void ocuparBloque( char* nomArchivo,int tamanioNuevo) {
+void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
     int puntero = darUltimoPuntero(nomArchivo);
@@ -153,7 +153,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesAEliminar = bloquesViejos - bloquesNuevos;
     uint32_t* arrayPunteros = darArrayDePunteros(fcb);
     uint32_t* posicionAEliminar = malloc(sizeof(uint32_t));
-    int cantidad = cantidadDePunteros(arrayPunteros);
+    int cantidad = darCantidadDePuntero(arrayPunteros);
     uint32_t* posicionEnBitMap = malloc(sizeof(uint32_t));
     uint32_t* valorAModificar = malloc(sizeof(uint32_t));
     *valorAModificar = 0;
