@@ -183,18 +183,19 @@ int tamanioRegistro(char* primerParametro ) {
     return 16;
   }
 }
-Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos,int id){
+Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos,int idIngresada){
   Segmento* seg;
-  for(int i = 0, i>list_size(listaDeSegmentos),i++){
-    if(listaDeSegmentos[i]->id == id){
-      seg = &listaDeSegmentos[i];
+  for(int i = 0; i>list_size(listaDeSegmentos);i++){
+	  Segmento* segmentoEncontrado  = list_get(listaDeSegmentos,i);
+	  if(segmentoEncontrado->id == idIngresada){
+    	seg = &segmentoEncontrado;
       return seg;
     }
   }
 }
 int posicionEnMemoria(int numeroSegmento,int numeroDesplazamiento,contextoEjecucion* contexto){
-  t_lits* listaDeSegmento = contexto -> tablaSegmentos;
-  Segmento* segmentoEncontrado = buscarSegmentoPorId(numeroSegmento);
+  t_list* listaDeSegmento = contexto -> tablaSegmentos;
+  Segmento* segmentoEncontrado = buscarSegmentoPorId(listaDeSegmento,numeroSegmento);
   int baseSegmento = segmentoEncontrado -> base;
   return baseSegmento + numeroDesplazamiento ;
 }
