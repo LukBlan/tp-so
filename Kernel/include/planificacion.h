@@ -51,4 +51,5 @@
   int findElementPosition(char array[], int size, char* target);
   void liberar_semaforos();
   void liberar_estructuras();
+  void recibirInstruccion();
 #endif
