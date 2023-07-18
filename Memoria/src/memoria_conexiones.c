@@ -211,9 +211,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         case MOV_OUT:
       puts("--------------- Entre MOV_OUT -------------");
       contexto = recibirContexto(socketCliente);
-      int posicion = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
+      int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       char* cosaAEscribir = recibirEntero(socketCliente);
-      memcpy(memoriaPrincipal+posicion,cosaAEscribir,sizeof(cosaAEscribir));
+      memcpy(memoriaPrincipal+posicionAMovear,cosaAEscribir,sizeof(cosaAEscribir));
       enviarContexto(contexto, socketCliente,SUCCESS);
       liberarContexto(contexto);
       break;
