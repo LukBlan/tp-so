@@ -80,7 +80,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int punteroDirecto = config_get_int_value(fcb, "punteroDirecto");
     int punteroIndirecto = config_get_int_value(fcb, "punteroIndirecto");
     uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
-    int cantidad = darCantidadDePuntero(arrayPunteros);
+    int cantidad = darCantidadDePuntero(arrayDePunteros);
     int bloquesViejos = darNumeroDeBloques(tamanioViejo);
     int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
     int bloquesAAgregar = bloquesNuevos - bloquesViejos;
@@ -93,7 +93,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                         uint32_t bloqueAUsar = i;
                         uint32_t* puntero = malloc(sizeof(uint32_t));
 		                *puntero = bloqueAUsar;
-                        memccpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
+                        memcpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
                         bitarray_set_bit(bitMapBloque,i);
                         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
                         posicionAAgregar += sizeof(uint32_t);
