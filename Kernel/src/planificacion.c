@@ -37,9 +37,11 @@ float estimacion(PCB* proceso) {
   float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
   return resultado;
 }
+
 float calcularResponseRatio (PCB* proceso) {
   return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
 }
+
 bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
   return calcularResponseRatio((PCB*)proceso1) > calcularResponseRatio((PCB*)proceso2);
 }
@@ -233,7 +235,7 @@ void sacarDeEjecutando(estadoProceso estado) {
   sem_post(&semaforoCantidadProcesosExec);
 }
 
-void actualizarContexto(contextoEjecucion* nuevoContexto){
+void actualizarContexto(contextoEjecucion* nuevoContexto) {
   liberarContexto(procesoEjecutandose->contexto);
   procesoEjecutandose->contexto = nuevoContexto;
 }
@@ -291,6 +293,7 @@ void agregarATabla (char* nombreArchivo) {
     t_queue* colaArchivo = queue_create();
     tabla1 -> colaBloqueado = colaArchivo;
 }
+
 tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
   tablaGlobal* tabla;
    for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
@@ -308,7 +311,7 @@ void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
   queue_push (tablaEncontrada -> colaBloqueado,proceso);
 }
 
-int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
+int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ) {
   int posicion;  
     for (int i = 0; i < list_size(tablaArchivos); i++){
       archivoAbierto* arch = list_get(tablaArchivos,i);
@@ -320,7 +323,7 @@ int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ){
     return posicion;
 }
 
-int encontrarEnTablaGlobal(char* nombre ){
+int encontrarEnTablaGlobal(char* nombre) {
   int posicion;  
     for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++){
       tablaGlobal* arch = list_get(tablaGlobalDeArchivos,i);
@@ -332,13 +335,13 @@ int encontrarEnTablaGlobal(char* nombre ){
     return posicion;
 }
 
-void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto){
+void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
   //ver de hacer fclose aca
   list_remove(procesoDevuelto -> contexto -> archivosAbiertos, posicion);
 }
 
-bool hayEnCola(char* nombre){
+bool hayEnCola(char* nombre) {
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombre);
   if(queue_size (tablaEncontrada -> colaBloqueado) >= 1 ){
     return true;
@@ -346,13 +349,13 @@ bool hayEnCola(char* nombre){
   return false;
 }
 
-void moverAListoColaDeArchivo(char* nombreArchivo){
+void moverAListoColaDeArchivo(char* nombreArchivo) {
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
   PCB* procesoAListo = queue_pop (tablaEncontrada -> colaBloqueado);
   agregarAListo(procesoAListo);
 }
 
-void eliminarDeTablaGlobal(char* nombreArchivo){
+void eliminarDeTablaGlobal(char* nombreArchivo) {
   int posicion = encontrarEnTablaGlobal(nombreArchivo);
   list_remove(tablaGlobalDeArchivos,posicion);
 }

@@ -2,8 +2,9 @@
 #include <estructuras.h>
 #include <recursos.h>
 #include <planificacion.h>
+#include <utils.h>
 
-t_list* cargarListaDeRecursos(void){
+t_list* cargarListaDeRecursos(void) {
   t_list* listaRecursos = list_create();
 
   t_list* recursosDeLaConfig = recursosKernel->configuracion->RECURSOS;
@@ -26,12 +27,12 @@ t_list* cargarListaDeRecursos(void){
   return listaRecursos;
 }
 
-t_queue* crearColaRecursosBloqueados(void){
+t_queue* crearColaRecursosBloqueados(void) {
   t_queue* colaRecursosBloqueados = queue_create();// creo la lista de recursos
   return colaRecursosBloqueados;
 }
 
-t_queue* devuelvoColaBloqueados(colaRecBloqueados){
+t_queue* devuelvoColaBloqueados(colaRecBloqueados) {
   return colaRecBloqueados;
 }
 
@@ -52,7 +53,7 @@ void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido) {
     }
   }
 
-  if(existeRecurso == 0){ //sino existe recurso lo mando al EXIT
+  if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
     PCB* procesoTerminado = procesoEjecutandose;
     sacarDeEjecutando();
     log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
@@ -61,12 +62,12 @@ void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido) {
   }
 }
 
-void procesarRecursoWait(char* recursopedido){
+void procesarRecursoWait(char* recursopedido) {
   t_list* listRecursos = cargarListaDeRecursos();
   validoExistenciaDeRecursoWait(listRecursos, recursopedido);
 }
 
-void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados){
+void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {
 
   int cantidadInstancias = registroRecurso->cantidad_inst_recurso;
   if(cantidadInstancias > 0){
@@ -80,7 +81,7 @@ void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* c
   }
 }
 
-void procesarRecursoSignal(char* recpedido){
+void procesarRecursoSignal(char* recpedido) {
   t_list* listaRecursos;
   validoExistenciaDeRecursoSignal(listaRecursos,recpedido);
 }
@@ -102,7 +103,7 @@ void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido) 
     }
   }
 
-  if(existeRecurso == 0){ //sino existe recurso lo mando al EXIT
+  if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
     PCB* procesoTerminado = procesoEjecutandose;
     sacarDeEjecutando();
     log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");

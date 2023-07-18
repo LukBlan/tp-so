@@ -12,5 +12,10 @@
   t_list* generarListaDeInstrucciones(int socketCliente);
   PCB* crearPcb(t_list* listaInstrucciones);
   void conectar_con_fileSystem();
-
+  void agregarANew(PCB* pcb);
+  void crearSocketKernel();
+  t_list* obtenerListaInstruciones(int socketCliente);
+  void agregarConsolaALista(PCB* pcb, int socketCliente);
+  void recibirSegementoMemoria(PCB* pcb);
+  void terminoProceso();
 #endif

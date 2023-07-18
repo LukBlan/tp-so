@@ -14,5 +14,6 @@
   int tamanioBytesListaArchivosAbiertos(t_list* listaArchivos);
   void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, int* posicion);
   t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion);
-
+  void serializarRegistros(t_buffer* buffer, t_registros registros, int* posicion);
+  t_registros deserializarRegistros(t_buffer* buffer, int* posicion);
 #endif

@@ -9,4 +9,13 @@
       t_queue* colaBloqueados;
   } recursoSolicitados;
 
+  t_list* cargarListaDeRecursos(void);
+  t_queue* crearColaRecursosBloqueados(void);
+  t_queue* devuelvoColaBloqueados(colaRecBloqueados);
+  void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido);
+  void procesarRecursoWait(char* recursopedido);
+  void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados);
+  void procesarRecursoSignal(char* recpedido);
+  void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido);
+  void procesarRecursoExistenteSignal(recursoSolicitados* registroRecurso,t_queue* colaBloqueados);
 #endif
