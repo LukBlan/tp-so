@@ -110,6 +110,20 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
 
     pthread_mutex_unlock(&mutexColaBlock);
 
+    // Despierto al planificador de largo plazo
+
+    sem_post(&largoPlazo);
+}
+void agregar_proceso_bloqueado_io(PCB *procesoBloqueado) {
+    procesoBloqueado->estimadoRafaga = estimacion(procesoBloqueado);
+    procesoBloqueado->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+    pthread_mutex_lock(&mutexColaBlock);
+
+    queue_push(colaBlock, procesoBloqueado);
+    log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO.", procesoBloqueado->pid);
+
+    pthread_mutex_unlock(&mutexColaBlock);
+
     // Despierto dispositivo I/O
     sem_post(&blockCounter);
 
@@ -307,6 +321,8 @@ tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
 }
 
 void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
+  proceso->estimadoRafaga = estimacion(proceso);
+    proceso->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(proceso);
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
   queue_push (tablaEncontrada -> colaBloqueado,proceso);
 }
@@ -393,6 +409,7 @@ void ejecutar(PCB* proceso) {
        char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
+      agregar_proceso_bloqueado(procesoDevuelto);
       enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_TRUNCATE);
       enviarString(nombreArchivoATruncar,socketFileSystem);
       enviarEntero(tamanioNuevo,socketFileSystem);
@@ -400,7 +417,7 @@ void ejecutar(PCB* proceso) {
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
           switch(respuestaTruncado) {
                   case SUCCESS:
-                    actualizarContexto(nuevoFS);
+                  actualizarContexto(nuevoTruncado);
                   agregarAListo(procesoDevuelto);
       break;
     case MOV_OUT:
@@ -487,7 +504,7 @@ void ejecutar(PCB* proceso) {
       puts("-------------------- Llego IO --------------------");
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
       sacarDeEjecutando(BLOCK);
-      agregar_proceso_bloqueado(procesoDevuelto);
+      agregar_proceso_bloqueado_io(procesoDevuelto);
       break;
     case EXIT:
       puts("-------------------- Llego Exit --------------------");
@@ -615,6 +632,7 @@ void ejecutar(PCB* proceso) {
     }
   */
 }
+
 
 
 void agregarFinalizado(PCB* proceso) {
