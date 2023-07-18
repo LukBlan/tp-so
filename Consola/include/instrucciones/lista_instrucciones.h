@@ -4,5 +4,5 @@
   #include <commons/collections/list.h>
 
   void generarListaDeInstrucciones(t_list* listaInstrucciones);
-
+  void filtrarListaStrings(t_list* listaStrings);
 #endif

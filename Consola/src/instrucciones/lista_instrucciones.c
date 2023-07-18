@@ -15,6 +15,7 @@ void filtrarListaStrings(t_list* listaStrings) {
     }
   }
 }
+
 void generarListaDeInstrucciones(t_list* listaInstrucciones) {
   char* fileAsString = getFileAsString();
   t_list* listaStrings = list_create();

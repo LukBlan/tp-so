@@ -77,6 +77,7 @@ void procesarOperacionRecibida(int socketCliente) {
     }
   }
 }
+
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
