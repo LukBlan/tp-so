@@ -154,7 +154,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int idProceso = recibirEntero(socketCliente);
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
-      op_code respuestaMemoria;
+      respuestaMemoria = Pcb; // Se usa cuando se compacta
 
       if (puedoGuardar(tamanioSegmento)) {
         printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
@@ -168,9 +168,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         respuestaMemoria = OUT_OF_MEMORY;
       }
 
-      printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
-      printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
-      enviarContexto(contexto, socketCliente, respuestaMemoria);
+      if (respuestaMemoria == COMPACTACION) {
+        enviarTablaDeSegmentos(tablaDeSegmentosPorProceso, socketCliente, COMPACTACION);
+      } else {
+        printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
+        printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
+        enviarContexto(contexto, socketCliente, respuestaMemoria);
+      }
+
       liberarContexto(contexto);
       break;
 

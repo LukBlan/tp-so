@@ -9,6 +9,7 @@ Segmento* segmentoCero;
 char* arrayDeHuecos;
 t_bitarray* bitMapSegmento;
 t_list* tablaDeSegmentosPorProceso;
+op_code respuestaMemoria;
 
 void iniciarSegmentacion() {
     int tamanio = recursosMemoria->configuracion->TAM_MEMORIA;
@@ -137,6 +138,7 @@ void compactacion() {
   t_list* listaDeProcesosConContenido = obtenerContenidoSegmentos();
   limpiarArrayBits();
   ocuparMemoriaPrincipal(listaDeProcesosConContenido);
+  respuestaMemoria = COMPACTACION;
 }
 
 Segmento* buscarCandidato(int tamanio) {
