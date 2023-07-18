@@ -12,6 +12,7 @@
   extern t_bitarray* bitMapSegmento;
   extern Segmento* segmentoCero;
   extern t_list* tablaDeSegmentosPorProceso;
+  extern op_code respuestaMemoria;
 
   typedef struct {
     int idSegmento;

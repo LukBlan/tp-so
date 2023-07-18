@@ -94,6 +94,7 @@
     SEGMENTATION_FAULT,
     SUCCESS,
     INVALID_RESOURCE,
+    COMPACTACION,
   } op_code;
 
   typedef struct {
