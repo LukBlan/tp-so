@@ -326,4 +326,46 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		
 	}
 }
+/*char* leer_datos(char* nomArchivo, int posicion, int tamanio){
+	char* fcbPath = generarPathFCB(nomArchivo);
+    t_config* fcb = config_create(fcbPath);
 
+	int bloque = darNumeroBloque(posicion);
+	int offset = darOffset(posicion);
+
+	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
+	int excedente = tamanio - restoAEscribir;
+
+	int lecturaEnBloqueUno = restoAEscribir;
+	
+    if(tamanio < restoAEscribir){
+		lecturaEnBloqueUno = tamanio;
+	}
+
+	char* datosLeidos = malloc(tamanio);
+
+	uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
+
+	int posicionBloqueABuscar = buscar_bloque(fcb, bloque, arrayDePunteros); //--
+	memcpy(datosLeidos, copiaBloque+posicionBloqueABuscar+offset_bloque, lecturaEnBloqueUno);
+
+	if(excedente > 0){
+		int bloquesCompletos = darNumeroBloque(excedente);
+		int offsetBloque = darNumeroOffset(excedente);
+		int extra;
+		int desplazamientoLeido = restoAEscribir;
+		for(extra = 1; extra < bloquesCompletos + 1; extra++){
+			int posicionActual = buscar_bloque(fcb, bloque + extra, arrayDePunteros); //--
+
+			memcpy(datosLeidos + desplazamientoLeido, copiaBloque + posicionActual, recursosFileSystem->superBloque->BLOCK_SIZE);
+
+			desplazamientoLeido += recursosFileSystem->superBloque->BLOCK_SIZE;
+		}
+		int ultimaPosicion = buscar_bloque(fcb, bloque + extra, arrayDePunteros); //--
+
+		memcpy(datosLeidos + desplazamientoLeido, copiaBloque + ultimaPosicion, offsetBloque);
+	}
+
+	return datosLeidos;
+}
+*/
