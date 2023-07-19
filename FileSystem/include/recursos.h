@@ -65,5 +65,7 @@ typedef struct{
   void cargarBloques();
   void cargarBitMap();
   void cargarSuperbloque();
+  void generarListaDeFCB();
+  void iniciarFCBExistente();
 
 #endif

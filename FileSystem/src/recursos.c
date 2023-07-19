@@ -4,6 +4,7 @@
 #include <commons/config.h>
 #include <unistd.h>
 #include <utils.h>
+#include <dirent.h>
 
 t_recursos* recursosFileSystem;
 void* copiaBloque;
@@ -108,7 +109,7 @@ void cargarBloques() {
 
 		close(fileDescriptor);
 }
-void inicializar_fcbs(){
+void iniciarFCBExistente(){
 	DIR *directorioFCB = opendir(recursosFileSystem->configuracion->PATH_FCB);
 	struct dirent *fcb;
 
@@ -129,7 +130,7 @@ void inicializar_fcbs(){
 		char* path_archivo = malloc(strlen(recursosFileSystem->configuracion->PATH_FCB) + strlen(fcb->d_name));
 		strcpy(path_archivo, recursosFileSystem->configuracion->PATH_FCB);
 		strcat(path_archivo, fcb->d_name);
-		archivo->archivo_fcb = config_create(path_archivo);
+		archivo->configFCB = config_create(path_archivo);
 
 		list_add(listaDeFCB, archivo);
 	}
