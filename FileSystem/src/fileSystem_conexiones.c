@@ -92,7 +92,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("a");
       contexto = fcreate(nomArchivo, contexto);
       puts("b");
-      enviarContexto(contexto,socketCliente,SUCCESS);
+      enviarContexto(contexto,socketCliente,SUCCESS_OPEN);
       liberarContexto(contexto);
     break;
 
@@ -105,7 +105,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("a");
       contexto = ftruncar(nombreArchivo, contexto,tamanio);
       puts("b");
-      enviarContexto(contexto,socketCliente,SUCCESS);
+      enviarContexto(contexto,socketCliente,SUCCESS_TRUNCATE);
       liberarContexto(contexto);
     break;
       case F_WRITE:
@@ -119,7 +119,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarEntero(direccionAEscribir,socketMemoria);
       char* datosParaEscribir = recibirString(socketMemoria);
       fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
-      enviarContexto(contexto,socketCliente,SUCCESS);
+      enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
       liberarContexto(contexto);
       break;
       case F_READ:
@@ -135,9 +135,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarEntero(posicionARead,socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
       switch(respuestaMemoria){
-        case SUCCESS:
+        case SUCCESS_READ_MEMORY:
         puts("Volvi de memoria");
-        enviarContexto(contexto,socketCliente,SUCCESS);
+        enviarContexto(contexto,socketCliente,SUCCESS_READ);
         liberarContexto(contexto);
         break;
         default:

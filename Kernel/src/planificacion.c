@@ -350,7 +350,11 @@ int encontrarEnTablaGlobal(char* nombre) {
     }
     return posicion;
 }
-
+int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto){
+  int posicion = encontrarEnTablaDeArchivos(contexto-> archivosAbiertos,nomArchivo);
+  archivoAbierto* arch = list_get(contexto-> archivosAbiertos,posicion);
+  int puntero = (int) ftell(arch->punteroArchivo);
+}
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
   //ver de hacer fclose aca
@@ -427,7 +431,7 @@ void recibirInstruccion() {
       op_code respuestaTruncado = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
       switch(respuestaTruncado) {
-        case SUCCESS:
+        case SUCCESS_TRUNCATE:
         actualizarContexto(nuevoTruncado);
         agregarAListo(procesoDevuelto);
         break;
@@ -460,11 +464,11 @@ void recibirInstruccion() {
           op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
           contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
           switch(respuestaFS) {
-            case SUCCESS:
+            case SUCCESS_OPEN:
               puts("Entre en SUCCESS");
               actualizarContexto(nuevoFS);
               //agregarATablaArchivo(nuevoFS);
-              enviarContexto(nuevoFS, socketCpu, SUCCESS);
+              enviarContexto(nuevoFS, socketCpu, SUCCESS_OPEN_CPU);
               recibirInstruccion();
               break;
             default:
@@ -503,7 +507,7 @@ void recibirInstruccion() {
       } else {
         eliminarDeTablaGlobal(nombrArchivo);
       }
-      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
+      enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS_CLOSE);
       free(nombrArchivo);
       break;
 
@@ -521,14 +525,37 @@ void recibirInstruccion() {
 
     case F_READ:
       puts("-------------------- Llego F_READ --------------------");
-      sacarDeEjecutando(READY);
+      sacarDeEjecutando(BLOCK);
+      agregar_proceso_bloqueado(procesoDevuelto);
       agregarAListo(procesoDevuelto);
       break;
 
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");
-      sacarDeEjecutando(READY);
+      sacarDeEjecutando(BLOCK);
+      agregar_proceso_bloqueado(procesoDevuelto);
+      char* nombreArchivoAEscribir = recibirString(socketCpu);
+      int posicionEnMemoria = recibirEntero(socketCpu);
+      int tamanioAEscribir = recibirEntero (socketCpu);
+      int posicionDeArchivo = obtenerPosicion(nombreArchivoAEscribir,procesoDevuelto->contexto);
+      enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_WRITE);
+      enviarString(nombreArchivoAEscribir,socketFileSystem);
+      enviarEntero(posicionEnMemoria,socketFileSystem);
+      enviarEntero(tamanioAEscribir,socketFileSystem);
+      enviarEntero(posicionDeArchivo,socketFileSystem);
       agregarAListo(procesoDevuelto);
+      op_code respuestaEscritura = obtenerCodigoOperacion(socketFileSystem);
+      contextoEjecucion* nuevoEscrito = recibirContexto(socketFileSystem);
+      switch(respuestaEscritura) {
+        case SUCCESS_WRITE:
+        actualizarContexto(nuevoEscrito);
+        agregarAListo(procesoDevuelto);
+        break;
+
+        default:
+          puts("Entre por el default");
+          break;
+      }
       break;
 
     case IO:

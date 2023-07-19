@@ -86,7 +86,7 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     op_code respuestaFS = obtenerCodigoOperacion(socketKernel);
 
     switch(respuestaFS) {
-      case SUCCESS:
+      case SUCCESS_OPEN_CPU:
         puts("Entre en el switch");
         liberarContexto(contexto);
         puts("1");
@@ -294,6 +294,7 @@ int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instrucci
   char* segundoParametro = instruccion->strings[2];
   char* tercerParametro = instruccion->strings[3];
   int continuarEjecutando;
+  int socketKernel = recursosCpu->conexiones->socketKernel;
 
   log_info(logger, "Ejecutando %s %s %s %s", identificador, primerParametro, segundoParametro, tercerParametro);
   if (strcmp("F_READ", identificador) == 0) {
@@ -301,7 +302,20 @@ int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instrucci
     enviarContexto(contexto, recursosCpu->conexiones->socketKernel, F_READ);
   } else if (strcmp("F_WRITE", identificador) == 0) {
     continuarEjecutando = 0;
+    char* nombreArchivoAEscribir = primerParametro;
+    int direccionLogica = atoi(segundoParametro);
+    int tamanio = atoi(tercerParametro);
+    int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
+    int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
+    if(numeroDesplazamiento + tamanio > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+      enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
+      return continuarEjecutando;
+    }
+    int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
     enviarContexto(contexto, recursosCpu->conexiones->socketKernel, F_WRITE);
+    enviarString(nombreArchivoAEscribir,socketKernel);
+    enviarEntero(posicion,socketKernel);
+    enviarEntero(tamanio,socketKernel);
   }
 
   return continuarEjecutando;
