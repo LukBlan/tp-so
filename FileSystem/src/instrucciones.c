@@ -102,7 +102,12 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int cantidad = darCantidadDePuntero(arrayDePunteros);
     int bloquesViejos = darNumeroDeBloques(tamanioViejo);
     int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
+    int offset = darOffset(tamanioNuevo);
+
     int bloquesAAgregar = bloquesNuevos - bloquesViejos;
+    if(offset != 0){
+    	bloquesAAgregar ++;
+    }
     int posicionAAgregar = (cantidad+ 1)*sizeof(uint32_t);
 
         for(int j = bloquesAAgregar ; j>0; j--) {
@@ -123,11 +128,15 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                 }
             }
             memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
+
  pthread_mutex_lock(&mutexBloques);
                         memcpy(copiaBloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, sizeof(uint32_t));
                         pthread_mutex_unlock(&mutexBloques); 
-            config_set_value(fcb,"file_size", tamanioNuevo);
-            config_destroy(fcb);
+                        char* tamanioEnTexto = malloc(10);
+                                sprintf(tamanioEnTexto,"%d",tamanioNuevo);
+                                config_set_value(fcb,"file_size",tamanioEnTexto);
+            config_save(fcb);
+                                config_destroy(fcb);
 }
 
 void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
@@ -160,8 +169,11 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                 }
             	free(posicionEnBitMap);
                 memcpy(arrayPunteros,&cantidad,sizeof(uint32_t));
-            config_set_value(fcb,"file_size",tamanioNuevo);
+                char* tamanioEnTexto = malloc(10);
+                        sprintf(tamanioEnTexto,"%d",tamanioNuevo);
+                        config_set_value(fcb,"file_size",tamanioEnTexto);
             memcpy(copiaBloque+posicionIndirecta,arrayPunteros,tamanioBloque);
+            config_save(fcb);
             config_destroy(fcb);
 }
 
@@ -212,7 +224,10 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 
 void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
         t_config* fcb = obtener_archivo(nomArchivo);
-        config_set_value(fcb,"file_size",nuevoTamanio);
+        nuevoTamanio = malloc(10);
+        char* tamanioEnTexto = malloc(10);
+        sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+        config_set_value(fcb,"file_size",tamanioEnTexto);
         config_destroy(fcb);
     }
 int tamanioDeFCB(char* nomArchivo){
@@ -223,14 +238,11 @@ int tamanioDeFCB(char* nomArchivo){
     }
 uint32_t buscar_bloque_libre(){ //busca un bloque libre y lo ocupa
 int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;	
-    for(int i = 0; i < bloquesDelSist; i++){
-		pthread_mutex_lock(&mutexBitMap);
-        log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 0", i);
-        if(bitarray_test_bit(bitMapBloque, i)== 0){
+    for(int i = 0; i < bytesDelBitarray; i++){
+        if(!bitarray_test_bit(bitMapBloque, i)){
 			bitarray_set_bit(bitMapBloque, i);
 			log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
-			msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-            pthread_mutex_unlock(&mutexBitMap);
+
             return i;
 		}
 	}
@@ -239,35 +251,53 @@ int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
 }
 void generarPunteroDirecto(char* nomArchivo,t_config* fcb){
 	int i = buscar_bloque_libre();
-	config_set_value(fcb,"punteroDirecto",i);
+	char* punteroEnTexto = malloc(10);
+	sprintf(punteroEnTexto,"%d",i);
+	        config_set_value(fcb,"punteroDirecto",punteroEnTexto);
+	        config_save(fcb);
 	       
 }
 
 void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
 		int i = buscar_bloque_libre();
-	    config_set_value(fcb,"punteroDirecto",i);
+		char* punteroEnTexto = malloc(10);
+			sprintf(punteroEnTexto,"%d",i);
+			        config_set_value(fcb,"punteroIndirecto",punteroEnTexto);
+			        config_save(fcb);
 	}
 
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
   //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
   t_config* fcb = obtener_archivo(nomArchivo);
-  int tamanioViejo = tamanioDeFCB(nomArchivo);
-  int tamanioRestante;
+  int tamanioViejo = config_get_int_value(fcb,"file_size");
+  int tamanioRestante = nuevoTamanio;
+  int tamanioBloque = recursosFileSystem->superBloque->BLOCK_SIZE;
 
   if(tamanioViejo == 0) {
     generarPunteroDirecto(nomArchivo,fcb);
     generarPunteroIndirecto(nomArchivo,fcb);
-    int punteroDirecto = config_get_int_value(fcb,"punteroDirecto");
-    bitarray_set_bit(bitMapBloque,punteroDirecto);
-    tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
+    tamanioRestante = nuevoTamanio - tamanioBloque;
   }
 
   if(tamanioRestante > tamanioViejo) {
   ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
-  } else {
+  } else if (tamanioViejo > tamanioRestante) {
   desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
+  }else if (tamanioRestante == 0){
+	  char* tamanioEnTexto = malloc(10);
+	  sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+	  config_set_value(fcb,"file_size",tamanioEnTexto);
+	  config_save(fcb);
+	  puts("Llego aca");
+	  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   }
+  char* tamanioEnTexto = malloc(10);
+  sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+  config_set_value(fcb,"file_size",tamanioEnTexto);
+  config_save(fcb);
+  puts("Llego aca");
+  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   config_destroy(fcb);
   return contexto;
 }
