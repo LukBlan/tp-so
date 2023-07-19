@@ -3,7 +3,7 @@
 #include <recursos.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <signal.h>
 t_recursos* recursosMemoria;
 
 void crearRecursosMemoria() {
@@ -62,3 +62,15 @@ void liberarRecursos() {
   free(recursosMemoria->conexiones);
   free(recursosMemoria);
 }
+void termination_handler(int signum){
+	 liberarRecursos();
+	 exit(-1);
+ }
+
+void agarrarSenial(){
+	struct sigaction nuevaAccion;
+	nuevaAccion.sa_handler = termination_handler;
+	sigaction(SIGTERM,&nuevaAccion, NULL);
+	}
+
+

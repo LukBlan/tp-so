@@ -55,6 +55,8 @@
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathArchivoConfiguracion);
   void liberarRecursos();
+  void agarrarSenial();
+  void termination_handler(int signum);
   void cargarBloques();
   void cargarBitMap();
   void cargarSuperbloque();

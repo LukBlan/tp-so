@@ -34,5 +34,6 @@
   void cargarLogger(char* pathLogger);
   void cargarConfiguracion(char* pathArchivoConfiguracion);
   void liberarRecursos();
-
+  void termination_handler(int signum);
+  void agarrarSenial();
 #endif

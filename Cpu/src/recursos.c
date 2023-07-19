@@ -5,7 +5,7 @@
 #include <commons/config.h>
 #include <unistd.h>
 #include <math.h>
-
+#include <signal.h>
 t_recursos* recursosCpu;
 
 void crearRecursosCpu() {
@@ -64,6 +64,7 @@ void liberarRecursos() {
   }
 
   if (recursosCpu->conexiones->socketCpu > 0) {
+	log_info(recursosCpu->logger, "Cerrando Servidor de Cpu...");
     close(recursosCpu->conexiones->socketCpu);
   }
 
@@ -82,3 +83,13 @@ void liberarRecursos() {
   free(recursosCpu->conexiones);
   free(recursosCpu);
 }
+void termination_handler(int signum){
+	 liberarRecursos();
+	 exit(-1);
+ }
+
+void agarrarSenial(){
+	struct sigaction nuevaAccion;
+	nuevaAccion.sa_handler = termination_handler;
+	sigaction(SIGTERM,&nuevaAccion, NULL);
+	}

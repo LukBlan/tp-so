@@ -3,6 +3,7 @@
 #include <recursos.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 
 t_queue* colaNew;
 t_list *colaReady;
@@ -94,6 +95,7 @@ void liberarRecursos() {
   }
 
   if (recursosKernel->conexiones->socketCpu > 0) {
+	log_info(recursosKernel->logger, "Cerrando Servidor kernel...");
     close(recursosKernel->conexiones->socketCpu);
   }
 
@@ -117,6 +119,17 @@ void liberarRecursos() {
   free(recursosKernel->conexiones);
   free(recursosKernel);
 }
+void termination_handler(int signum){
+	 liberarRecursos();
+	 exit(-1);
+ }
+
+void agarrarSenial(){
+	struct sigaction nuevaAccion;
+	nuevaAccion.sa_handler = termination_handler;
+	sigaction(SIGTERM,&nuevaAccion, NULL);
+	}
+
 
 void iniciarColas() {
   colaNew = queue_create();

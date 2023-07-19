@@ -32,5 +32,8 @@
   void cargarConfiguracion(char* pathConfiguracin);
   void cargarLogger(char* pathLogger);
   void liberarRecursos();
+  void agarrarSenial();
+  void termination_handler(int signum);
   void llamarAMmu(int direccion_logica);
+
 #endif

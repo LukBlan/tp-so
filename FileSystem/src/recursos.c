@@ -4,7 +4,7 @@
 #include <commons/config.h>
 #include <unistd.h>
 #include <utils.h>
-
+#include <signal.h>
 t_recursos* recursosFileSystem;
 void* copiaBloque;
 pthread_mutex_t mutexBloques;
@@ -123,6 +123,7 @@ void liberarRecursos() {
   }
 
   if (recursosFileSystem->conexiones->socketFileSystem > 0) {
+	log_info(recursosFileSystem->logger, "Cerrando Servidor de FileSystem...");
     close(recursosFileSystem->conexiones->socketFileSystem);
   }
 
@@ -138,3 +139,14 @@ void liberarRecursos() {
   free(recursosFileSystem->conexiones);
   free(recursosFileSystem);
 }
+void termination_handler(int signum){
+	 liberarRecursos();
+	 exit(-1);
+ }
+
+void agarrarSenial(){
+	struct sigaction nuevaAccion;
+	nuevaAccion.sa_handler = termination_handler;
+	sigaction(SIGTERM,&nuevaAccion, NULL);
+	}
+

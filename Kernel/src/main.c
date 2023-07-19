@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
-
+  agarrarSenial();
   crearRecursos();
   cargarLogger("kernel.log");
   cargarConfiguracion(argv[1]);
