@@ -39,6 +39,7 @@
     BLOCK,
     EXITSTATE
   } estadoProceso;
+
   typedef struct {
     char* nomArchivo;
     t_queue* colaBloqueado;

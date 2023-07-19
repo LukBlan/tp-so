@@ -454,6 +454,10 @@ void actualizarSegmentosProcesos(t_list* tablaDeSegmentos) {
   }
 }
 
+void agregarATablaArchivo(contextoEjecucion* contexto, char* nombreArchivo) {
+
+}
+
 void ejecutar(PCB* proceso) {
   // Esta parte envia a cpu
   procesoEjecutandose = proceso;
@@ -523,6 +527,7 @@ void recibirInstruccion() {
       char* nombreArchivo = recibirString(socketCpu);
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
         if(estaEnTablaGlobal(nombreArchivo)) {
+          agregarATablaArchivo(procesoDevuelto->contexto, nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
@@ -533,11 +538,12 @@ void recibirInstruccion() {
 
           op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
           contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
+
           switch(respuestaFS) {
             case SUCCESS_OPEN:
               puts("Entre en SUCCESS");
               actualizarContexto(nuevoFS);
-              //agregarATablaArchivo(nuevoFS);
+              agregarATablaArchivo(nuevoFS, nombreArchivo);
               enviarContexto(nuevoFS, socketCpu, SUCCESS_OPEN_CPU);
               recibirInstruccion();
               break;
@@ -585,11 +591,17 @@ void recibirInstruccion() {
       puts("-------------------- Llego F_SEEK --------------------");
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
+      puts("1");
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
+      puts("2");
       int posicionEnTabla = encontrarEnTablaDeArchivos(archivosAbiertos,nomArchivo);
+      puts("3");
       archivoAbierto* arch = list_get(archivosAbiertos,posicionEnTabla);
+      puts("4");
       fseek(arch->punteroArchivo, posicion, SEEK_SET);
+      puts("5");
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
+      puts("6");
       free(nomArchivo);
       break;
 

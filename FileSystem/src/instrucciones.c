@@ -7,10 +7,11 @@
 #include <instrucciones.h>
 
 
-bool existe_fcb(char* nombre_archivo){
+bool existe_fcb(char* nombre_archivo) {
 	for(int i = 0; i < list_size(listaDeFCB); i++){
 		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
-
+		printf("Nombre archivo %s\n", nombre_archivo);
+		printf("Nombre archivo FCB %s\n", archivo_buscado->nombre_archivo);
 		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
 			return true;
 		}
@@ -185,9 +186,10 @@ archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
   puts("-3");
-  if(existe_fcb(nomArchivo)){
+  if(existe_fcb(nomArchivo)) {
 	  return contexto;
   }
+  puts("-2.1");
 	char* path_archivo = generarPathFCB(nomArchivo);
    
 	puts("-2.2");
@@ -373,14 +375,12 @@ char* fLectura(char* nomArchivo, int posicion, int tamanio){
 
 	int lecturaEnBloqueUno = restoAEscribir;
 	
-    if(tamanio < restoAEscribir){
+  if(tamanio < restoAEscribir) {
 		lecturaEnBloqueUno = tamanio;
 	}
 
 	char* datosLeidos = malloc(tamanio);
-
 	uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
-
 	int posicionBloqueABuscar = buscar_bloque(fcb, bloque, arrayDePunteros); //--
 	memcpy(datosLeidos, copiaBloque+posicionBloqueABuscar+offset, lecturaEnBloqueUno);
 

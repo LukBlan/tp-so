@@ -6,6 +6,7 @@
 #include <utils.h>
 #include <dirent.h>
 #include <signal.h>
+
 t_recursos* recursosFileSystem;
 void* copiaBloque;
 pthread_mutex_t mutexBloques;
@@ -14,6 +15,7 @@ int bytesDelBitarray;
 t_bitarray* bitMapBloque;
 t_list* listaDeFCB;
 void* bitmapMapeado;
+void* bloque;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -82,34 +84,14 @@ void cargarBitMap() {
 }
 
 void cargarBloques() {
-  copiaBloque = malloc(recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
+  int tamanioTotalBloques = recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT;
+  copiaBloque = malloc(tamanioTotalBloques);
   int fileDescriptor = open(recursosFileSystem->configuracion->PATH_BLOQUES, O_CREAT | O_RDWR,0664);
-  ftruncate(fileDescriptor, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
-  void* bloque = mmap(NULL, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
-  pthread_mutex_lock(&mutexBloques);
-		memcpy(copiaBloque,bloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
-		pthread_mutex_unlock(&mutexBloques);
-		while(1){ 
-
-			sleep(recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE);
-			pthread_mutex_lock(&mutexBloques);
-			memcpy(bloque,copiaBloque,recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT);
-			pthread_mutex_unlock(&mutexBloques);
-			int sincronizacion = msync(bloque, recursosFileSystem->superBloque->BLOCK_SIZE * recursosFileSystem->superBloque->BLOCK_COUNT, MS_SYNC);
-			if(sincronizacion == -1){
-        
-        printf("fallo en la sincronizacion\n");
-        
-        }
-			else{
-        
-        printf("se realizo una sincronizacion exitosa\n");
-        
-        }
-		}
-
-		close(fileDescriptor);
+  ftruncate(fileDescriptor, tamanioTotalBloques);
+  bloque = mmap(NULL, tamanioTotalBloques, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);;
+  //msync(bloque, tamanioTotalBloques, MS_SYNC);
 }
+
 void iniciarFCBExistente(){
 	DIR *directorioFCB = opendir(recursosFileSystem->configuracion->PATH_FCB);
 	struct dirent *fcb;
@@ -172,6 +154,12 @@ void liberarRecursos() {
   free(recursosFileSystem->conexiones);
   free(recursosFileSystem);
 }
+
+void inicializarSemaforos() {
+  pthread_mutex_init(&mutexBloques, NULL);
+  pthread_mutex_init(&mutexBitMap, NULL);
+}
+
 void termination_handler(int signum){
 	 liberarRecursos();
 	 exit(-1);
