@@ -74,6 +74,7 @@
   extern sem_t blockCounter;
 
   extern sem_t largoPlazo;
+  extern sem_t fOpenFS;
 
   extern sem_t semaforoCantidadProcesosExec;
   extern sem_t comunicacionMemoria;

@@ -25,6 +25,7 @@ pthread_mutex_t mutexcantidadProcesosMemoria;
 sem_t semProcesoNew;
 sem_t semProcesoReady;
 sem_t semaProcesoExec;
+sem_t fOpenFS;
 
 sem_t blockCounter;
 
@@ -138,4 +139,5 @@ void iniciarSemaforos() {
   sem_init(&blockCounter, 0, 0);
   sem_init(&semaforoCantidadProcesosExec, 0, 1);
   sem_init(&largoPlazo, 0, 0);
+  sem_init(&fOpenFS);
 }

@@ -379,6 +379,32 @@ void eliminarDeTablaGlobal(char* nombreArchivo) {
 void iniciarTablaGlobal() {
   tablaGlobalDeArchivos = list_create();
 }
+void procesarFS(){
+  op_code cop;
+  int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
+  while (socketFileSystem != -1){
+    cop = obtenerCodigoOperacion(socketFileSystem);
+  
+  switch(cop){
+		case FIN_F_OPEN:
+			t_list* paquete = recibir_paquete(fd_modulo);
+	    op_code* cop2 = list_get(paquete, 0);
+	    free(cop2);
+	    list_destroy(paquete);
+			sem_post(&fOpenFS)
+			break;
+  }
+}
+void ejecutarFOpen(char* nomArchivo,contextoEjecucion* contexto){
+          
+          t_paquete* paquete = crear_paquete(F_OPEN);
+          enviarString(nomArchivo, socketFileSystem);
+          sem_wait(&fOpenFS);
+              puts("Entre en SUCCESS");
+              agregarATabla(nomArchivo);
+              agregarATablaArchivo(nomArchivo,contexto);
+          
+}
 
 void ejecutar(PCB* proceso) {
   // Esta parte envia a cpu
@@ -453,22 +479,10 @@ void recibirInstruccion() {
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
-          agregarATabla(nombreArchivo);
-          enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
-          enviarString(nombreArchivo, socketFileSystem);
-
-          op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
-          contextoEjecucion* nuevoFS = recibirContexto(socketFileSystem);
-          switch(respuestaFS) {
-            case SUCCESS:
-              puts("Entre en SUCCESS");
-              actualizarContexto(nuevoFS);
-              enviarContexto(nuevoFS, socketCpu, SUCCESS);
-              recibirInstruccion();
-              break;
-            default:
-              puts("Entre por el default de F_OPEN");
-              break;
+          ejecutarOpen(nombreArchivo,procesoDevuelto->contexto);
+          actualizarContexto(nuevoFS);
+          enviarContexto(nuevoFS, socketCpu, SUCCESS);
+          recibirInstruccion();
           }
           //recibir contexto y enviarlo a CPU .
         }
@@ -627,7 +641,7 @@ int findElementPosition(char array[], int size, char* target) {
     }
     return -1;  // Return -1 if the element is not found
 }
-
+void procesarFs
 
 /*
 

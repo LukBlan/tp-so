@@ -89,6 +89,18 @@ t_buffer* obtenerBuffer(int socketCliente) {
   buffer->size = tamanioBuffer;
   return buffer;
 }
+t_paquete* crear_paquete(op_code codigo_op){
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+	paquete->codigo_operacion = codigo_op;
+	crear_buffer(paquete);
+	return paquete;
+}
+
+void crear_buffer(t_paquete* paquete){
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = 0;
+	paquete->buffer->stream = NULL;
+}
 
 op_code obtenerCodigoOperacion(int socketCliente) {
   op_code codigoOperacion;
@@ -117,7 +129,25 @@ void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOp
   enviar_paquete(paquete, socketCpu);
   liberarPaquete(paquete);
 }
+t_list* recibir_paquete(int socket_cliente){
+	int size;
+	int desplazamiento = 0;
+	void* buffer;
+	t_list* valores = list_create();
+	int tamanio;
 
+	buffer = recibir_buffer(&size, socket_cliente);
+	while(desplazamiento < size){
+		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+		desplazamiento+=sizeof(int);
+		char* valor = malloc(tamanio);
+		memcpy(valor, buffer+desplazamiento, tamanio);
+		desplazamiento+=tamanio;
+		list_add(valores, valor);
+	}
+	free(buffer);
+	return valores;
+}
 contextoEjecucion* recibirContexto(int socketCliente) {
   t_buffer* buffer = obtenerBuffer(socketCliente);
   contextoEjecucion* contexto = deserializarContexto(buffer);

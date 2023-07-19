@@ -141,6 +141,7 @@ void conectar_con_memoria() {
 void conectar_con_cpu() {
   t_configuracion* config = recursosKernel->configuracion;
   t_log* logger = recursosKernel->logger;
+  pthread_t conexion_cpu;
 
   log_info(logger, "Conectando con el Servidor Cpu...");
   int socketCpu = crearConexionServidor(config->IP_CPU, config->PUERTO_CPU);
@@ -153,11 +154,14 @@ void conectar_con_cpu() {
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketCpu = socketCpu;
+  pthread_create(&conexion_cpu, NULL, (void*) ejecutar(), (void*) &socketCpu);
+	pthread_detach(conexion_cpu);
 }
 
 void conectar_con_fileSystem() {
   t_configuracion* config = recursosKernel->configuracion;
   t_log* logger = recursosKernel->logger;
+  pthread_t conexion_filesystem;
 
   log_info(logger, "Conectando con el Servidor FileSystem...");
   int socketFileSystem = crearConexionServidor(config->IP_FILESYSTEM, config->PUERTO_FILESYSTEM);
@@ -170,4 +174,6 @@ void conectar_con_fileSystem() {
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketFileSystem = socketFileSystem;
+  pthread_create(&conexion_filesystem, NULL, (void*) procesarFs, (void*) &socketFileSystem);
+	pthread_detach(conexion_filesystem);
 }
