@@ -3,6 +3,7 @@
 
   #include <commons/log.h>
   #include <commons/bitarray.h>
+ #include <commons/config.h>
   #include <utils.h>
   #include <fcntl.h>
   #include <sys/mman.h>
@@ -55,6 +56,7 @@ typedef struct{
   extern pthread_mutex_t mutexBitMap;
   extern int bytesDelBitarray;
   extern t_bitarray* bitMapBloque;
+  extern t_list* listaDeFCB;
   
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);

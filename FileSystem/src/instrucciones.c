@@ -23,7 +23,7 @@ t_config* obtener_archivo(char* nombre_archivo){
 		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
 
 		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
-			return archivo_buscado->archivo_fcb;
+			return archivo_buscado->configFCB;
 		}
 	}
 	return NULL;
@@ -174,7 +174,7 @@ archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
   puts("-3");
   if(existe_fcb(nomArchivo)){
-    return contexto;
+	  return contexto;
   }
 	char* path_archivo = generarPathFCB(nomArchivo);
 	puts("-2.2");
@@ -189,13 +189,13 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
     list_add(contexto -> archivosAbiertos,arch);
 */
 	
-	FILE* fcb = fopen(fcbPath, "a+");
+	FILE* fcb = fopen(path_archivo, "a+");
 
 	puts("0");
 	configArchivo* archivoFCB = malloc(sizeof(configArchivo));
   archivoFCB->nombre_archivo = malloc(strlen(nomArchivo));
-  strcpy(archivo_fcb->nombre_archivo, nomArchivo);
-  archivoFCB->configFCB = config_create();
+  strcpy(archivoFCB->nombre_archivo, nomArchivo);
+  archivoFCB->configFCB = config_create(path_archivo);
   puts("1");
 
   config_set_value(archivoFCB->configFCB, "file_size", 0);
