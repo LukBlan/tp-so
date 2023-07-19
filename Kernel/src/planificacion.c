@@ -596,7 +596,22 @@ void recibirInstruccion() {
       puts("-------------------- Llego F_READ --------------------");
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
-      agregarAListo(procesoDevuelto);
+      char* nombreArchivoALeer = recibirString(socketCpu);
+      int posicionEnMemoriaAleer = recibirEntero(socketCpu);
+      int tamanioALeer = recibirEntero(socketCpu);
+      int posicionDeArchivoLectura = obtenerPosicion(nombreArchivoALeer,procesoDevuelto->contexto);
+      enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_READ);
+      enviarString(nombreArchivoALeer,socketFileSystem);
+      enviarEntero(tamanioALeer,socketFileSystem);
+      enviarEntero(posicionEnMemoriaAleer,socketFileSystem);
+      enviarEntero(posicionDeArchivoLectura,socketFileSystem);
+      op_code respuestaLectura = obtenerCodigoOperacion(socketFileSystem);
+      contextoEjecucion* nuevoLeido = recibirContexto(socketFileSystem);
+      switch(respuestaLectura) {
+        case SUCCESS_WRITE:
+        actualizarContexto(nuevoLeido);
+        agregarAListo(procesoDevuelto);
+        break;
       break;
 
     case F_WRITE:
@@ -612,7 +627,6 @@ void recibirInstruccion() {
       enviarEntero(posicionEnMemoria,socketFileSystem);
       enviarEntero(tamanioAEscribir,socketFileSystem);
       enviarEntero(posicionDeArchivo,socketFileSystem);
-      agregarAListo(procesoDevuelto);
       op_code respuestaEscritura = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoEscrito = recibirContexto(socketFileSystem);
       switch(respuestaEscritura) {
