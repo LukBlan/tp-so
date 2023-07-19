@@ -5,14 +5,6 @@
 #include <fileSystem_conexiones.h>
 #include <string.h>
 
-void escribirEnArchivo() {
-  int* datos = malloc(sizeof(int));
-  memcpy(datos , bloque + sizeof(int), sizeof(int));
-
-  printf("Se leyo %d", *datos);
-  puts("Esto es no es");
-}
-
 int main(int argc, char* argv[]) {
   validarCantidadArgumentosMain(argc, 2);
   agarrarSenial();
@@ -30,7 +22,7 @@ int main(int argc, char* argv[]) {
 
 	generarListaDeFCB();
 	iniciarFCBExistente();
-	escribirEnArchivo();
+
 	montarServidor();
 	liberarRecursos();
 	return EXIT_SUCCESS;
