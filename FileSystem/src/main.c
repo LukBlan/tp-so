@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
 			pthread_create(&manejo_bloque, NULL, (void*) cargarBloques, NULL);
 			pthread_detach(manejo_bloque);
 	generarListaFCB();
+	 inicializar_fcbs()
 	montarServidor();
 
 
