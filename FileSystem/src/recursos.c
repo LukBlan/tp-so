@@ -108,6 +108,34 @@ void cargarBloques() {
 
 		close(fileDescriptor);
 }
+void inicializar_fcbs(){
+	DIR *directorioFCB = opendir(recursosFileSystem->configuracion->PATH_FCB);
+	struct dirent *fcb;
+
+	if(directorioFCB == NULL){
+    puts("No existe directorio");
+		exit(1);
+	}
+
+	while((fcb = readdir(directorioFCB)) != NULL){
+		if (strcmp(fcb->d_name, ".") == 0 || strcmp(fcb->d_name, "..") == 0){
+			continue;
+		}
+
+		configArchivo* archivo = malloc(sizeof(configArchivo));
+		archivo->nombre_archivo = malloc(strlen(fcb->d_name));
+		strcpy(archivo->nombre_archivo, fcb->d_name);
+
+		char* path_archivo = malloc(strlen(recursosFileSystem->configuracion->PATH_FCB) + strlen(fcb->d_name));
+		strcpy(path_archivo, recursosFileSystem->configuracion->PATH_FCB);
+		strcat(path_archivo, fcb->d_name);
+		archivo->archivo_fcb = config_create(path_archivo);
+
+		list_add(listaDeFCB, archivo);
+	}
+
+	closedir(directorioFCB);
+}
 
 void cargarLogger(char* pathLogger) {
   recursosFileSystem->logger = log_create(pathLogger, "FileSystem", 1, LOG_LEVEL_INFO);
