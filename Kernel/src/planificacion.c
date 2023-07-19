@@ -601,16 +601,26 @@ void recibirInstruccion() {
       enviarEntero(idSegmento, socketMemoria);
       enviarEntero(tamanioSegmento, socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
-      contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
 
       printf("Respuesta memoria %d\n", respuestaMemoria);
       switch(respuestaMemoria) {
         case Pcb:
+          contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
           actualizarContexto(nuevoActualizado);
           sacarDeEjecutando(READY);
           agregarAListo(procesoDevuelto);
           break;
+
+        case COMPACTACION:
+          puts("Entre en compactacion");
+          t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
+          mostrarTablaDeSegmentos(tablaDeSegmentos);
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+          break;
+
         case OUT_OF_MEMORY:
+          contextoEjecucion* recibeAlgoAlPedo = recibirContexto(socketMemoria);
           sacarDeEjecutando(EXIT);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
           finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);

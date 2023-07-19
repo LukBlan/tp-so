@@ -22,6 +22,7 @@
   char* recibirString(int socket);
   void enviarString(char* stringEnviado, int socket);
   void enviarTablaDeSegmentos(t_list* tablaDeSegmentos, int socketCpu, op_code codigoOperacion);
+  t_list* recibirTablaDeSegmentos(int socket);
 
 #endif
 
