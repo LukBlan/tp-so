@@ -350,11 +350,13 @@ int encontrarEnTablaGlobal(char* nombre) {
     }
     return posicion;
 }
+
 int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto){
   int posicion = encontrarEnTablaDeArchivos(contexto-> archivosAbiertos,nomArchivo);
   archivoAbierto* arch = list_get(contexto-> archivosAbiertos,posicion);
   int puntero = (int) ftell(arch->punteroArchivo);
 }
+
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
   //ver de hacer fclose aca
@@ -382,6 +384,73 @@ void eliminarDeTablaGlobal(char* nombreArchivo) {
 
 void iniciarTablaGlobal() {
   tablaGlobalDeArchivos = list_create();
+}
+
+void actualizarSegmentos(t_list* segmentosDesactualizados, t_list* segmentosNuevos) {
+  int cantidadSegmentosDesactualizados = segmentosDesactualizados->elements_count - 1; // -1 por segmento 0
+  int cantidadSegmentosNuevos = segmentosNuevos->elements_count;
+
+  for (int i = 0; i < cantidadSegmentosDesactualizados; i++) {
+    Segmento* segmentoViejo = list_get(segmentosDesactualizados, i + 1);
+    printf("Segmento Viejo id %d\n", segmentoViejo->id);
+    Segmento* segmentoNuevo = list_get(segmentosNuevos, i);
+    printf("Segmento Nuevo id %d\n", segmentoNuevo->id);
+    segmentoViejo->base = segmentoNuevo->base;
+  }
+
+  if (cantidadSegmentosDesactualizados != cantidadSegmentosNuevos) {
+    Segmento* ultimoSegmento = list_get(segmentosNuevos, cantidadSegmentosNuevos - 1);
+    Segmento* ultimoSegmentoNuevo = malloc(sizeof(Segmento));
+    ultimoSegmentoNuevo->id = ultimoSegmento->id;
+    ultimoSegmentoNuevo->base = ultimoSegmento->base;
+    ultimoSegmentoNuevo->limite = ultimoSegmento->limite;
+    list_add(segmentosDesactualizados, ultimoSegmentoNuevo);
+    printf("Segmento Nuevo id %d\n", ultimoSegmentoNuevo->id);
+  }
+}
+
+int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
+  int procesoEncontrado = 0;
+  if (procesoEjecutandose->pid == idProceso) {
+    actualizarSegmentos(procesoEjecutandose->contexto->tablaSegmentos, segmentosProceso);
+    procesoEncontrado = 1;
+  }
+  return procesoEncontrado;
+}
+
+int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
+  int procesoEncontrado = 0;
+  int cantidadDeProcesosEnReady = colaReady->elements_count;
+
+  for (int i = 0; i < cantidadDeProcesosEnReady; i++) {
+    pthread_mutex_lock(&mutexColaReady);
+    PCB* pcb = list_get(colaReady, i);
+    pthread_mutex_unlock(&mutexColaReady);
+    if (pcb->pid == idProceso) {
+      actualizarSegmentos(pcb->contexto->tablaSegmentos, segmentosProceso);
+      procesoEncontrado = 1;
+    }
+  }
+  return procesoEncontrado;
+}
+
+
+void actualizarProceso(int idProceso, t_list* segmentosProceso) {
+  if (actualizarSiEstaEjecutandose(idProceso, segmentosProceso)) {
+  } else if (actualizarSiEstaEnReady(idProceso, segmentosProceso)) {
+  } //else if (actualizarSiEstaEnBloqueado(idProceso, segmentosProceso)) {
+  //} else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
+  //} else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
+  //}
+}
+
+void actualizarSegmentosProcesos(t_list* tablaDeSegmentos) {
+  int cantidadProcesos = tablaDeSegmentos->elements_count;
+
+  for (int i = 0; i < cantidadProcesos; i++) {
+    tablaDeSegmento* tablaProceso = list_get(tablaDeSegmentos, i);
+    actualizarProceso(tablaProceso->id, tablaProceso->segmentos_proceso);
+  }
 }
 
 void ejecutar(PCB* proceso) {
@@ -601,16 +670,29 @@ void recibirInstruccion() {
       enviarEntero(idSegmento, socketMemoria);
       enviarEntero(tamanioSegmento, socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
-      contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
 
       printf("Respuesta memoria %d\n", respuestaMemoria);
       switch(respuestaMemoria) {
         case Pcb:
+          contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
           actualizarContexto(nuevoActualizado);
           sacarDeEjecutando(READY);
           agregarAListo(procesoDevuelto);
           break;
+
+        case COMPACTACION:
+          puts("Entre en compactacion");
+          t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
+          mostrarContexto(procesoEjecutandose->contexto);
+          mostrarTablaDeSegmentos(tablaDeSegmentos);
+          actualizarSegmentosProcesos(tablaDeSegmentos);
+          mostrarContexto(procesoEjecutandose->contexto);
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+          break;
+
         case OUT_OF_MEMORY:
+          contextoEjecucion* recibeAlgoAlPedo = recibirContexto(socketMemoria);
           sacarDeEjecutando(EXIT);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
           finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);
@@ -633,8 +715,6 @@ void recibirInstruccion() {
       break;
   }
 }
-
-
 
 void agregarFinalizado(PCB* proceso) {
     pthread_mutex_lock(&mutexColaEnd);

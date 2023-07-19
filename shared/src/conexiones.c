@@ -171,8 +171,15 @@ void enviarTablaDeSegmentos(t_list* tablaDeSegmentos, int socketCpu, op_code cod
   t_buffer* buffer = generarBuffer(tamanioTablaDeSegmentos);
   serializarTablaDeSegmentos(buffer, tablaDeSegmentos);
   t_list* tablaDeSegmentosRecibida = deserializarTablaDeSegmentos(buffer);
-  mostrarTablaDeSegmentos(tablaDeSegmentosRecibida);
-  //t_paquete* paquete = crearPaquete(buffer, codigoOperacion);
-  //enviar_paquete(paquete, socketCpu);
-  //liberarPaquete(paquete);
+  //mostrarTablaDeSegmentos(tablaDeSegmentosRecibida);
+  t_paquete* paquete = crearPaquete(buffer, codigoOperacion);
+  enviar_paquete(paquete, socketCpu);
+  liberarPaquete(paquete);
+}
+
+t_list* recibirTablaDeSegmentos(int socket) {
+  t_buffer* buffer = obtenerBuffer(socket);
+  t_list* tablaSegmentos = deserializarTablaDeSegmentos(buffer);
+  liberarBuffer(buffer);
+  return tablaSegmentos;
 }

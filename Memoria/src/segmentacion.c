@@ -21,7 +21,7 @@ Segmento* crearSegmentoCero() {
   Segmento* segmentoCero = malloc(sizeof(Segmento));
   int tamanioSegmentoCero = recursosMemoria->configuracion->TAM_SEGMENTO_0;
 
-  segmentoCero->id = 1;
+  segmentoCero->id = 0;
   segmentoCero->base = 0;
   segmentoCero->limite = tamanioSegmentoCero;
 
