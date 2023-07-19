@@ -50,6 +50,16 @@ void mostrarRegistros(t_registros registros) {
   printf("Dx %s\n", registros.DX);
 }
 
+void mostrarSegmentos(t_list* segmentos) {
+  int cantidadSegmentos = segmentos->elements_count;
+  printf("Cantidad Segmentos %d\n", cantidadSegmentos);
+
+  for (int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmento = list_get(segmentos, i);
+    printf("Segmento id: %d, base: %d, limite: %d\n", segmento->id, segmento->base, segmento->limite);
+  }
+}
+
 void mostrarContexto(contextoEjecucion* contexto) {
   puts("----------------------------------------");
   puts("         Contexto Ejecucion             ");
@@ -57,7 +67,7 @@ void mostrarContexto(contextoEjecucion* contexto) {
   printf("programCounter = %d\n", contexto->programCounter);
   mostrarInstrucciones(contexto->instrucciones);
   mostrarRegistros(contexto->registros);
-  printf("Cantidad Segmentos %d\n", contexto->tablaSegmentos->elements_count);
+  mostrarSegmentos(contexto->tablaSegmentos);
   printf("Cantidad de Archivos = %d\n", contexto->archivosAbiertos->elements_count);
   puts("----------------------------------------");
 }
