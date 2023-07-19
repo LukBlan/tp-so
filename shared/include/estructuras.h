@@ -95,6 +95,7 @@
     SUCCESS,
     INVALID_RESOURCE,
     COMPACTACION,
+	FIN_F_OPEN,
   } op_code;
 
   typedef struct {

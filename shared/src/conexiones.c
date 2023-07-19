@@ -129,6 +129,14 @@ void enviarContexto(contextoEjecucion* contexto, int socketCpu, op_code codigoOp
   enviar_paquete(paquete, socketCpu);
   liberarPaquete(paquete);
 }
+void* recibirBuffer(int* size, int socketCliente){
+	void* buffer;
+	recv(socketCliente,size,sizeof(int),MSG_WAITALL);
+	buffer=malloc(*size);
+	recv(socketCliente,buffer,*size,MSG_WAITALL);
+
+	return buffer;
+}
 t_list* recibir_paquete(int socket_cliente){
 	int size;
 	int desplazamiento = 0;
@@ -136,7 +144,7 @@ t_list* recibir_paquete(int socket_cliente){
 	t_list* valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size, socket_cliente);
+	buffer = recibirBuffer(&size, socket_cliente);
 	while(desplazamiento < size){
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento+=sizeof(int);

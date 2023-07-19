@@ -52,4 +52,5 @@
   void liberar_semaforos();
   void liberar_estructuras();
   void recibirInstruccion();
+  void procesarFS();
 #endif

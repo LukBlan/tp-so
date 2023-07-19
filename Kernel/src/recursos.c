@@ -139,5 +139,5 @@ void iniciarSemaforos() {
   sem_init(&blockCounter, 0, 0);
   sem_init(&semaforoCantidadProcesosExec, 0, 1);
   sem_init(&largoPlazo, 0, 0);
-  sem_init(&fOpenFS);
+  sem_init(&fOpenFS,0,0);
 }

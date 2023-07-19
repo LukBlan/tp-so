@@ -154,7 +154,7 @@ void conectar_con_cpu() {
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketCpu = socketCpu;
-  pthread_create(&conexion_cpu, NULL, (void*) ejecutar(), (void*) &socketCpu);
+  pthread_create(&conexion_cpu, NULL, (void*) ejecutar, (void*) &socketCpu);
 	pthread_detach(conexion_cpu);
 }
 
@@ -174,6 +174,6 @@ void conectar_con_fileSystem() {
 
   log_info(logger, "Conexión exitosa. Iniciando cliente...");
   recursosKernel->conexiones->socketFileSystem = socketFileSystem;
-  pthread_create(&conexion_filesystem, NULL, (void*) procesarFs, (void*) &socketFileSystem);
-	pthread_detach(conexion_filesystem);
+  pthread_create(&conexion_filesystem, NULL, (void*) procesarFS, (void*) &socketFileSystem);
+  pthread_detach(conexion_filesystem);
 }

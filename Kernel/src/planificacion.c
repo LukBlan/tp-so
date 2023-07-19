@@ -384,25 +384,25 @@ void procesarFS(){
   int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
   while (socketFileSystem != -1){
     cop = obtenerCodigoOperacion(socketFileSystem);
-  
   switch(cop){
 		case FIN_F_OPEN:
-			t_list* paquete = recibir_paquete(fd_modulo);
+			t_list* paquete = recibir_paquete(socketFileSystem);
 	    op_code* cop2 = list_get(paquete, 0);
 	    free(cop2);
 	    list_destroy(paquete);
-			sem_post(&fOpenFS)
+			sem_post(&fOpenFS);
 			break;
   }
 }
+}
 void ejecutarFOpen(char* nomArchivo,contextoEjecucion* contexto){
-          
+	int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
           t_paquete* paquete = crear_paquete(F_OPEN);
           enviarString(nomArchivo, socketFileSystem);
           sem_wait(&fOpenFS);
               puts("Entre en SUCCESS");
               agregarATabla(nomArchivo);
-              agregarATablaArchivo(nomArchivo,contexto);
+              //agregarATablaArchivo(nomArchivo,contexto);
           
 }
 
@@ -479,14 +479,10 @@ void recibirInstruccion() {
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
-          ejecutarOpen(nombreArchivo,procesoDevuelto->contexto);
-          actualizarContexto(nuevoFS);
-          enviarContexto(nuevoFS, socketCpu, SUCCESS);
+          ejecutarFOpen(nombreArchivo,procesoDevuelto->contexto);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           recibirInstruccion();
           }
-          //recibir contexto y enviarlo a CPU .
-        }
-
         free(nombreArchivo);
       break;
 
@@ -641,7 +637,7 @@ int findElementPosition(char array[], int size, char* target) {
     }
     return -1;  // Return -1 if the element is not found
 }
-void procesarFs
+
 
 /*
 
