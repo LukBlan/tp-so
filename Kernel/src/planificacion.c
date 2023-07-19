@@ -355,6 +355,7 @@ int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto){
   int posicion = encontrarEnTablaDeArchivos(contexto-> archivosAbiertos,nomArchivo);
   archivoAbierto* arch = list_get(contexto-> archivosAbiertos,posicion);
   int puntero = (int) ftell(arch->punteroArchivo);
+  return posicion;
 }
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
@@ -418,7 +419,7 @@ int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
   return procesoEncontrado;
 }
 
-int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
+int actualizarSiEstaEnReady(int idProceso, t_list* segmentosProceso) {
   int procesoEncontrado = 0;
   int cantidadDeProcesosEnReady = colaReady->elements_count;
 
@@ -612,7 +613,12 @@ void recibirInstruccion() {
         actualizarContexto(nuevoLeido);
         agregarAListo(procesoDevuelto);
         break;
+        default:
+          puts("Entre por default de SUCCESS_write");
+          break;
+      }
       break;
+
 
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");

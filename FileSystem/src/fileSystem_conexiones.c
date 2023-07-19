@@ -83,6 +83,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   contextoEjecucion* contexto;
   int socketMemoria = recursosFileSystem->conexiones->socketMemoria;
   printf("Estoy procesando conexion %d\n", codigoOperacion);
+
   switch (codigoOperacion) {
     case F_OPEN:
       puts ("Llego F_open");
@@ -107,7 +108,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("b");
       enviarContexto(contexto,socketCliente,SUCCESS_TRUNCATE);
       liberarContexto(contexto);
-    break;
+      break;
+
       case F_WRITE:
       puts("Llego F_Write");
       contexto=recibirContexto(socketCliente);
@@ -119,43 +121,50 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarEntero(direccionAEscribir,socketMemoria);
       enviarEntero(tamanioWrite,socketMemoria);
       op_code respuestaMemoriaEscritura = obtenerCodigoOperacion(socketMemoria);
-      switch(respuestaMemoriaEscritura){
+
+      switch(respuestaMemoriaEscritura) {
         case SUCCESS_WRITE_MEMORY:
-        puts("Volvi de memoria");
-       contexto = recibirContexto(socketMemoria);
-       char* datosParaEscribir = recibirString(socketMemoria);
-      fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
-      enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
-      liberarContexto(contexto);
-        break;
-        default:
-        puts("llegue por default");
-        break;
-      
-      break;
-      case F_READ:
-      puts("Llego F_Read");
-      contexto = recibirContexto(socketCliente);
-      char* nombreArchivoLeer = recibirString(socketCliente);
-      int direccionALeer = recibirEntero(socketCliente);
-      int tamanioARead = recibirEntero(socketCliente);
-      int posicionARead = recibirEntero(socketCliente);
-      char* datoLeido = fLectura(nombreArchivoLeer,posicionARead,tamanioARead);
-      enviarContexto(contexto,socketMemoria,F_READ);
-      enviarString(datoLeido,socketMemoria);
-      enviarEntero(posicionARead,socketMemoria);
-      op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
-      switch(respuestaMemoria){
-        case SUCCESS_READ_MEMORY:
-        puts("Volvi de memoria");
-        contexto = recibirContexto(socketMemoria);
-        enviarContexto(contexto,socketCliente,SUCCESS_READ);
-        liberarContexto(contexto);
-        break;
-        default:
-        puts("llegue por default");
-        break;
+          puts("Volvi de memoria");
+          contexto = recibirContexto(socketMemoria);
+          char* datosParaEscribir = recibirString(socketMemoria);
+          fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
+          enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
+          liberarContexto(contexto);
+          break;
+
+          default:
+            puts("llegue por default");
+            break;
       }
+      break;
+      
+      case F_READ:
+        puts("Llego F_Read");
+        contexto = recibirContexto(socketCliente);
+        char* nombreArchivoLeer = recibirString(socketCliente);
+        int direccionALeer = recibirEntero(socketCliente);
+        int tamanioARead = recibirEntero(socketCliente);
+        int posicionARead = recibirEntero(socketCliente);
+        char* datoLeido = fLectura(nombreArchivoLeer,posicionARead,tamanioARead);
+        enviarContexto(contexto,socketMemoria,F_READ);
+        enviarString(datoLeido,socketMemoria);
+        enviarEntero(posicionARead,socketMemoria);
+        op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
+
+        switch(respuestaMemoria) {
+          case SUCCESS_READ_MEMORY:
+            puts("Volvi de memoria");
+            contexto = recibirContexto(socketMemoria);
+            enviarContexto(contexto,socketCliente,SUCCESS_READ);
+            liberarContexto(contexto);
+            break;
+
+          default:
+            puts("llegue por default");
+            break;
+        }
+      break;
+
     default:
       puts("Cerre una conexion");
       /*

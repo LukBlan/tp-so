@@ -201,8 +201,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int posicion = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int tamanio = recibirEntero(socketCliente);
       char* cosaAEnviar;
-      memcpy(cosaAEnviar,memoriaPrincipal+posicion,sizeof(tamanio));
 
+      memcpy(cosaAEnviar, memoriaPrincipal+posicion, tamanio);
       enviarContexto(contexto, socketCliente,SUCCESS);
       enviarString(cosaAEnviar,socketCliente);
       liberarContexto(contexto);
@@ -211,8 +211,8 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       puts("--------------- Entre MOV_OUT -------------");
       contexto = recibirContexto(socketCliente);
       int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
-      char* cosaAEscribir = recibirEntero(socketCliente);
-      memcpy(memoriaPrincipal+posicionAMovear,cosaAEscribir,sizeof(cosaAEscribir));
+      char* cosaAEscribir = recibirString(socketCliente);
+      memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
       enviarContexto(contexto, socketCliente,SUCCESS);
       liberarContexto(contexto);
       break;
@@ -221,18 +221,21 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioAEscribir = recibirEntero(socketCliente);
-      char* cosaEscrita;
-      memcpy(cosaEscrita,memoriaPrincipal+direccionAEscribir,sizeOf(tamanioAEscribir));
+      char* cosaEscrita = malloc(tamanioAEscribir);
+      memcpy(cosaEscrita, memoriaPrincipal+direccionAEscribir, tamanioAEscribir);
       enviarContexto(contexto,socketCliente,SUCCESS_WRITE_MEMORY);
+      enviarString(cosaEscrita, socketCliente);
       break;
-       case F_READ:
+
+      case F_READ:
       puts("Llego F_READ");
       contexto = recibirContexto(socketCliente);
       char* cosaParaEscribir = recibirString(socketCliente);
       int posicionAEscribir = recibirEntero(socketCliente);
-      memcpy(memoriaPrincipal+direccionAEscribir,cosaParaEscribir,sizeOf(cosaParaEscribir));
+      memcpy(memoriaPrincipal+posicionAEscribir, cosaParaEscribir, strlen(cosaParaEscribir));
       enviarContexto(contexto,socketCliente,SUCCESS_READ_MEMORY);
       break;
+
     case SUCCESS:
       puts("------------- Entre Success ----------------");
       buffer = obtenerBuffer(socketCliente);
