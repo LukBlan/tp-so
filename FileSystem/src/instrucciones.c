@@ -30,10 +30,10 @@ t_config* obtener_archivo(char* nombre_archivo){
 }
 
 char* generarPathFCB(char* nomArchivo){
-        char* fcbPath = string_new();
-        string_append(&fcbPath,recursosFileSystem->configuracion->PATH_FCB);
-        string_append(&fcbPath,nomArchivo);
-        return fcbPath;
+         char* path_archivo = malloc(strlen(recursosFileSystem->configuracion->PATH_FCB) + strlen(nomArchivo));
+	strcpy(path_archivo, recursosFileSystem->configuracion->PATH_FCB);
+	strcat(path_archivo, nomArchivo);
+        return path_archivo;
     }
 int tamanioDeArray(char** array){
 	int tamanio;
@@ -177,6 +177,7 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 	  return contexto;
   }
 	char* path_archivo = generarPathFCB(nomArchivo);
+   
 	puts("-2.2");
 	FCB* nuevaFCB = malloc(sizeof(FCB));
 	nuevaFCB->nombre_archivo = malloc(strlen(nomArchivo) + 1);
