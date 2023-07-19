@@ -115,12 +115,23 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioWrite = recibirEntero(socketCliente);
       int posicionWrite = recibirEntero(socketCliente);
-      enviarContexto(contexto,socketMemoria,F_WRITE);
+      enviarContexto(contexto,socketMemoria,F_WRITE_MEMORIA);
       enviarEntero(direccionAEscribir,socketMemoria);
-      char* datosParaEscribir = recibirString(socketMemoria);
+      enviarEntero(tamanioWrite,socketMemoria);
+      op_code respuestaMemoriaEscritura = obtenerCodigoOperacion(socketMemoria);
+      switch(respuestaMemoriaEscritura){
+        case SUCCESS_WRITE_MEMORY:
+        puts("Volvi de memoria");
+       contexto = recibirContexto(socketMemoria);
+       char* datosParaEscribir = recibirString(socketMemoria);
       fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
       enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
       liberarContexto(contexto);
+        break;
+        default:
+        puts("llegue por default");
+        break;
+      
       break;
       case F_READ:
       puts("Llego F_Read");
@@ -137,6 +148,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       switch(respuestaMemoria){
         case SUCCESS_READ_MEMORY:
         puts("Volvi de memoria");
+        contexto = recibirContexto(socketMemoria);
         enviarContexto(contexto,socketCliente,SUCCESS_READ);
         liberarContexto(contexto);
         break;

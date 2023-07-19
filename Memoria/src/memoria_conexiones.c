@@ -216,6 +216,23 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarContexto(contexto, socketCliente,SUCCESS);
       liberarContexto(contexto);
       break;
+      case F_WRITE_MEMORIA:
+      puts("Llego F_WRITE");
+      contexto = recibirContexto(socketCliente);
+      int direccionAEscribir = recibirEntero(socketCliente);
+      int tamanioAEscribir = recibirEntero(socketCliente);
+      char* cosaEscrita;
+      memcpy(cosaEscrita,memoriaPrincipal+direccionAEscribir,sizeOf(tamanioAEscribir));
+      enviarContexto(contexto,socketCliente,SUCCESS_WRITE_MEMORY);
+      break;
+       case F_READ:
+      puts("Llego F_READ");
+      contexto = recibirContexto(socketCliente);
+      char* cosaParaEscribir = recibirString(socketCliente);
+      int posicionAEscribir = recibirEntero(socketCliente);
+      memcpy(memoriaPrincipal+direccionAEscribir,cosaParaEscribir,sizeOf(cosaParaEscribir));
+      enviarContexto(contexto,socketCliente,SUCCESS_READ_MEMORY);
+      break;
     case SUCCESS:
       puts("------------- Entre Success ----------------");
       buffer = obtenerBuffer(socketCliente);
