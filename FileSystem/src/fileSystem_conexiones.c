@@ -81,7 +81,7 @@ void procesarOperacionRecibida(int socketCliente) {
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
-
+  int socketMemoria = recursosFileSystem->conexiones->socketMemoria;
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case F_OPEN:
@@ -108,7 +108,42 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       enviarContexto(contexto,socketCliente,SUCCESS);
       liberarContexto(contexto);
     break;
-
+      case F_WRITE:
+      puts("Llego F_Write");
+      contexto=recibirContexto(socketCliente);
+      char* nombreDeArchivo = recibirString(socketCliente);
+      int direccionAEscribir = recibirEntero(socketCliente);
+      int tamanioWrite = recibirEntero(socketCliente);
+      int posicionWrite = recibirEntero(socketCliente);
+      enviarContexto(contexto,socketMemoria,F_WRITE);
+      enviarEntero(direccionAEscribir,socketMemoria);
+      char* datosParaEscribir = recibirString(socketMemoria);
+      fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
+      enviarContexto(contexto,socketCliente,SUCCESS);
+      liberarContexto(contexto);
+      break;
+      case F_READ:
+      puts("Llego F_Read");
+      contexto = recibirContexto(socketCliente);
+      char* nombreArchivoLeer = recibirString(socketCliente);
+      int direccionALeer = recibirEntero(socketCliente);
+      int tamanioARead = recibirEntero(socketCliente);
+      int posicionARead = recibirEntero(socketCliente);
+      char* datoLeido = fLectura(nombreArchivoLeer,posicionARead,tamanioARead);
+      enviarContexto(contexto,socketMemoria,F_READ);
+      enviarString(datoLeido,socketMemoria);
+      enviarEntero(posicionARead,socketMemoria);
+      op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
+      switch(respuestaMemoria){
+        case SUCCESS:
+        puts("Volvi de memoria");
+        enviarContexto(contexto,socketCliente,SUCCESS);
+        liberarContexto(contexto);
+        break;
+        default:
+        puts("llegue por default");
+        break;
+      }
     default:
       puts("Cerre una conexion");
       /*

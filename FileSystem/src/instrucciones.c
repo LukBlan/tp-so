@@ -361,7 +361,7 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		
 	}
 }
-/*char* leer_datos(char* nomArchivo, int posicion, int tamanio){
+/*char* FLectura(char* nomArchivo, int posicion, int tamanio){
 
     t_config* fcb = obtener_archivo(nomArchivo);
 
@@ -403,4 +403,5 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 
 	return datosLeidos;
 }
+
 */
