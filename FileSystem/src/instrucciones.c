@@ -361,11 +361,11 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		
 	}
 }
-/*char* FLectura(char* nomArchivo, int posicion, int tamanio){
+char* fLectura(char* nomArchivo, int posicion, int tamanio){
 
     t_config* fcb = obtener_archivo(nomArchivo);
 
-	int bloque = darNumeroBloque(posicion);
+	int bloque = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
 
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
@@ -382,11 +382,11 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
 
 	int posicionBloqueABuscar = buscar_bloque(fcb, bloque, arrayDePunteros); //--
-	memcpy(datosLeidos, copiaBloque+posicionBloqueABuscar+offset_bloque, lecturaEnBloqueUno);
+	memcpy(datosLeidos, copiaBloque+posicionBloqueABuscar+offset, lecturaEnBloqueUno);
 
 	if(excedente > 0){
-		int bloquesCompletos = darNumeroBloque(excedente);
-		int offsetBloque = darNumeroOffset(excedente);
+		int bloquesCompletos = darNumeroDeBloques(excedente);
+		int offsetBloque = darOffset(excedente);
 		int extra;
 		int desplazamientoLeido = restoAEscribir;
 		for(extra = 1; extra < bloquesCompletos + 1; extra++){
@@ -404,4 +404,4 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	return datosLeidos;
 }
 
-*/
+
