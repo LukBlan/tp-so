@@ -57,6 +57,7 @@ typedef struct{
   extern int bytesDelBitarray;
   extern t_bitarray* bitMapBloque;
   extern t_list* listaDeFCB;
+  extern void* bitmapMapeado;
   
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);

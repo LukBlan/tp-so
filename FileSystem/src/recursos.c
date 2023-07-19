@@ -13,6 +13,7 @@ pthread_mutex_t mutexBitMap;
 int bytesDelBitarray;
 t_bitarray* bitMapBloque;
 t_list* listaDeFCB;
+void* bitmapMapeado;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -70,13 +71,13 @@ void cargarSuperbloque() {
 }
 
 void cargarBitMap() {
-  int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
+  int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_RDWR);
   bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
   ftruncate(fileDescriptor, bytesDelBitarray );
-  void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
-  bitMapBloque = bitarray_create_with_mode(bitmap,bytesDelBitarray, LSB_FIRST);
-  recursosFileSystem->bitMap = bitMapBloque;
-  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+  bitmapMapeado = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
+  bitMapBloque = bitarray_create_with_mode(bitmapMapeado,bytesDelBitarray, LSB_FIRST);
+  //recursosFileSystem->bitMap = bitMapBloque;
+  //msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   close(fileDescriptor);
 }
 

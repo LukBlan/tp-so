@@ -119,7 +119,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
 		                *puntero = bloqueAUsar;
                         memcpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
                         bitarray_set_bit(bitMapBloque,i);
-                        msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+                        msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
                         posicionAAgregar += sizeof(uint32_t);
                         cantidad++;
                        
@@ -160,7 +160,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                     pthread_mutex_lock(&mutexBitMap);
                         memcpy(posicionEnBitMap, arrayPunteros + posicionBloqueAEliminar, sizeof(uint32_t));
                         bitarray_clean_bit(bitMapBloque,*posicionEnBitMap);
-                        msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+                        msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
                         pthread_mutex_lock(&mutexBloques);
         			memcpy(copiaBloque +  posicionBloqueAEliminar,valorAModificar , sizeof(uint32_t));
                     pthread_mutex_unlock(&mutexBloques);
@@ -290,14 +290,14 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
 	  config_set_value(fcb,"file_size",tamanioEnTexto);
 	  config_save(fcb);
 	  puts("Llego aca");
-	  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+	  msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
   }
   char* tamanioEnTexto = malloc(10);
   sprintf(tamanioEnTexto,"%d",nuevoTamanio);
   config_set_value(fcb,"file_size",tamanioEnTexto);
   config_save(fcb);
   puts("Llego aca");
-  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+  msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
   config_destroy(fcb);
   return contexto;
 }
