@@ -31,6 +31,11 @@
     uint32_t punteroIndirecto;
   } FCB;
 
+typedef struct{
+	char* nombre_archivo;
+	t_config* configFCB;
+} configArchivo;
+
   typedef struct {
     int socketMemoria;
     int socketFileSystem;

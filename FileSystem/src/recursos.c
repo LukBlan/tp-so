@@ -11,6 +11,7 @@ pthread_mutex_t mutexBloques;
 pthread_mutex_t mutexBitMap;
 int bytesDelBitarray;
 t_bitarray* bitMapBloque;
+t_list* listaDeFCB;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -21,7 +22,9 @@ void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem->conexiones->socketFileSystem = -1;
   recursosFileSystem->conexiones->socketMemoria = -1;
 }
-
+void generarListaDeFCB(){
+  listaDeFCB = list_create();
+}
 void cargarConfiguracion(char* pathConfiguracin) {
   t_configuracion* config;
   t_config* fileConfig = config_create(pathConfiguracin);

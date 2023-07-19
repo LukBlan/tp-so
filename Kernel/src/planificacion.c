@@ -463,6 +463,7 @@ void recibirInstruccion() {
             case SUCCESS:
               puts("Entre en SUCCESS");
               actualizarContexto(nuevoFS);
+              //agregarATablaArchivo(nuevoFS);
               enviarContexto(nuevoFS, socketCpu, SUCCESS);
               recibirInstruccion();
               break;

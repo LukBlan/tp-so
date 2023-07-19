@@ -7,11 +7,32 @@
 #include <instrucciones.h>
 
 
+bool existe_fcb(char* nombre_archivo){
+	for(int i = 0; i < list_size(listaDeFCB); i++){
+		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
+
+		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
+			return true;
+		}
+	}
+	return false;
+}
+
+t_config* obtener_archivo(char* nombre_archivo){
+	for(int i = 0; i < list_size(listaDeFCB); i++){
+		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
+
+		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
+			return archivo_buscado->archivo_fcb;
+		}
+	}
+	return NULL;
+}
+
 char* generarPathFCB(char* nomArchivo){
         char* fcbPath = string_new();
         string_append(&fcbPath,recursosFileSystem->configuracion->PATH_FCB);
         string_append(&fcbPath,nomArchivo);
-        string_append(&fcbPath,".data");
         return fcbPath;
     }
 int tamanioDeArray(char** array){
@@ -74,9 +95,7 @@ int generarCantidad (int tamanioEnBytes){
 void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
-
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
     int punteroDirecto = config_get_int_value(fcb, "punteroDirecto");
     int punteroIndirecto = config_get_int_value(fcb, "punteroIndirecto");
     uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
@@ -115,8 +134,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
     
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
     int punteroIndirecto = config_get_int_value(fcb,"punteroIndirecto");
     int posicionIndirecta = punteroIndirecto*tamanioBloque;
     int bloquesViejos = darNumeroDeBloques(tamanioViejo);
@@ -147,9 +165,7 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
             config_destroy(fcb);
 }
 
-
-
-    archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
+archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
         archivoAbierto* archivo = malloc(sizeof(archivoAbierto));
         archivo -> nombre = nomArchivo;
         archivo -> punteroArchivo = fd;
@@ -157,6 +173,9 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
   puts("-3");
+  if(existe_fcb(nomArchivo)){
+    return contexto;
+  }
 	char* path_archivo = generarPathFCB(nomArchivo);
 	puts("-2.2");
 	FCB* nuevaFCB = malloc(sizeof(FCB));
@@ -169,46 +188,34 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
     archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
     list_add(contexto -> archivosAbiertos,arch);
 */
-	/*
-	FILE* fcb = fopen(fcbPath, "rb");
-
-  if (fcb != NULL) { //VER SI ESTE IF ESTA BIEN
-    fclose(fcb);
-      log_info(logger, "FCB encontrada");
-    return;
-
-  }
-  */
+	
+	FILE* fcb = fopen(fcbPath, "a+");
 
 	puts("0");
-	t_config* archivoFCB = malloc(sizeof(t_config));
-  archivoFCB->path = path_archivo;
-  archivoFCB->properties = dictionary_create();
+	configArchivo* archivoFCB = malloc(sizeof(configArchivo));
+  archivoFCB->nombre_archivo = malloc(strlen(nomArchivo));
+  strcpy(archivo_fcb->nombre_archivo, nomArchivo);
+  archivoFCB->configFCB = config_create();
   puts("1");
 
-  dictionary_put(archivoFCB->properties, "file_size", 0);
-	dictionary_put(archivoFCB->properties, "nombre_archivo", nuevaFCB->nombre_archivo);
-	dictionary_put(archivoFCB->properties, "punteroDirecto", "");
-	dictionary_put(archivoFCB->properties, "punteroIndirecto", "");
-	dictionary_put(archivoFCB->properties, "bloques", "");
+  config_set_value(archivoFCB->configFCB, "file_size", 0);
+	config_set_value(archivoFCB->configFCB, "nombre_archivo", nuevaFCB->nombre_archivo);
   puts("2");
 	config_save(archivoFCB);
-	dictionary_destroy(archivoFCB->properties);
-	//fclose(nuevaFCB);
+    list_add(listaDeFCB,archivoFCB);
+	fclose(fcb);
 
     return contexto;
     }
 
-    void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
-        char* fcbPath = generarPathFCB(nomArchivo);
-        t_config* fcb = config_create(fcbPath);
+void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
+        t_config* fcb = obtener_archivo(nomArchivo);
         config_set_value(fcb,"file_size",(char)nuevoTamanio);
         config_destroy(fcb);
     }
-    int tamanioDeFCB(char* nomArchivo){
+int tamanioDeFCB(char* nomArchivo){
         //int tamanio
-        char* fcbPath = generarPathFCB(nomArchivo);
-        t_config* fcb = config_create(fcbPath);
+        t_config* fcb = obtener_archivo(nomArchivo);
         int tamanio = config_get_int_value(fcb, "file_size");
         return tamanio;
     }
@@ -242,8 +249,7 @@ void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
   //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
-  char* fcbPath = generarPathFCB(nomArchivo);
-  t_config* fcb = config_create(fcbPath);
+  t_config* fcb = obtener_archivo(nomArchivo);
   int tamanioViejo = tamanioDeFCB(nomArchivo);
   int tamanioRestante;
 
@@ -260,8 +266,6 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
   } else {
   desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
   }
-
-  cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
   config_destroy(fcb);
   return contexto;
 }
@@ -290,8 +294,7 @@ uint32_t* darArrayDePunteros(t_config* fcb){
 }
 void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
 	int bloque = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
@@ -327,8 +330,8 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	}
 }
 /*char* leer_datos(char* nomArchivo, int posicion, int tamanio){
-	char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+
+    t_config* fcb = obtener_archivo(nomArchivo);
 
 	int bloque = darNumeroBloque(posicion);
 	int offset = darOffset(posicion);
