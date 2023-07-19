@@ -4,6 +4,7 @@
 #include <commons/config.h>
 #include <unistd.h>
 #include <utils.h>
+#include <dirent.h>
 #include <signal.h>
 t_recursos* recursosFileSystem;
 void* copiaBloque;
@@ -11,6 +12,7 @@ pthread_mutex_t mutexBloques;
 pthread_mutex_t mutexBitMap;
 int bytesDelBitarray;
 t_bitarray* bitMapBloque;
+t_list* listaDeFCB;
 
 void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem = malloc(sizeof(t_recursos));
@@ -21,7 +23,9 @@ void crearRecursosFileSystem(char* pathLogger, char* pathConfiguracion) {
   recursosFileSystem->conexiones->socketFileSystem = -1;
   recursosFileSystem->conexiones->socketMemoria = -1;
 }
-
+void generarListaDeFCB(){
+  listaDeFCB = list_create();
+}
 void cargarConfiguracion(char* pathConfiguracin) {
   t_configuracion* config;
   t_config* fileConfig = config_create(pathConfiguracin);
@@ -70,7 +74,7 @@ void cargarBitMap() {
   bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
   ftruncate(fileDescriptor, bytesDelBitarray );
   void* bitmap = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
-  bitMapBloque = bitarray_create_with_mode((char*)bitmap,bytesDelBitarray, MSB_FIRST);
+  bitMapBloque = bitarray_create_with_mode(bitmap,bytesDelBitarray, LSB_FIRST);
   recursosFileSystem->bitMap = bitMapBloque;
   msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   close(fileDescriptor);
@@ -105,6 +109,34 @@ void cargarBloques() {
 
 		close(fileDescriptor);
 }
+void iniciarFCBExistente(){
+	DIR *directorioFCB = opendir(recursosFileSystem->configuracion->PATH_FCB);
+	struct dirent *fcb;
+
+	if(directorioFCB == NULL){
+    puts("No existe directorio");
+		exit(1);
+	}
+
+	while((fcb = readdir(directorioFCB)) != NULL){
+		if (strcmp(fcb->d_name, ".") == 0 || strcmp(fcb->d_name, "..") == 0){
+			continue;
+		}
+
+		configArchivo* archivo = malloc(sizeof(configArchivo));
+		archivo->nombre_archivo = malloc(strlen(fcb->d_name));
+		strcpy(archivo->nombre_archivo, fcb->d_name);
+
+		char* path_archivo = malloc(strlen(recursosFileSystem->configuracion->PATH_FCB) + strlen(fcb->d_name));
+		strcpy(path_archivo, recursosFileSystem->configuracion->PATH_FCB);
+		strcat(path_archivo, fcb->d_name);
+		archivo->configFCB = config_create(path_archivo);
+
+		list_add(listaDeFCB, archivo);
+	}
+
+	closedir(directorioFCB);
+}
 
 void cargarLogger(char* pathLogger) {
   recursosFileSystem->logger = log_create(pathLogger, "FileSystem", 1, LOG_LEVEL_INFO);
@@ -123,7 +155,7 @@ void liberarRecursos() {
   }
 
   if (recursosFileSystem->conexiones->socketFileSystem > 0) {
-	log_info(recursosFileSystem->logger, "Cerrando Servidor de FileSystem...");
+	log_info(recursosFileSystem->logger, "Cerrando Servidor de FileSystem..");
     close(recursosFileSystem->conexiones->socketFileSystem);
   }
 
@@ -149,4 +181,3 @@ void agarrarSenial(){
 	nuevaAccion.sa_handler = termination_handler;
 	sigaction(SIGTERM,&nuevaAccion, NULL);
 	}
-

@@ -7,12 +7,33 @@
 #include <instrucciones.h>
 
 
+bool existe_fcb(char* nombre_archivo){
+	for(int i = 0; i < list_size(listaDeFCB); i++){
+		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
+
+		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
+			return true;
+		}
+	}
+	return false;
+}
+
+t_config* obtener_archivo(char* nombre_archivo){
+	for(int i = 0; i < list_size(listaDeFCB); i++){
+		configArchivo* archivo_buscado = list_get(listaDeFCB, i);
+
+		if(strcmp(archivo_buscado->nombre_archivo, nombre_archivo) == 0){
+			return archivo_buscado->configFCB;
+		}
+	}
+	return NULL;
+}
+
 char* generarPathFCB(char* nomArchivo){
-        char* fcbPath = string_new();
-        string_append(&fcbPath,recursosFileSystem->configuracion->PATH_FCB);
-        string_append(&fcbPath,nomArchivo);
-        string_append(&fcbPath,".data");
-        return fcbPath;
+         char* path_archivo = malloc(strlen(recursosFileSystem->configuracion->PATH_FCB) + strlen(nomArchivo));
+	strcpy(path_archivo, recursosFileSystem->configuracion->PATH_FCB);
+	strcat(path_archivo, nomArchivo);
+        return path_archivo;
     }
 int tamanioDeArray(char** array){
 	int tamanio;
@@ -74,16 +95,19 @@ int generarCantidad (int tamanioEnBytes){
 void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
-
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
     int punteroDirecto = config_get_int_value(fcb, "punteroDirecto");
     int punteroIndirecto = config_get_int_value(fcb, "punteroIndirecto");
     uint32_t* arrayDePunteros = darArrayDePunteros(fcb);
     int cantidad = darCantidadDePuntero(arrayDePunteros);
     int bloquesViejos = darNumeroDeBloques(tamanioViejo);
     int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
+    int offset = darOffset(tamanioNuevo);
+
     int bloquesAAgregar = bloquesNuevos - bloquesViejos;
+    if(offset != 0){
+    	bloquesAAgregar ++;
+    }
     int posicionAAgregar = (cantidad+ 1)*sizeof(uint32_t);
 
         for(int j = bloquesAAgregar ; j>0; j--) {
@@ -104,19 +128,22 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                 }
             }
             memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
+
  pthread_mutex_lock(&mutexBloques);
                         memcpy(copiaBloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, sizeof(uint32_t));
                         pthread_mutex_unlock(&mutexBloques); 
-            config_set_value(fcb,"file_size", tamanioNuevo);
-            config_destroy(fcb);
+                        char* tamanioEnTexto = malloc(10);
+                                sprintf(tamanioEnTexto,"%d",tamanioNuevo);
+                                config_set_value(fcb,"file_size",tamanioEnTexto);
+            config_save(fcb);
+                                config_destroy(fcb);
 }
 
 void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
     int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
     
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
     int punteroIndirecto = config_get_int_value(fcb,"punteroIndirecto");
     int posicionIndirecta = punteroIndirecto*tamanioBloque;
     int bloquesViejos = darNumeroDeBloques(tamanioViejo);
@@ -142,14 +169,15 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                 }
             	free(posicionEnBitMap);
                 memcpy(arrayPunteros,&cantidad,sizeof(uint32_t));
-            config_set_value(fcb,"file_size",tamanioNuevo);
+                char* tamanioEnTexto = malloc(10);
+                        sprintf(tamanioEnTexto,"%d",tamanioNuevo);
+                        config_set_value(fcb,"file_size",tamanioEnTexto);
             memcpy(copiaBloque+posicionIndirecta,arrayPunteros,tamanioBloque);
+            config_save(fcb);
             config_destroy(fcb);
 }
 
-
-
-    archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
+archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
         archivoAbierto* archivo = malloc(sizeof(archivoAbierto));
         archivo -> nombre = nomArchivo;
         archivo -> punteroArchivo = fd;
@@ -157,7 +185,11 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     }
 contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
   puts("-3");
+  if(existe_fcb(nomArchivo)){
+	  return contexto;
+  }
 	char* path_archivo = generarPathFCB(nomArchivo);
+   
 	puts("-2.2");
 	FCB* nuevaFCB = malloc(sizeof(FCB));
 	nuevaFCB->nombre_archivo = malloc(strlen(nomArchivo) + 1);
@@ -165,63 +197,52 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 	strcpy(nuevaFCB->nombre_archivo, nomArchivo);
 	puts("-1");
 	nuevaFCB->file_size = 0;
+	char* tamanioEnTexto = malloc(10);
+	sprintf(tamanioEnTexto,"%d",nuevaFCB->file_size);
     /*FILE* fileDescriptor = fopen("nomArchivo","rb");
     archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
     list_add(contexto -> archivosAbiertos,arch);
 */
-	/*
-	FILE* fcb = fopen(fcbPath, "rb");
-
-  if (fcb != NULL) { //VER SI ESTE IF ESTA BIEN
-    fclose(fcb);
-      log_info(logger, "FCB encontrada");
-    return;
-
-  }
-  */
+	
+	FILE* fcb = fopen(path_archivo, "a+");
 
 	puts("0");
-	t_config* archivoFCB = malloc(sizeof(t_config));
-  archivoFCB->path = path_archivo;
-  archivoFCB->properties = dictionary_create();
+	configArchivo* archivoFCB = malloc(sizeof(configArchivo));
+  archivoFCB->nombre_archivo = malloc(strlen(nomArchivo));
+  strcpy(archivoFCB->nombre_archivo, nomArchivo);
+  archivoFCB->configFCB = config_create(path_archivo);
   puts("1");
-
-  dictionary_put(archivoFCB->properties, "file_size", 0);
-	dictionary_put(archivoFCB->properties, "nombre_archivo", nuevaFCB->nombre_archivo);
-	dictionary_put(archivoFCB->properties, "punteroDirecto", "");
-	dictionary_put(archivoFCB->properties, "punteroIndirecto", "");
-	dictionary_put(archivoFCB->properties, "bloques", "");
+  config_set_value(archivoFCB->configFCB, "nombre_archivo", nuevaFCB->nombre_archivo);
+  config_set_value(archivoFCB->configFCB, "file_size", tamanioEnTexto);
   puts("2");
-	config_save(archivoFCB);
-	dictionary_destroy(archivoFCB->properties);
-	//fclose(nuevaFCB);
+	config_save(archivoFCB->configFCB);
+    list_add(listaDeFCB,archivoFCB);
+	fclose(fcb);
 
     return contexto;
     }
 
-    void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
-        char* fcbPath = generarPathFCB(nomArchivo);
-        t_config* fcb = config_create(fcbPath);
-        config_set_value(fcb,"file_size",(char)nuevoTamanio);
+void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
+        t_config* fcb = obtener_archivo(nomArchivo);
+        nuevoTamanio = malloc(10);
+        char* tamanioEnTexto = malloc(10);
+        sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+        config_set_value(fcb,"file_size",tamanioEnTexto);
         config_destroy(fcb);
     }
-    int tamanioDeFCB(char* nomArchivo){
+int tamanioDeFCB(char* nomArchivo){
         //int tamanio
-        char* fcbPath = generarPathFCB(nomArchivo);
-        t_config* fcb = config_create(fcbPath);
+        t_config* fcb = obtener_archivo(nomArchivo);
         int tamanio = config_get_int_value(fcb, "file_size");
         return tamanio;
     }
 uint32_t buscar_bloque_libre(){ //busca un bloque libre y lo ocupa
 int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;	
-    for(int i = 0; i < bloquesDelSist; i++){
-		pthread_mutex_lock(&mutexBitMap);
-        log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 0", i);
-        if(bitarray_test_bit(bitMapBloque, i)== 0){
+    for(int i = 0; i < bytesDelBitarray; i++){
+        if(!bitarray_test_bit(bitMapBloque, i)){
 			bitarray_set_bit(bitMapBloque, i);
 			log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
-			msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-            pthread_mutex_unlock(&mutexBitMap);
+
             return i;
 		}
 	}
@@ -230,38 +251,53 @@ int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
 }
 void generarPunteroDirecto(char* nomArchivo,t_config* fcb){
 	int i = buscar_bloque_libre();
-	config_set_value(fcb,"punteroDirecto",i);
+	char* punteroEnTexto = malloc(10);
+	sprintf(punteroEnTexto,"%d",i);
+	        config_set_value(fcb,"punteroDirecto",punteroEnTexto);
+	        config_save(fcb);
 	       
 }
 
 void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
 		int i = buscar_bloque_libre();
-	    config_set_value(fcb,"punteroDirecto",i);
+		char* punteroEnTexto = malloc(10);
+			sprintf(punteroEnTexto,"%d",i);
+			        config_set_value(fcb,"punteroIndirecto",punteroEnTexto);
+			        config_save(fcb);
 	}
 
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio){
   //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
-  char* fcbPath = generarPathFCB(nomArchivo);
-  t_config* fcb = config_create(fcbPath);
-  int tamanioViejo = tamanioDeFCB(nomArchivo);
-  int tamanioRestante;
+  t_config* fcb = obtener_archivo(nomArchivo);
+  int tamanioViejo = config_get_int_value(fcb,"file_size");
+  int tamanioRestante = nuevoTamanio;
+  int tamanioBloque = recursosFileSystem->superBloque->BLOCK_SIZE;
 
   if(tamanioViejo == 0) {
     generarPunteroDirecto(nomArchivo,fcb);
     generarPunteroIndirecto(nomArchivo,fcb);
-    int punteroDirecto = config_get_int_value(fcb,"punteroDirecto");
-    bitarray_set_bit(bitMapBloque,punteroDirecto);
-    tamanioRestante = nuevoTamanio - recursosFileSystem->superBloque->BLOCK_SIZE;
+    tamanioRestante = nuevoTamanio - tamanioBloque;
   }
 
   if(tamanioRestante > tamanioViejo) {
   ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
-  } else {
+  } else if (tamanioViejo > tamanioRestante) {
   desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
+  }else if (tamanioRestante == 0){
+	  char* tamanioEnTexto = malloc(10);
+	  sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+	  config_set_value(fcb,"file_size",tamanioEnTexto);
+	  config_save(fcb);
+	  puts("Llego aca");
+	  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   }
-
-  cambiarTamanioEnFCB(nomArchivo,nuevoTamanio);
+  char* tamanioEnTexto = malloc(10);
+  sprintf(tamanioEnTexto,"%d",nuevoTamanio);
+  config_set_value(fcb,"file_size",tamanioEnTexto);
+  config_save(fcb);
+  puts("Llego aca");
+  msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
   config_destroy(fcb);
   return contexto;
 }
@@ -290,8 +326,7 @@ uint32_t* darArrayDePunteros(t_config* fcb){
 }
 void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 
-    char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+    t_config* fcb = obtener_archivo(nomArchivo);
 	int bloque = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
@@ -327,8 +362,8 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	}
 }
 /*char* leer_datos(char* nomArchivo, int posicion, int tamanio){
-	char* fcbPath = generarPathFCB(nomArchivo);
-    t_config* fcb = config_create(fcbPath);
+
+    t_config* fcb = obtener_archivo(nomArchivo);
 
 	int bloque = darNumeroBloque(posicion);
 	int offset = darOffset(posicion);

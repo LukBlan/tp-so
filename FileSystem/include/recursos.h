@@ -3,6 +3,7 @@
 
   #include <commons/log.h>
   #include <commons/bitarray.h>
+ #include <commons/config.h>
   #include <utils.h>
   #include <fcntl.h>
   #include <sys/mman.h>
@@ -31,6 +32,11 @@
     uint32_t punteroIndirecto;
   } FCB;
 
+typedef struct{
+	char* nombre_archivo;
+	t_config* configFCB;
+} configArchivo;
+
   typedef struct {
     int socketMemoria;
     int socketFileSystem;
@@ -50,6 +56,7 @@
   extern pthread_mutex_t mutexBitMap;
   extern int bytesDelBitarray;
   extern t_bitarray* bitMapBloque;
+  extern t_list* listaDeFCB;
   
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);
@@ -60,5 +67,7 @@
   void cargarBloques();
   void cargarBitMap();
   void cargarSuperbloque();
+  void generarListaDeFCB();
+  void iniciarFCBExistente();
 
 #endif
