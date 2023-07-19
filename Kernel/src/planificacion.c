@@ -470,7 +470,7 @@ void recibirInstruccion() {
               puts("Entre por el default de F_OPEN");
               break;
           }
-          //recibir contexto y enviarlo a CPU
+          //recibir contexto y enviarlo a CPU .
         }
 
         free(nombreArchivo);
