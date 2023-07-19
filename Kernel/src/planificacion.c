@@ -350,11 +350,13 @@ int encontrarEnTablaGlobal(char* nombre) {
     }
     return posicion;
 }
+
 int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto){
   int posicion = encontrarEnTablaDeArchivos(contexto-> archivosAbiertos,nomArchivo);
   archivoAbierto* arch = list_get(contexto-> archivosAbiertos,posicion);
   int puntero = (int) ftell(arch->punteroArchivo);
 }
+
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
   int posicion = encontrarEnTablaDeArchivos(procesoDevuelto -> contexto -> archivosAbiertos, nombreArchivo);
   //ver de hacer fclose aca
@@ -416,10 +418,27 @@ int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
   return procesoEncontrado;
 }
 
+int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
+  int procesoEncontrado = 0;
+  int cantidadDeProcesosEnReady = colaReady->elements_count;
+
+  for (int i = 0; i < cantidadDeProcesosEnReady; i++) {
+    pthread_mutex_lock(&mutexColaReady);
+    PCB* pcb = list_get(colaReady, i);
+    pthread_mutex_unlock(&mutexColaReady);
+    if (pcb->pid == idProceso) {
+      actualizarSegmentos(pcb->contexto->tablaSegmentos, segmentosProceso);
+      procesoEncontrado = 1;
+    }
+  }
+  return procesoEncontrado;
+}
+
+
 void actualizarProceso(int idProceso, t_list* segmentosProceso) {
   if (actualizarSiEstaEjecutandose(idProceso, segmentosProceso)) {
-  } //else if (actualizarSiEstaEnReady(idProceso, segmentosProceso)) {
-  //} else if (actualizarSiEstaEnBloqueado(idProceso, segmentosProceso)) {
+  } else if (actualizarSiEstaEnReady(idProceso, segmentosProceso)) {
+  } //else if (actualizarSiEstaEnBloqueado(idProceso, segmentosProceso)) {
   //} else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
   //} else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
   //}
