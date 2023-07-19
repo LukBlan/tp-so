@@ -185,6 +185,8 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 	strcpy(nuevaFCB->nombre_archivo, nomArchivo);
 	puts("-1");
 	nuevaFCB->file_size = 0;
+	char* tamanioEnTexto = malloc(10);
+	sprintf(tamanioEnTexto,"%d",nuevaFCB->file_size);
     /*FILE* fileDescriptor = fopen("nomArchivo","rb");
     archivoAbierto*  arch = agregarAArchivo(fileDescriptor,nomArchivo);
     list_add(contexto -> archivosAbiertos,arch);
@@ -198,11 +200,10 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
   strcpy(archivoFCB->nombre_archivo, nomArchivo);
   archivoFCB->configFCB = config_create(path_archivo);
   puts("1");
-
-  config_set_value(archivoFCB->configFCB, "file_size", 0);
-	config_set_value(archivoFCB->configFCB, "nombre_archivo", nuevaFCB->nombre_archivo);
+  config_set_value(archivoFCB->configFCB, "nombre_archivo", nuevaFCB->nombre_archivo);
+  config_set_value(archivoFCB->configFCB, "file_size", tamanioEnTexto);
   puts("2");
-	config_save(archivoFCB);
+	config_save(archivoFCB->configFCB);
     list_add(listaDeFCB,archivoFCB);
 	fclose(fcb);
 
@@ -211,7 +212,7 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 
 void cambiarTamanioEnFCB(char* nomArchivo, int nuevoTamanio){
         t_config* fcb = obtener_archivo(nomArchivo);
-        config_set_value(fcb,"file_size",(char)nuevoTamanio);
+        config_set_value(fcb,"file_size",nuevoTamanio);
         config_destroy(fcb);
     }
 int tamanioDeFCB(char* nomArchivo){
