@@ -102,11 +102,17 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       char* nombreArchivo = recibirString(socketCliente);
       int tamanio = recibirEntero(socketCliente);
+      printf("Tamanio %d", tamanio);
+      puts("");
+
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
       puts("a");
       contexto = ftruncar(nombreArchivo, contexto,tamanio);
       puts("b");
-      enviarContexto(contexto,socketCliente,SUCCESS_TRUNCATE);
+      printf("Tamanio nuevo %d", tamanio);
+      puts("");
+
+      enviarContexto(contexto, socketCliente, SUCCESS_TRUNCATE);
       liberarContexto(contexto);
       break;
 

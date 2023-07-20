@@ -240,15 +240,16 @@ int tamanioDeFCB(char* nomArchivo){
     }
 
 uint32_t buscar_bloque_libre() { //busca un bloque libre y lo ocupa
-int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;	
+  int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
 
-for(int i = 0; i < bytesDelBitarray; i++) {
-  if(!bitarray_test_bit(bitMapBloque, i)) {
-    bitarray_set_bit(bitMapBloque, i);
-    log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
-    return i;
+  for(int i = 0; i < bytesDelBitarray; i++) {
+    if(!bitarray_test_bit(bitMapBloque, i)) {
+      bitarray_set_bit(bitMapBloque, i);
+      log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
+      msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+      return i;
+    }
   }
-}
 	return 0;
 }
 

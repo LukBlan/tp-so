@@ -6,7 +6,6 @@
 #include <utils.h>
 #include <dirent.h>
 #include <signal.h>
-#include <commons/bitarray.h>
 
 void* bitmapMapeado;
 t_bitarray* bitMapBloque;
@@ -76,13 +75,13 @@ void cargarSuperbloque() {
 
 void cargarBitMap() {
   puts("aca 1");
-  int fileDescriptor = open (recursosFileSystem->configuracion->PATH_BITMAP, O_RDWR);
+  int fileDescriptor = open(recursosFileSystem->configuracion->PATH_BITMAP, O_CREAT | O_RDWR,0664);
   bytesDelBitarray = bitsToBytes(recursosFileSystem->superBloque->BLOCK_COUNT);
-  ftruncate(fileDescriptor, bytesDelBitarray );
+  ftruncate(fileDescriptor, bytesDelBitarray);
   puts("aca 2");
   bitmapMapeado = mmap(NULL , bytesDelBitarray , PROT_READ | PROT_WRITE , MAP_SHARED , fileDescriptor , 0);
   puts("aca 2.5");
-  bitMapBloque = bitarray_create_with_mode(bitmapMapeado, bytesDelBitarray, LSB_FIRST);
+  bitMapBloque = bitarray_create_with_mode(bitmapMapeado,bytesDelBitarray, LSB_FIRST);
   puts("aca 2.7");
   if(!bitarray_test_bit(bitMapBloque, 0)) {
     puts("Esta Vacio");
@@ -90,9 +89,9 @@ void cargarBitMap() {
   puts("aca 2.9");
   bitarray_set_bit(bitMapBloque, 0);
   puts("aca 3");
-  //recursosFileSystem->bitMap = bitMapBloque;
+  recursosFileSystem->bitMap = bitMapBloque;
   msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
-
+  puts("aca 4");
   close(fileDescriptor);
 }
 

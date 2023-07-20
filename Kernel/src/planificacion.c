@@ -249,9 +249,9 @@ void sacarDeEjecutando(estadoProceso estado) {
   sem_post(&semaforoCantidadProcesosExec);
 }
 
-void actualizarContexto(contextoEjecucion* nuevoContexto) {
-  liberarContexto(procesoEjecutandose->contexto);
-  procesoEjecutandose->contexto = nuevoContexto;
+void actualizarContexto(PCB* proceso, contextoEjecucion* nuevoContexto) {
+  liberarContexto(proceso->contexto);
+  proceso->contexto = nuevoContexto;
 }
 
 int buscarSocket(int pidProceso) {
@@ -475,7 +475,7 @@ void recibirInstruccion() {
   contextoEjecucion* nuevoContexto = recibirContexto(socketCpu);
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
   int socketFileSystem = recursosKernel->conexiones->socketFileSystem;
-  actualizarContexto(nuevoContexto);
+  actualizarContexto(proceso, nuevoContexto);
   PCB* procesoDevuelto = procesoEjecutandose;
 
   switch (codigoOperacion) {
@@ -495,6 +495,9 @@ void recibirInstruccion() {
       puts("-------------------- Llego F_TRUNCATE --------------------");
       char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
+      printf("Tamanio %d", tamanioNuevo);
+      puts("");
+      PCB* procesoTruncado = procesoEjecutandose;
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
 
@@ -506,7 +509,7 @@ void recibirInstruccion() {
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
       switch(respuestaTruncado) {
         case SUCCESS_TRUNCATE:
-        actualizarContexto(nuevoTruncado);
+        actualizarContexto(procesoTruncado, nuevoTruncado);
         agregarAListo(procesoDevuelto);
         break;
 
@@ -542,7 +545,7 @@ void recibirInstruccion() {
           switch(respuestaFS) {
             case SUCCESS_OPEN:
               puts("Entre en SUCCESS");
-              actualizarContexto(nuevoFS);
+              actualizarContexto(procesoEjecutandose, nuevoFS);
               agregarATablaArchivo(nuevoFS, nombreArchivo);
               enviarContexto(nuevoFS, socketCpu, SUCCESS_OPEN_CPU);
               recibirInstruccion();
@@ -567,7 +570,7 @@ void recibirInstruccion() {
 
       obtenerCodigoOperacion(socketMemoria);
       nuevoContexto = recibirContexto(socketMemoria);
-      actualizarContexto(nuevoContexto);
+      actualizarContexto(procesoEjecutandose, nuevoContexto);
 
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
@@ -607,6 +610,7 @@ void recibirInstruccion() {
 
     case F_READ:
       puts("-------------------- Llego F_READ --------------------");
+      PCB* procesoQueLeyo = procesoEjecutandose;
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
       char* nombreArchivoALeer = recibirString(socketCpu);
@@ -619,10 +623,11 @@ void recibirInstruccion() {
       enviarEntero(posicionEnMemoriaAleer,socketFileSystem);
       enviarEntero(posicionDeArchivoLectura,socketFileSystem);
       op_code respuestaLectura = obtenerCodigoOperacion(socketFileSystem);
+
       contextoEjecucion* nuevoLeido = recibirContexto(socketFileSystem);
       switch(respuestaLectura) {
         case SUCCESS_WRITE:
-        actualizarContexto(nuevoLeido);
+        actualizarContexto(procesoQueLeyo, nuevoLeido);
         agregarAListo(procesoDevuelto);
         break;
         default:
@@ -634,6 +639,7 @@ void recibirInstruccion() {
 
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");
+      PCB* procesoQueEscribio = procesoEjecutandose;
       sacarDeEjecutando(BLOCK);
       agregar_proceso_bloqueado(procesoDevuelto);
       char* nombreArchivoAEscribir = recibirString(socketCpu);
@@ -649,7 +655,7 @@ void recibirInstruccion() {
       contextoEjecucion* nuevoEscrito = recibirContexto(socketFileSystem);
       switch(respuestaEscritura) {
         case SUCCESS_WRITE:
-        actualizarContexto(nuevoEscrito);
+        actualizarContexto(procesoQueEscribio, nuevoEscrito);
         agregarAListo(procesoDevuelto);
         break;
 
@@ -707,7 +713,7 @@ void recibirInstruccion() {
       switch(respuestaMemoria) {
         case Pcb:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
-          actualizarContexto(nuevoActualizado);
+          actualizarContexto(procesoEjecutandose, nuevoActualizado);
           sacarDeEjecutando(READY);
           agregarAListo(procesoDevuelto);
           break;

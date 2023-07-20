@@ -272,6 +272,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
     int tamanioNuevo = atoi(segundoParametro);
+    printf("Tamanio de truncate %d", tamanioNuevo);
     char* nombreArchivoATruncar = primerParametro;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
     enviarString(nombreArchivoATruncar,socketKernel);

@@ -31,7 +31,7 @@
   char* asignarStringLiteral(char* stringLiteral);
   char* estadoAsString(estadoProceso estado);
   void sacarDeEjecutando(estadoProceso estado);
-  void actualizarContexto(contextoEjecucion* nuevoContexto);
+  void actualizarContexto(PCB* proceso, contextoEjecucion* nuevoContexto);
   int buscarSocket(int pidProceso);
   void terminarConsola(procesoConsola* consolaFinalizada, int posicionProceso);
   void avisarProcesoFinalizado(int socket, op_code motivo);
@@ -52,4 +52,5 @@
   void liberar_semaforos();
   void liberar_estructuras();
   void recibirInstruccion();
+
 #endif
