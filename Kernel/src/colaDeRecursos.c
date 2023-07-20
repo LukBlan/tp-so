@@ -30,34 +30,20 @@ t_queue* devuelvoColaBloqueados(colaRecBloqueados) {
   return colaRecBloqueados;
 }
 
-void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido) {
-  int cantRecursos = list_size(listaRecursos);// obtengo la cantidad de recursos
+int validarRecurso(char* recursoPedido) {
+  int cantidadRecursos = listaRecursos->elements_count;// obtengo la cantidad de recursos
   int existeRecurso = 0;
-  recursoSolicitados* reg_recurso;
 
-  for (size_t i = 0; i < cantRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
-    reg_recurso =  list_get(listaRecursos, i);
+  for (int i = 0; i < cantidadRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
+    recursoSolicitados* reg_recurso =  list_get(listaRecursos, i);
     char* elementoRecurso = reg_recurso->recurso;
-    int comparacion = strcmp(recursopedido, elementoRecurso);
 
-    if (comparacion == 0){
+    if (strcmp(recursoPedido, elementoRecurso) == 0) {
+      puts("Existe El recurso");
       existeRecurso = 1;
-      t_queue* colaBloqueados = crearColaRecursosBloqueados();
-      procesarRecursoExistenteWait(reg_recurso,colaBloqueados);
     }
   }
-
-  if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
-    PCB* procesoTerminado = procesoEjecutandose;
-    sacarDeEjecutando(EXIT);
-    log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
-    finalizarProceso(procesoTerminado, INVALID_RESOURCE);
-    liberarPcb(procesoTerminado);
-  }
-}
-
-void procesarRecursoWait(char* recursopedido) {
-  validoExistenciaDeRecursoWait(listaRecursos, recursopedido);
+  return existeRecurso;
 }
 
 void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {

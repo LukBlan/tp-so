@@ -6,6 +6,7 @@
 #include <serializacion/paquete.h>
 #include <conexiones.h>
 #include <utils.h>
+#include <colaDeRecursos.h>
 
 t_list* tablaGlobalDeArchivos;
 
@@ -697,10 +698,23 @@ void recibirInstruccion() {
 
     case WAIT:
       puts("-------------------- Llego WAIT --------------------");
-      char* recursoWait = recibirString(socketCpu);
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
-      free(recursoWait);
+      char* recursoPedido = recibirString(socketCpu);
+      if (validarRecurso(recursoPedido)) {
+        sacarDeEjecutando(READY);
+        agregarAListo(procesoDevuelto);
+        free(recursoPedido);
+        /*
+        PCB* procesoTerminado = procesoEjecutandose;
+        sacarDeEjecutando(EXIT);
+        log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
+        finalizarProceso(procesoTerminado, INVALID_RESOURCE);
+        liberarPcb(procesoTerminado);
+        */
+      } else {
+        sacarDeEjecutando(EXIT);
+        log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
+        finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
+      }
       break;
 
     case SIGNAL:

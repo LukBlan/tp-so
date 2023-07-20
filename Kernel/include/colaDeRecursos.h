@@ -14,7 +14,7 @@
   void iniciarListaDeRecursos(void);
   t_queue* crearColaRecursosBloqueados(void);
   t_queue* devuelvoColaBloqueados(colaRecBloqueados);
-  void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido);
+  int validarRecurso(char* recursopedido);
   void procesarRecursoWait(char* recursopedido);
   void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados);
   void procesarRecursoSignal(char* recpedido);
