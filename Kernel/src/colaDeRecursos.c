@@ -68,7 +68,6 @@ void procesarRecursoWait(char* recursopedido) {
 }
 
 void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {
-
   int cantidadInstancias = registroRecurso->cantidad_inst_recurso;
   if(cantidadInstancias > 0){
     registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso - 1; //resto 1 a la cantidad de recursos disponibles

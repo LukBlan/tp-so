@@ -419,14 +419,14 @@ int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
   return procesoEncontrado;
 }
 
-int actualizarSiEstaEnReady(int idProceso, t_list* segmentosProceso) {
+int actualizarSiEstaEn(int idProceso, t_list* segmentosProceso, t_list* colaProcesos, pthread_mutex_t mutextCola) {
   int procesoEncontrado = 0;
   int cantidadDeProcesosEnReady = colaReady->elements_count;
 
   for (int i = 0; i < cantidadDeProcesosEnReady; i++) {
-    pthread_mutex_lock(&mutexColaReady);
-    PCB* pcb = list_get(colaReady, i);
-    pthread_mutex_unlock(&mutexColaReady);
+    pthread_mutex_lock(&mutextCola);
+    PCB* pcb = list_get(colaProcesos, i);
+    pthread_mutex_unlock(&mutextCola);
     if (pcb->pid == idProceso) {
       actualizarSegmentos(pcb->contexto->tablaSegmentos, segmentosProceso);
       procesoEncontrado = 1;
@@ -435,12 +435,22 @@ int actualizarSiEstaEnReady(int idProceso, t_list* segmentosProceso) {
   return procesoEncontrado;
 }
 
+int actualizarSiEstaBloqueadoPorArchivo(int idProceso, t_list* segmentosProceso) {
+  int cantidadColasDeArchivos = tablaGlobalDeArchivos->elements_count;
+  int procesoEncontrado = 0;
+  for (int i = 0; i < cantidadColasDeArchivos; i++) {
+    tablaGlobal* tabla = list_get(tablaGlobalDeArchivos, i);
+    t_list* listaProcesos = tabla->colaBloqueado->elements;
+    procesoEncontrado = actualizarSiEstaEn(idProceso, segmentosProceso, listaProcesos, mutexColaArchivos);
+  }
+  return procesoEncontrado;
+}
 
 void actualizarProceso(int idProceso, t_list* segmentosProceso) {
   if (actualizarSiEstaEjecutandose(idProceso, segmentosProceso)) {
-  } else if (actualizarSiEstaEnReady(idProceso, segmentosProceso)) {
-  } //else if (actualizarSiEstaEnBloqueado(idProceso, segmentosProceso)) {
-  //} else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
+  } else if (actualizarSiEstaEn(idProceso, segmentosProceso, colaReady, mutexColaReady)) {
+  } else if (actualizarSiEstaEn(idProceso, segmentosProceso, colaBlock->elements, mutexColaBlock)) {
+  } else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
   //} else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
   //}
 }
