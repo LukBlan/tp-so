@@ -47,6 +47,44 @@ void crearRecursos() {
   recursosKernel->conexiones->socketMemoria = -1;
 }
 
+t_list* obtenerListaDeInstancias(t_config* fileConfig) {
+  t_list* listaInstancias = list_create();
+  char** instanciasRecursos = config_get_array_value(fileConfig,"INSTANCIAS_RECURSOS");
+  int i = 0;
+  while(instanciasRecursos[i] != NULL) {
+    list_add(listaInstancias, atoi(instanciasRecursos[i]));
+    i++;
+  }
+  free(instanciasRecursos);
+  return listaInstancias;
+}
+
+t_list* obtenerListaDeRecursos(t_config* fileConfig) {
+  t_list* listaRecursos = list_create();
+    char** recursos = config_get_array_value(fileConfig,"RECURSOS");
+    int i = 0;
+    while(recursos[i] != NULL) {
+      list_add(listaRecursos, recursos[i]);
+      i++;
+    }
+    free(recursos);
+    return listaRecursos;
+}
+
+void mostrarConfig() {
+  puts("1");
+  t_configuracion* config = recursosKernel->configuracion;
+  t_list* listaRecursos = config->RECURSOS;
+  t_list* listaInstancias = config->INSTANCIAS_RECURSOS;
+  puts("2");
+  printf("%d = %d\n", listaRecursos->elements_count, listaInstancias->elements_count);
+  puts("3");
+  for (int i = 0; i < listaRecursos->elements_count; i++) {
+    printf("Recurso: %s cantidad: %d\n", list_get(listaRecursos, i), list_get(listaInstancias, i));
+  }
+
+}
+
 void cargarConfiguracion(char* pathConfiguracion) {
   t_configuracion* config;
   t_config* fileConfig = config_create(pathConfiguracion);
@@ -65,8 +103,9 @@ void cargarConfiguracion(char* pathConfiguracion) {
     config->ESTIMACION_INICIAL = config_get_int_value(fileConfig,"ESTIMACION_INICIAL");
     config->HRRN_ALFA = config_get_int_value(fileConfig,"HRRN_ALFA");
     config->GRADO_MAX_MULTIPROGRAMACION = config_get_int_value(fileConfig,"GRADO_MAX_MULTIPROGRAMACION");
-    config->RECURSOS = config_get_array_value(fileConfig,"RECURSOS");//es una lista de char
-    config->INSTANCIAS_RECURSOS = config_get_array_value(fileConfig,"INSTANCIAS_RECURSOS");// es una lista de int
+    config->RECURSOS = obtenerListaDeRecursos(fileConfig);
+    config->INSTANCIAS_RECURSOS = obtenerListaDeInstancias(fileConfig);
+
   } else {
     log_error(recursosKernel->logger, "No se pudo Encontrar el Archivo de configuracion");
     liberarRecursos();
@@ -75,6 +114,7 @@ void cargarConfiguracion(char* pathConfiguracion) {
 
   config_destroy(fileConfig);
   recursosKernel->configuracion = config;
+  mostrarConfig();
 }
 
 void cargarLogger(char* pathLogger) {
