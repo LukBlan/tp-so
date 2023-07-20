@@ -303,9 +303,9 @@ bool estaEnTablaGlobal (char* nomArchivo) {
 
 void agregarATabla (char* nombreArchivo) {
     tablaGlobal* tabla1 = malloc(sizeof(tablaGlobal));
-    tabla1 -> nomArchivo = nombreArchivo;
+    tabla1->nomArchivo = nombreArchivo;
     t_queue* colaArchivo = queue_create();
-    tabla1 -> colaBloqueado = colaArchivo;
+    tabla1->colaBloqueado = colaArchivo;
 }
 
 tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
@@ -455,7 +455,10 @@ void actualizarSegmentosProcesos(t_list* tablaDeSegmentos) {
 }
 
 void agregarATablaArchivo(contextoEjecucion* contexto, char* nombreArchivo) {
-
+  archivoAbierto* nuevoArchivo = malloc(sizeof(archivoAbierto));
+  nuevoArchivo->nombre = nombreArchivo;
+  nuevoArchivo->punteroArchivo = fopen("r", nombreArchivo);
+  list_add(contexto->archivosAbiertos, nuevoArchivo);
 }
 
 void ejecutar(PCB* proceso) {
@@ -599,7 +602,7 @@ void recibirInstruccion() {
       puts("2");
       int posicionEnTabla = encontrarEnTablaDeArchivos(archivosAbiertos,nomArchivo);
       puts("3");
-      archivoAbierto* arch = list_get(archivosAbiertos,posicionEnTabla);
+      archivoAbierto* arch = list_get(archivosAbiertos, posicionEnTabla);
       puts("4");
       fseek(arch->punteroArchivo, posicion, SEEK_SET);
       puts("5");

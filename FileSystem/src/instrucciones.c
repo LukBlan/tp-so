@@ -137,7 +137,6 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                                 sprintf(tamanioEnTexto,"%d",tamanioNuevo);
                                 config_set_value(fcb,"file_size",tamanioEnTexto);
             config_save(fcb);
-                                config_destroy(fcb);
 }
 
 void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
@@ -175,7 +174,6 @@ void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
                         config_set_value(fcb,"file_size",tamanioEnTexto);
             memcpy(bloque+posicionIndirecta,arrayPunteros,tamanioBloque);
             config_save(fcb);
-            config_destroy(fcb);
 }
 
 archivoAbierto* agregarAArchivo(FILE* fd,char* nomArchivo){
@@ -288,21 +286,14 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
   ocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
   } else if (tamanioViejo > tamanioRestante) {
   desocuparBloque(nomArchivo,tamanioRestante,tamanioViejo);
-  }else if (tamanioRestante == 0){
-	  char* tamanioEnTexto = malloc(10);
-	  sprintf(tamanioEnTexto,"%d",nuevoTamanio);
-	  config_set_value(fcb,"file_size",tamanioEnTexto);
-	  config_save(fcb);
-	  puts("Llego aca");
-	  msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
   }
+
   char* tamanioEnTexto = malloc(10);
   sprintf(tamanioEnTexto,"%d",nuevoTamanio);
   config_set_value(fcb,"file_size",tamanioEnTexto);
   config_save(fcb);
   puts("Llego aca");
   msync(bitmapMapeado, bytesDelBitarray, MS_SYNC);
-  config_destroy(fcb);
   return contexto;
 }
 
