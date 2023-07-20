@@ -9,7 +9,9 @@
       t_queue* colaBloqueados;
   } recursoSolicitados;
 
-  t_list* cargarListaDeRecursos(void);
+  extern t_list* listaRecursos;
+
+  void iniciarListaDeRecursos(void);
   t_queue* crearColaRecursosBloqueados(void);
   t_queue* devuelvoColaBloqueados(colaRecBloqueados);
   void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido);

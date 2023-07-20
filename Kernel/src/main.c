@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <recursos.h>
 #include <pthread.h>
+#include <colaDeRecursos.h>
 #include <utils.h>
 
 int main(int argc, char* argv[]) {
@@ -12,6 +13,7 @@ int main(int argc, char* argv[]) {
   cargarConfiguracion(argv[1]);
   cargarConexiones();
 
+  iniciarListaDeRecursos();
   iniciarTablaGlobal();
   iniciarColas();
   iniciarSemaforos();

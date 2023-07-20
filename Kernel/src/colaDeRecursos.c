@@ -4,27 +4,21 @@
 #include <planificacion.h>
 #include <utils.h>
 
-t_list* cargarListaDeRecursos(void) {
-  t_list* listaRecursos = list_create();
+t_list* listaRecursos;
 
-  t_list* recursosDeLaConfig = recursosKernel->configuracion->RECURSOS;
+void iniciarListaDeRecursos(void) {
+  t_list* listaRecursosDisponibles = recursosKernel->configuracion->RECURSOS;
+  t_list* listaCantidadInstancias = recursosKernel->configuracion->INSTANCIAS_RECURSOS;
+  listaRecursos = list_create();
 
-  int cantRecursos = list_size(recursosDeLaConfig);
-  recursoSolicitados* recurso;
-
-  for (size_t i = 0; i < cantRecursos; i++) {
-
-    char* auxRecursos = list_get(recursosDeLaConfig, i);
-    int auxInstancias = list_get(recursosKernel->configuracion->INSTANCIAS_RECURSOS, i);
-
-    recurso->recurso = auxRecursos;
-    recurso->cantidad_inst_recurso = auxInstancias;
-
-    list_add_in_index(listaRecursos, i, recurso);
-
-    i+=1;
+  int cantRecursos = listaRecursosDisponibles->elements_count;
+  for (int i = 0; i < cantRecursos; i++) {
+    recursoSolicitados* recurso = malloc(sizeof(recursoSolicitados));
+    recurso->recurso = list_get(listaRecursosDisponibles, i);
+    recurso->cantidad_inst_recurso = list_get(listaCantidadInstancias, i);
+    recurso->colaBloqueados = queue_create();
+    list_add(listaRecursos, recurso);
   }
-  return listaRecursos;
 }
 
 t_queue* crearColaRecursosBloqueados(void) {
@@ -63,8 +57,7 @@ void validoExistenciaDeRecursoWait(t_list* listaRecursos,char* recursopedido) {
 }
 
 void procesarRecursoWait(char* recursopedido) {
-  t_list* listRecursos = cargarListaDeRecursos();
-  validoExistenciaDeRecursoWait(listRecursos, recursopedido);
+  validoExistenciaDeRecursoWait(listaRecursos, recursopedido);
 }
 
 void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {

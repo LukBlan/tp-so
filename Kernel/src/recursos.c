@@ -71,20 +71,6 @@ t_list* obtenerListaDeRecursos(t_config* fileConfig) {
     return listaRecursos;
 }
 
-void mostrarConfig() {
-  puts("1");
-  t_configuracion* config = recursosKernel->configuracion;
-  t_list* listaRecursos = config->RECURSOS;
-  t_list* listaInstancias = config->INSTANCIAS_RECURSOS;
-  puts("2");
-  printf("%d = %d\n", listaRecursos->elements_count, listaInstancias->elements_count);
-  puts("3");
-  for (int i = 0; i < listaRecursos->elements_count; i++) {
-    printf("Recurso: %s cantidad: %d\n", list_get(listaRecursos, i), list_get(listaInstancias, i));
-  }
-
-}
-
 void cargarConfiguracion(char* pathConfiguracion) {
   t_configuracion* config;
   t_config* fileConfig = config_create(pathConfiguracion);
@@ -114,7 +100,6 @@ void cargarConfiguracion(char* pathConfiguracion) {
 
   config_destroy(fileConfig);
   recursosKernel->configuracion = config;
-  mostrarConfig();
 }
 
 void cargarLogger(char* pathLogger) {
@@ -170,7 +155,6 @@ void agarrarSenial(){
 	nuevaAccion.sa_handler = termination_handler;
 	sigaction(SIGTERM,&nuevaAccion, NULL);
 	}
-
 
 void iniciarColas() {
   colaNew = queue_create();
