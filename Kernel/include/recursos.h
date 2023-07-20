@@ -63,6 +63,7 @@
   extern pthread_mutex_t mutexColaBlock;
   extern pthread_mutex_t mutexColaExec;
   extern pthread_mutex_t mutexColaEnd;
+  extern pthread_mutex_t mutexColaArchivos;
 
   extern pthread_mutex_t mutex_cola;
   extern pthread_mutex_t mutexcantidadProcesosMemoria;

@@ -74,9 +74,13 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, SIGNAL);
     enviarString(recurso, socketKernel);
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
+    continuarEjecutando = 1;
     int idSegmento = atoi(primerParametro);
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
     enviarEntero(idSegmento, socketKernel);
+    liberarContexto(contexto);
+    obtenerCodigoOperacion(socketKernel);
+    contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
     printf("Nombre Archivo %s\n", primerParametro);
     char* nombreArchivo = primerParametro;
@@ -280,10 +284,14 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   } else if (strcmp("CREATE_SEGMENT", identificador) == 0) {
     int idSegmento = atoi(primerParametro);
     int tamainoSegmento = atoi(segundoParametro);
-    continuarEjecutando = 0;
+    continuarEjecutando = 1;
     enviarContexto(contexto, socketKernel, CREATE_SEGMENT);
     enviarEntero(idSegmento, socketKernel);
     enviarEntero(tamainoSegmento, socketKernel);
+
+    liberarContexto(contexto);
+    obtenerCodigoOperacion(socketKernel);
+    contexto = recibirContexto(socketKernel);
   }
   return continuarEjecutando;
 }

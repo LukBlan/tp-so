@@ -453,6 +453,7 @@ void actualizarProceso(int idProceso, t_list* segmentosProceso) {
   } else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
   //} else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
   //}
+  }
 }
 
 void actualizarSegmentosProcesos(t_list* tablaDeSegmentos) {
@@ -727,8 +728,8 @@ void recibirInstruccion() {
         case Pcb:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
           actualizarContexto(procesoEjecutandose, nuevoActualizado);
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
+          enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
+          recibirInstruccion();
           break;
 
         case COMPACTACION:
@@ -738,8 +739,8 @@ void recibirInstruccion() {
           mostrarTablaDeSegmentos(tablaDeSegmentos);
           actualizarSegmentosProcesos(tablaDeSegmentos);
           mostrarContexto(procesoEjecutandose->contexto);
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
+          enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
+          recibirInstruccion();
           break;
 
         case OUT_OF_MEMORY:
