@@ -117,11 +117,9 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
 
 
   for(int j = bloquesAAgregar ; j>0; j--) {
-   int i = 0;
-   while(continuarBuscando) {
+ 
       pthread_mutex_lock(&mutexBitMap);
-      if(bitarray_test_bit(bitMapBloque, i) == 0) {
-        uint32_t bloqueAUsar = i;
+        uint32_t bloqueAUsar = buscar_bloque_libre();
         uint32_t* puntero = malloc(sizeof(uint32_t));
         *puntero = bloqueAUsar;
         memcpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
@@ -131,13 +129,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
         cantidad++;
         cantidadBloquesEncontrados++;
       }
-
-      if (cantidadBloquesEncontrados == bloquesAAgregar) {
-        continuarBuscando = 0;
-      }
       pthread_mutex_unlock(&mutexBitMap);
-    }
-  }
 
   memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
   pthread_mutex_lock(&mutexBloques);
@@ -249,13 +241,14 @@ int tamanioDeFCB(char* nomArchivo){
         return tamanio;
     }
 
-uint32_t buscar_bloque_libre() { //busca un bloque libre y lo ocupa
+uint32_t buscar_bloque_libre() {
   int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
 
   for(int i = 0; i < bytesDelBitarray; i++) {
-    if(!bitarray_test_bit(bitMapBloque, i)) {
+    log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado Actual: 0", i);
+    if(bitarray_test_bit(bitMapBloque, i) == 0) {
       bitarray_set_bit(bitMapBloque, i);
-      log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado: 1", i);
+      log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado Modificado: 1", i);
       msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
       return i;
     }
