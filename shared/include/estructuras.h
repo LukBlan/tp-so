@@ -47,7 +47,7 @@
 
   typedef struct {
     char* nombre;
-    FILE* punteroArchivo;
+    int punteroArchivo;
   } archivoAbierto;
 
   typedef struct {

@@ -86,23 +86,24 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
   switch (codigoOperacion) {
     case F_OPEN:
-      puts ("Llego F_open");
+      puts ("-------------- Llego F_open --------------");
       contexto = recibirContexto(socketCliente);
+      printf("Recibi cantidad de archivos = %d\n", contexto->archivosAbiertos->elements_count);
       char* nomArchivo = recibirString(socketCliente);
       printf("Recibi archivo con nombre %s\n", nomArchivo);
       puts("a");
       contexto = fcreate(nomArchivo, contexto);
       puts("b");
-      enviarContexto(contexto,socketCliente,SUCCESS_OPEN);
+      enviarContexto(contexto,socketCliente, SUCCESS_OPEN);
       liberarContexto(contexto);
     break;
 
     case F_TRUNCATE:
-      puts ("Llego F_truncate");
+      puts ("-------------- Llego F_truncate --------------");
       contexto = recibirContexto(socketCliente);
       char* nombreArchivo = recibirString(socketCliente);
       int tamanio = recibirEntero(socketCliente);
-      printf("Tamanio %d", tamanio);
+      printf("Tamanio %d\n", tamanio);
       puts("");
 
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
@@ -117,7 +118,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
       case F_WRITE:
-      puts("Llego F_Write");
+      puts("-------------- Llego F_Write --------------");
       contexto=recibirContexto(socketCliente);
       char* nombreDeArchivo = recibirString(socketCliente);
       int direccionAEscribir = recibirEntero(socketCliente);
@@ -145,7 +146,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
       
       case F_READ:
-        puts("Llego F_Read");
+        puts("-------------- Llego F_Read --------------");
         contexto = recibirContexto(socketCliente);
         char* nombreArchivoLeer = recibirString(socketCliente);
         int direccionALeer = recibirEntero(socketCliente);
@@ -172,7 +173,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
     default:
-      puts("Cerre una conexion");
+      puts("-------------- Llego Default --------------");
       /*
       close(socketCliente);
       */

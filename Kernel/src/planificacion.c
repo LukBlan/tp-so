@@ -355,8 +355,8 @@ int encontrarEnTablaGlobal(char* nombre) {
 int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto){
   int posicion = encontrarEnTablaDeArchivos(contexto-> archivosAbiertos,nomArchivo);
   archivoAbierto* arch = list_get(contexto-> archivosAbiertos,posicion);
-  int puntero = (int) ftell(arch->punteroArchivo);
-  return posicion;
+  int puntero = arch->punteroArchivo;
+  return puntero;
 }
 
 void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto) {
@@ -469,7 +469,7 @@ void actualizarSegmentosProcesos(t_list* tablaDeSegmentos) {
 void agregarATablaArchivo(contextoEjecucion* contexto, char* nombreArchivo) {
   archivoAbierto* nuevoArchivo = malloc(sizeof(archivoAbierto));
   nuevoArchivo->nombre = nombreArchivo;
-  nuevoArchivo->punteroArchivo = fopen("r", nombreArchivo);
+  nuevoArchivo->punteroArchivo = 0;
   list_add(contexto->archivosAbiertos, nuevoArchivo);
 }
 
@@ -496,12 +496,6 @@ void recibirInstruccion() {
   switch (codigoOperacion) {
     case YIELD:
       puts("-------------------- Llego YIELD --------------------");
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
-      break;
-
-    case MOV_IN:
-      puts("-------------------- Llego MOV_IN --------------------");
       sacarDeEjecutando(READY);
       agregarAListo(procesoDevuelto);
       break;
@@ -534,12 +528,6 @@ void recibirInstruccion() {
       }
       break;
 
-    case MOV_OUT:
-      puts("-------------------- Llego MOV_OUT --------------------");
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
-      break;
-
     case F_OPEN:
       puts("-------------------- Llego F_OPEN --------------------");
       char* nombreArchivo = recibirString(socketCpu);
@@ -551,7 +539,7 @@ void recibirInstruccion() {
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           agregarATabla(nombreArchivo);
-          enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_OPEN);
+          enviarContexto(procesoDevuelto->contexto, socketFileSystem, F_OPEN);
           enviarString(nombreArchivo, socketFileSystem);
 
           op_code respuestaFS = obtenerCodigoOperacion(socketFileSystem);
@@ -616,7 +604,7 @@ void recibirInstruccion() {
       puts("3");
       archivoAbierto* arch = list_get(archivosAbiertos, posicionEnTabla);
       puts("4");
-      fseek(arch->punteroArchivo, posicion, SEEK_SET);
+      arch->punteroArchivo = posicion;
       puts("5");
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
       puts("6");
