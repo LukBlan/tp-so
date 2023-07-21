@@ -21,18 +21,9 @@ void iniciarListaDeRecursos(void) {
   }
 }
 
-t_queue* crearColaRecursosBloqueados(void) {
-  t_queue* colaRecursosBloqueados = queue_create();// creo la lista de recursos
-  return colaRecursosBloqueados;
-}
-
-t_queue* devuelvoColaBloqueados(colaRecBloqueados) {
-  return colaRecBloqueados;
-}
-
 int validarRecurso(char* recursoPedido) {
   int cantidadRecursos = listaRecursos->elements_count;// obtengo la cantidad de recursos
-  int existeRecurso = 0;
+  int posicionRecurso = -1;
 
   for (int i = 0; i < cantidadRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
     recursoSolicitados* reg_recurso =  list_get(listaRecursos, i);
@@ -40,58 +31,38 @@ int validarRecurso(char* recursoPedido) {
 
     if (strcmp(recursoPedido, elementoRecurso) == 0) {
       puts("Existe El recurso");
-      existeRecurso = 1;
+      posicionRecurso = i;
     }
   }
-  return existeRecurso;
+  return posicionRecurso;
 }
 
-void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {
-  int cantidadInstancias = registroRecurso->cantidad_inst_recurso;
-  if(cantidadInstancias > 0){
-    registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso - 1; //resto 1 a la cantidad de recursos disponibles
-    //devuelvoColaBloqueados(colaBloqueados);
-  }
-  else {
-    queue_push(colaBloqueados,registroRecurso); //bloqueo el recurso solicitado
-    registroRecurso->colaBloqueados = colaBloqueados;
-    //devuelvoColaBloqueados(colaBloqueados);
-  }
+int validarInstanciasDeRecurso(int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  int cantidadInstancias = recurso->cantidad_inst_recurso;
+
+  return (cantidadInstancias > 0)? 1 : 0;
 }
 
-void procesarRecursoSignal(char* recpedido) {
-  t_list* listaRecursos;
-  validoExistenciaDeRecursoSignal(listaRecursos,recpedido);
+void disminuirInstanciasRecurso(int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  recurso->cantidad_inst_recurso -= 1;
 }
 
-void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido) {
-  int cantRecursos = list_size(listaRecursos);// obtengo la cantidad de recursos
-  int existeRecurso = 0;
-  recursoSolicitados* reg_recurso;
-
-  for (size_t i = 0; i < cantRecursos; i++) { // recorro la lista y valida que exsista el recurso pedido en la lista de recursos
-    // Obtener el elemento en el frente de la cola
-    reg_recurso =  list_get(listaRecursos, i);
-    char* elementoRecurso = reg_recurso->recurso;
-
-    if (recursopedido == elementoRecurso){
-      existeRecurso = 1;
-      t_queue* colaBloqueados;
-      procesarRecursoExistenteSignal(reg_recurso,colaBloqueados);
-    }
-  }
-
-  if(existeRecurso == 0) { //sino existe recurso lo mando al EXIT
-    PCB* procesoTerminado = procesoEjecutandose;
-    sacarDeEjecutando(EXIT);
-    log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
-    finalizarProceso(procesoTerminado, INVALID_RESOURCE);
-    liberarPcb(procesoTerminado);
-  }
+void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  queue_push(recurso->colaBloqueados, proceso);
+  printf("Cantidad procesos bloqueados en recurso %s %d\n", recurso->recurso, recurso->colaBloqueados->elements->elements_count);
 }
 
-void procesarRecursoExistenteSignal(recursoSolicitados* registroRecurso,t_queue* colaBloqueados) {
-  registroRecurso->cantidad_inst_recurso = registroRecurso->cantidad_inst_recurso + 1;//sumo 1 a la cantidad de recursos disponibles
-  queue_pop(registroRecurso);// desbloqueo el primer elemento de la cola de bloqeados d ese recurso.
-  // se devuelve la ejecución al proceso que peticionó el SIGNAL.
+PCB* obtenerProcesoBloqueado(int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  printf("Cantidad procesos bloqueados en recurso %s %d\n", recurso->recurso, recurso->colaBloqueados->elements->elements_count);
+  PCB* procesoBloqueado = queue_pop(recurso->colaBloqueados);
+  return procesoBloqueado;
+}
+
+void aumentarRecurso(int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  recurso->cantidad_inst_recurso += 1;
 }

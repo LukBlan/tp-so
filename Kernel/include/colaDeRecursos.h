@@ -1,7 +1,8 @@
 #ifndef COLA_DE_RECURSOS_H
 #define COLA_DE_RECURSOS_H
 
-#include <commons/collections/queue.h>
+  #include <commons/collections/queue.h>
+  #include <estructuras.h>
 
   typedef struct {
       char* recurso;
@@ -12,12 +13,11 @@
   extern t_list* listaRecursos;
 
   void iniciarListaDeRecursos(void);
-  t_queue* crearColaRecursosBloqueados(void);
-  t_queue* devuelvoColaBloqueados(colaRecBloqueados);
-  int validarRecurso(char* recursopedido);
-  void procesarRecursoWait(char* recursopedido);
-  void procesarRecursoExistenteWait(recursoSolicitados* registroRecurso,t_queue* colaBloqueados);
-  void procesarRecursoSignal(char* recpedido);
-  void validoExistenciaDeRecursoSignal(t_list* listaRecursos,char* recursopedido);
-  void procesarRecursoExistenteSignal(recursoSolicitados* registroRecurso,t_queue* colaBloqueados);
+  int validarRecurso(char* recursoPedido);
+  int validarInstanciasDeRecurso(int posicionRecurso);
+  void disminuirInstanciasRecurso(int posicionRecurso);
+  void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso);
+  PCB* obtenerProcesoBloqueado(int posicionRecurso);
+  void aumentarRecurso(int posicionRecurso);
+
 #endif

@@ -17,6 +17,7 @@ void planificador_corto_plazo_fifo() {
     sem_wait(&semProcesoReady);
     sem_wait(&semaforoCantidadProcesosExec);
     //TODO ver lista
+    sleep(5);
     procesoEjecutandose = list_remove(colaReady, 0);
     ejecutar(procesoEjecutandose);
   }
@@ -687,30 +688,55 @@ void recibirInstruccion() {
     case WAIT:
       puts("-------------------- Llego WAIT --------------------");
       char* recursoPedido = recibirString(socketCpu);
-      if (validarRecurso(recursoPedido)) {
-        sacarDeEjecutando(READY);
-        agregarAListo(procesoDevuelto);
-        free(recursoPedido);
-        /*
-        PCB* procesoTerminado = procesoEjecutandose;
-        sacarDeEjecutando(EXIT);
-        log_info(recursosKernel->logger,  "Finaliza el proceso, Motivo: No existe el recurso solicitado");
-        finalizarProceso(procesoTerminado, INVALID_RESOURCE);
-        liberarPcb(procesoTerminado);
-        */
+      int posicionRecurso = validarRecurso(recursoPedido);
+      if (posicionRecurso >= 0) {
+        if(validarInstanciasDeRecurso(posicionRecurso)) {
+          puts("Candtidad de instancias mayor a 0");
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+        } else {
+          puts("Candtidad de instancias menor a 0");
+          log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO", procesoDevuelto->pid);
+          bloquearProcesoPorRecurso(procesoDevuelto, posicionRecurso);
+          sacarDeEjecutando(BLOCK);
+        }
+        disminuirInstanciasRecurso(posicionRecurso);
       } else {
+        PCB* procesoTerminado = procesoEjecutandose;
         sacarDeEjecutando(EXIT);
         log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
         finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
+        liberarPcb(procesoTerminado);
       }
+      free(recursoPedido);
       break;
 
     case SIGNAL:
       puts("-------------------- Llego SIGNAL --------------------");
-      char* recursoSignal = recibirString(socketCpu);
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
-      free(recursoSignal);
+      char* recursoPedidoSignal = recibirString(socketCpu);
+      int posicionRecursoSignal = validarRecurso(recursoPedidoSignal);
+      if (posicionRecurso >= 0) {
+        aumentarRecurso(posicionRecursoSignal);
+        if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
+          puts("Candtidad de instancias mayor a 0");
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+        } else {
+          puts("Candtidad de instancias menor a 0");
+          PCB* procesoBloqueado = obtenerProcesoBloqueado(posicionRecursoSignal);
+          log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
+          agregarAListo(procesoBloqueado);
+          sacarDeEjecutando(READY);
+          agregarAListo(procesoDevuelto);
+        }
+      } else {
+        PCB* procesoTerminado = procesoEjecutandose;
+        sacarDeEjecutando(EXIT);
+        log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
+        finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
+        liberarPcb(procesoTerminado);
+      }
+      free(recursoPedidoSignal);
       break;
 
     case CREATE_SEGMENT:
