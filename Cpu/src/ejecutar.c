@@ -272,6 +272,8 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketKernel, F_SEEK);
     enviarString(nombreArchivo,socketKernel);
     enviarEntero(posicion,socketKernel);
+    liberarContexto(contexto);
+    obtenerCodigoOperacion(socketKernel);
     contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
