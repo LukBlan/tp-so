@@ -123,7 +123,6 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
         uint32_t* puntero = malloc(sizeof(uint32_t));
         *puntero = bloqueAUsar;
         memcpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
-        bitarray_set_bit(bitMapBloque,i);
         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
         posicionAAgregar += sizeof(uint32_t);
         cantidad++;
