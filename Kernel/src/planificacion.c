@@ -289,6 +289,7 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
 
   avisarProcesoFinalizado(socketConsola, motivo);
   avisarProcesoFinalizado(socketMemoria, motivo);
+  enviarEntero(procesoFinalizado->pid, socketMemoria);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
 
@@ -638,7 +639,6 @@ void recibirInstruccion() {
           break;
       }
       break;
-
 
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");

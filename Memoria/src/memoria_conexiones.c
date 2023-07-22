@@ -112,13 +112,27 @@ void eliminarSegmentoDeContexto(contextoEjecucion* contexto, int posicionEnConte
   free(segmento);
 }
 
-void elimnarSegmentoDeBitArray(contextoEjecucion* contexto, int posicionEnContexto) {
-  Segmento* segmentoAEliminar = list_get(contexto->tablaSegmentos, posicionEnContexto);
-  int baseSegmento = segmentoAEliminar->base;
-  int tamanioSegmento = segmentoAEliminar->limite;
-
+void eliminarSegmentoDelArray(Segmento* segmento) {
+  int tamanioSegmento = segmento->limite;
+  int baseSegmento = segmento->base;
   for (int i = baseSegmento * 8; i < (baseSegmento + tamanioSegmento) * 8; i++) {
     bitarray_clean_bit(bitMapSegmento, i);
+  }
+}
+
+void elimnarSegmentoDeBitArray(contextoEjecucion* contexto, int posicionEnContexto) {
+  Segmento* segmentoAEliminar = list_get(contexto->tablaSegmentos, posicionEnContexto);
+  eliminarSegmentoDelArray(segmentoAEliminar);
+}
+
+void eliminarSegmentosDeProceso(int procesoId) {
+  tablaDeSegmento* segmentosEnProceso = list_get(tablaDeSegmentosPorProceso, procesoId);
+  t_list* listSegmentos = segmentosEnProceso->segmentos_proceso;
+  int cantidadSegmentos = listSegmentos->elements_count;
+  for (int i = 0; i < cantidadSegmentos; i++) {
+    Segmento* segmento = list_get(listSegmentos, i);
+    eliminarSegmentoDelArray(segmento);
+    free(segmento);
   }
 }
 
@@ -239,17 +253,37 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
     case SUCCESS:
       puts("------------- Entre Success ----------------");
       buffer = obtenerBuffer(socketCliente);
+      int idProcesSucess = recibirEntero(socketCliente);
+      eliminarSegmentosDeProceso(idProcesSucess);
+      int cantidadDeCeros = contarCantidadDe(1024, 0);
+      printf("El proceso termino con una cantidad de 0 = a %d\n", cantidadDeCeros);
       liberarBuffer(buffer);
-      //liberarRecursos();
-      //exit(-1);
       break;
 
     case OUT_OF_MEMORY:
       puts("------------- Entre OUT OF MEMORY -------------");
       buffer = obtenerBuffer(socketCliente);
+      int idProcesOut = recibirEntero(socketCliente);
+      eliminarSegmentosDeProceso(idProcesOut);
+
       liberarBuffer(buffer);
       break;
+    case INVALID_RESOURCE:
+      puts("------------- Entre OUT OF MEMORY -------------");
+      buffer = obtenerBuffer(socketCliente);
+      int idProcesoInvalido = recibirEntero(socketCliente);
+      eliminarSegmentosDeProceso(idProcesoInvalido);
 
+      liberarBuffer(buffer);
+      break;
+    case SEGMENTATION_FAULT:
+      puts("------------- Entre OUT OF MEMORY -------------");
+      buffer = obtenerBuffer(socketCliente);
+      int idProcesoFault = recibirEntero(socketCliente);
+      eliminarSegmentosDeProceso(idProcesoFault);
+
+      liberarBuffer(buffer);
+      break;
     default:
       puts("------------- Entre Default -------------");
       /*
