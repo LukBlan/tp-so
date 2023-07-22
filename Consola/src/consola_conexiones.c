@@ -56,6 +56,9 @@ void esperarResultado() {
     case INVALID_RESOURCE:
       log_error(logger, "INVALID_RESOURCE");
       break;
+    case SEGMENTATION_FAULT:
+      log_error(logger, "SEGMENTATION_FAULT");
+      break;
     case DESCONEXION:
       log_error(logger, "Perdi la conexion con el Kernel?");
       break;
