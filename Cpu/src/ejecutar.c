@@ -69,10 +69,37 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     char* recurso = primerParametro;
     enviarContexto(contexto, socketKernel, WAIT);
     enviarString(recurso, socketKernel);
+    op_code respuestaKernel = obtenerCodigoOperacion(socketKernel);
+    switch(respuestaKernel) {
+      case SUCCESS:
+        continuarEjecutando = 1;
+        break;
+      case BLOCK:
+        continuarEjecutando = 0;
+         break;
+      default:
+        puts("Entre por default de wait");
+        break;
+    }
+    contexto = recibirContexto(socketKernel);
   } else if (strcmp("SIGNAL", identificador) == 0){
     char* recurso = primerParametro;
     enviarContexto(contexto, socketKernel, SIGNAL);
     enviarString(recurso, socketKernel);
+    op_code respuestaKer = obtenerCodigoOperacion(socketKernel);
+
+    switch(respuestaKer) {
+      case SUCCESS:
+        continuarEjecutando = 1;
+        break;
+      case EXIT:
+        continuarEjecutando = 0;
+         break;
+      default:
+        puts("Entre por default de wait");
+        break;
+    }
+    contexto = recibirContexto(socketKernel);
   } else if (strcmp("DELETE_SEGMENT", identificador) == 0) {
     continuarEjecutando = 1;
     int idSegmento = atoi(primerParametro);

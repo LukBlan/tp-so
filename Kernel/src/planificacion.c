@@ -17,7 +17,6 @@ void planificador_corto_plazo_fifo() {
     sem_wait(&semProcesoReady);
     sem_wait(&semaforoCantidadProcesosExec);
     //TODO ver lista
-    sleep(5);
     procesoEjecutandose = list_remove(colaReady, 0);
     ejecutar(procesoEjecutandose);
   }
@@ -692,17 +691,19 @@ void recibirInstruccion() {
       if (posicionRecurso >= 0) {
         if(validarInstanciasDeRecurso(posicionRecurso)) {
           puts("Candtidad de instancias mayor a 0");
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
+          recibirInstruccion();
         } else {
           puts("Candtidad de instancias menor a 0");
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO", procesoDevuelto->pid);
           bloquearProcesoPorRecurso(procesoDevuelto, posicionRecurso);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK);
         }
         disminuirInstanciasRecurso(posicionRecurso);
       } else {
         PCB* procesoTerminado = procesoEjecutandose;
+        enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
         sacarDeEjecutando(EXIT);
         log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
         finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
@@ -719,18 +720,19 @@ void recibirInstruccion() {
         aumentarRecurso(posicionRecursoSignal);
         if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
           puts("Candtidad de instancias mayor a 0");
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
+          recibirInstruccion();
         } else {
           puts("Candtidad de instancias menor a 0");
           PCB* procesoBloqueado = obtenerProcesoBloqueado(posicionRecursoSignal);
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           agregarAListo(procesoBloqueado);
-          sacarDeEjecutando(READY);
-          agregarAListo(procesoDevuelto);
+          recibirInstruccion();
         }
       } else {
         PCB* procesoTerminado = procesoEjecutandose;
+        enviarContexto(procesoDevuelto->contexto, socketCpu, EXIT);
         sacarDeEjecutando(EXIT);
         log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
         finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
