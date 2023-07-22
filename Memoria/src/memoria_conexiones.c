@@ -68,7 +68,8 @@ Segmento* generarSegmentoAuxiliar(Segmento* segmentoNuevo) {
 }
 
 void agregarSegmentoATabla(Segmento* segmentoNuevo, int idProceso) {
-  tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, idProceso);
+  int posicionEnTabla = obtenerPosicionProcesoEnTabla(idProceso);
+  tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, posicionEnTabla);
   list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
   printf("El proceso %d tiene %d segmentos\n", idProceso, nuevaTabla->segmentos_proceso->elements_count);
 }
@@ -98,7 +99,8 @@ int obtenerPosicionSegmento(contextoEjecucion* contexto, int idSeg) {
 }
 
 void eliminarSegmentoDeTabla(int idProceso, int posicionEnContexto) {
-  tablaDeSegmento* tablaSegmento = list_get(tablaDeSegmentosPorProceso, idProceso);
+  int posicionEnTabla = obtenerPosicionProcesoEnTabla(idProceso);
+  tablaDeSegmento* tablaSegmento = list_get(tablaDeSegmentosPorProceso, posicionEnTabla);
   t_list* listaSegmentos = tablaSegmento->segmentos_proceso;
   printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
   Segmento* segmento = list_remove(listaSegmentos, posicionEnContexto - 1);
@@ -125,8 +127,22 @@ void elimnarSegmentoDeBitArray(contextoEjecucion* contexto, int posicionEnContex
   eliminarSegmentoDelArray(segmentoAEliminar);
 }
 
+int obtenerPosicionProcesoEnTabla(int idProceso) {
+  int cantidadDeProcesosEnTabla = tablaDeSegmentosPorProceso->elements_count;
+  int posicion = -1;
+
+  for (int i = 0; i < cantidadDeProcesosEnTabla; i++) {
+    tablaDeSegmento* segmentosEnProceso = list_get(tablaDeSegmentosPorProceso, i);
+    if (segmentosEnProceso->id == idProceso) {
+      posicion = i;
+    }
+  }
+  return posicion;
+}
+
 void eliminarSegmentosDeProceso(int procesoId) {
-  tablaDeSegmento* segmentosEnProceso = list_get(tablaDeSegmentosPorProceso, procesoId);
+  int posicionEnTabla = obtenerPosicionProcesoEnTabla(procesoId);
+  tablaDeSegmento* segmentosEnProceso = list_remove(tablaDeSegmentosPorProceso, posicionEnTabla);
   t_list* listSegmentos = segmentosEnProceso->segmentos_proceso;
   int cantidadSegmentos = listSegmentos->elements_count;
   for (int i = 0; i < cantidadSegmentos; i++) {
@@ -134,6 +150,7 @@ void eliminarSegmentosDeProceso(int procesoId) {
     eliminarSegmentoDelArray(segmento);
     free(segmento);
   }
+  list_destroy(segmentosEnProceso->segmentos_proceso);
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
@@ -201,11 +218,13 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       printf("Segmento Id %d\n", idSeg);
       printf("Proceso Id %d\n", idPro);
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
-
+      puts("1");
       elimnarSegmentoDeBitArray(contexto, posicionEnContexto);
+      puts("2");
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
+      puts("3");
       eliminarSegmentoDeContexto(contexto, posicionEnContexto);
-
+      puts("4");
       enviarContexto(contexto, socketCliente, DELETE_SEGMENT);
       liberarContexto(contexto);
       break;
