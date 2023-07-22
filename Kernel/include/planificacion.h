@@ -10,6 +10,8 @@
 #include <recursos.h>
 
   extern t_list* tablaGlobalDeArchivos;
+  extern int cantidadDeProcesos;
+
   void comenzarPlanificadores();
   void planificador_corto_plazo_fifo();
   void planificador_largo_plazo();

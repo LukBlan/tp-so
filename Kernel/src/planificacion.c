@@ -9,6 +9,7 @@
 #include <colaDeRecursos.h>
 
 t_list* tablaGlobalDeArchivos;
+int cantidadDeProcesos = 0;
 
 void planificador_corto_plazo_fifo() {
   t_log* logger = recursosKernel->logger;
@@ -91,10 +92,10 @@ void *io() {
   PCB* proceso = queue_peek(colaBlock); // Aun sigue en la cola de bloqueado.
   //TODO campo PCB
   int tiempoBloqueo = proceso->tiempoBloqueadoIO;
-  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,se bloqueara %f segundos.----------", proceso->pid, tiempoBloqueo / 1000.0);
-  int tiempoBloqueoEnMicrosegundos = tiempoBloqueo * 1000;
-  usleep(tiempoBloqueoEnMicrosegundos);
-  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,termino I/O %f segundos.----------", proceso->pid, tiempoBloqueo / 1000.0);
+
+  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,se bloqueara %d segundos.----------", proceso->pid, tiempoBloqueo);
+  sleep(tiempoBloqueo);
+  log_info(logger, "----------[DISP I/O] Proceso: [%d] ,termino I/O %d segundos.----------", proceso->pid, tiempoBloqueo);
 
   proceso = sacarBloqueado();
   agregarAListo(proceso);
@@ -174,7 +175,7 @@ void planificador_largo_plazo() {
 
 int sePuedeAgregarMasProcesos() {
   t_configuracion* config = recursosKernel->configuracion;
-  return (config->GRADO_MAX_MULTIPROGRAMACION > list_size(colaReady) && queue_size(colaNew) > 0)? 1 : 0;
+  return (config->GRADO_MAX_MULTIPROGRAMACION >= cantidadDeProcesos && queue_size(colaNew) > 0)? 1 : 0;
 }
 
 char* asignarStringLiteral(char* stringLiteral) {
@@ -287,6 +288,7 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
   int socketConsola = consolaFinalizada->socketConsola;
   int socketMemoria = recursosKernel->conexiones->socketMemoria;
 
+  cantidadDeProcesos--;
   avisarProcesoFinalizado(socketConsola, motivo);
   avisarProcesoFinalizado(socketMemoria, motivo);
   enviarEntero(procesoFinalizado->pid, socketMemoria);

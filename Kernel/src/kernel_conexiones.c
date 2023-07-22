@@ -89,6 +89,7 @@ void montarServidor() {
     pcb = crearPcb(instrucciones);
     recibirSegementoMemoria(pcb);
     agregarConsolaALista(pcb, socketCliente);
+    cantidadDeProcesos++;
     agregarANew(pcb);
   }
 }

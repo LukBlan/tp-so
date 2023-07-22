@@ -44,10 +44,11 @@ void mostrarInstrucciones(t_list* listaInstrucciones) {
 
 void mostrarRegistros(t_registros registros) {
   puts("----------- Registros ------------------");
-  printf("Ax %s ", registros.AX);
-  printf("Bx %s ", registros.BX);
-  printf("Cx %s ", registros.CX);
-  printf("Dx %s\n", registros.DX);
+  printf("|Ax - %s||\n", registros.AX);
+  printf("|Bx - %s||\n", registros.BX);
+  printf("|Cx - %s||\n", registros.CX);
+
+  printf("|Dx - %s||\n", registros.DX);
 }
 
 void mostrarSegmentos(t_list* segmentos) {

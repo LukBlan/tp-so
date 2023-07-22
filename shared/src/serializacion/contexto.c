@@ -101,22 +101,22 @@ void serializarRegistros(t_buffer* buffer, t_registros registros, int* posicion)
   *posicion += sizeof(char) * 4;
 
   memcpy(buffer->stream + *posicion, registros.EAX ,sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(buffer->stream + *posicion, registros.EBX ,sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(buffer->stream + *posicion, registros.ECX ,sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(buffer->stream + *posicion, registros.EDX ,sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
 
   memcpy(buffer->stream + *posicion, registros.RAX ,sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(buffer->stream + *posicion, registros.RBX ,sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(buffer->stream + *posicion, registros.RCX,sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(buffer->stream + *posicion, registros.RDX,sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
 }
 
 t_registros deserializarRegistros(t_buffer* buffer, int* posicion) {
@@ -131,22 +131,22 @@ t_registros deserializarRegistros(t_buffer* buffer, int* posicion) {
   *posicion += sizeof(char) * 4;
 
   memcpy(registros.EAX, buffer->stream + *posicion, sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(registros.EBX, buffer->stream + *posicion, sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(registros.ECX, buffer->stream + *posicion, sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
   memcpy(registros.EDX, buffer->stream + *posicion, sizeof(char) * 8);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 8;
 
   memcpy(registros.RAX, buffer->stream + *posicion, sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(registros.RBX, buffer->stream + *posicion, sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(registros.RCX, buffer->stream + *posicion, sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   memcpy(registros.RDX, buffer->stream + *posicion, sizeof(char) * 16);
-  *posicion += sizeof(char) * 4;
+  *posicion += sizeof(char) * 16;
   return registros;
 }
 

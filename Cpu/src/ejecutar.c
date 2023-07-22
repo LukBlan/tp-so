@@ -144,31 +144,30 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
 }
 
 void setearRegistro(char* primerParametro, char* segundoParametro) {
-
   if (strcmp("AX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.AX, segundoParametro);
+    memcpy(recursosCpu->registros.AX, segundoParametro, 4);
   } else if (strcmp("BX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.BX, segundoParametro);
+    memcpy(recursosCpu->registros.BX, segundoParametro, 4);
   } else if (strcmp("CX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.CX, segundoParametro);
+    memcpy(recursosCpu->registros.CX, segundoParametro, 4);
   } else if (strcmp("DX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.DX, segundoParametro);
+    memcpy(recursosCpu->registros.DX, segundoParametro, 4);
   } else if (strcmp("EAX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.EAX, segundoParametro);
+    memcpy(recursosCpu->registros.EAX, segundoParametro, 8);
   } else if (strcmp("EBX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.EBX, segundoParametro);
+    memcpy(recursosCpu->registros.EBX, segundoParametro, 8);
   } else if (strcmp("ECX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.ECX, segundoParametro);
+    memcpy(recursosCpu->registros.ECX, segundoParametro, 8);
   } else if (strcmp("EDX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.EDX, segundoParametro);
+    memcpy(recursosCpu->registros.EDX, segundoParametro, 8);
   } else if (strcmp("RAX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.RAX, segundoParametro);
+    memcpy(recursosCpu->registros.RAX, segundoParametro, 16);
   } else if (strcmp("RBX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.RBX, segundoParametro);
+    memcpy(recursosCpu->registros.RBX, segundoParametro, 16);
   } else if (strcmp("RCX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.RCX, segundoParametro);
+    memcpy(recursosCpu->registros.RCX, segundoParametro, 16);
   } else if (strcmp("RDX", primerParametro) == 0) {
-    strcpy(recursosCpu->registros.RDX, segundoParametro);
+    memcpy(recursosCpu->registros.RDX, segundoParametro, 16);
   }
 }
 
@@ -242,9 +241,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
 
   log_info(logger, "Ejecutando %s %s %s", identificador, primerParametro, segundoParametro);
   if (strcmp("SET", identificador) == 0) {
-    //TODO Retardo de instruccion
+    int retardoInstruccion = recursosCpu->configuracion->RETARDO_INSTRUCCION * 1000;
+    usleep(retardoInstruccion);
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
+    mostrarRegistros(contexto->registros);
   } else if (strcmp("MOV_IN", identificador) == 0) {
     /*int direccionLogica = atoi (segundoParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
