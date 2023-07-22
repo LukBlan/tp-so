@@ -35,5 +35,7 @@
   void agarrarSenial();
   void termination_handler(int signum);
   void llamarAMmu(int direccion_logica);
+  int darNumeroSegmentoMMU(int direccion_logica);
+  int darDesplazamientoMMU(int direccion_logica);
 
 #endif
