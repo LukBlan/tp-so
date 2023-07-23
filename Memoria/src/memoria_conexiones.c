@@ -156,6 +156,7 @@ void eliminarSegmentosDeProceso(int procesoId) {
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
+  int retardoMemoria = recursosMemoria->configuracion->RETARDO_MEMORIA * 1000;
 
   printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
@@ -189,6 +190,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
       if (puedoGuardar(tamanioSegmento)) {
         printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
+        usleep(retardoMemoria);
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
         agregarSegmentoATabla(segmentoNuevo, idProceso);
         agregarSegmentoAContexto(contexto, segmentoNuevo);
@@ -218,16 +220,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       printf("Segmento Id %d\n", idSeg);
       printf("Proceso Id %d\n", idPro);
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
-      puts("1");
       elimnarSegmentoDeBitArray(contexto, posicionEnContexto);
-      puts("2");
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
-      puts("3");
+      usleep(retardoMemoria);
       eliminarSegmentoDeContexto(contexto, posicionEnContexto);
-      puts("4");
       enviarContexto(contexto, socketCliente, DELETE_SEGMENT);
       liberarContexto(contexto);
       break;
+
     case MOV_IN:
       puts("--------------- Entre MOV_IN -------------");
       contexto = recibirContexto(socketCliente);
@@ -235,17 +235,20 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int tamanio = recibirEntero(socketCliente);
 
       char* cosaAEnviar = malloc(tamanio + 1);
+      usleep(retardoMemoria);
       memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
       cosaAEnviar[tamanio] = '\0';
 
       enviarString(cosaAEnviar, socketCliente);
       liberarContexto(contexto);
       break;
-        case MOV_OUT:
+
+      case MOV_OUT:
       puts("--------------- Entre MOV_OUT -------------");
       contexto = recibirContexto(socketCliente);
       int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       char* cosaAEscribir = recibirString(socketCliente);
+      usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
       liberarContexto(contexto);
       break;
@@ -255,6 +258,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioAEscribir = recibirEntero(socketCliente);
       char* cosaEscrita = malloc(tamanioAEscribir);
+      usleep(retardoMemoria);
       memcpy(cosaEscrita, memoriaPrincipal+direccionAEscribir, tamanioAEscribir);
       enviarContexto(contexto,socketCliente,SUCCESS_WRITE_MEMORY);
       enviarString(cosaEscrita, socketCliente);
@@ -265,6 +269,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       char* cosaParaEscribir = recibirString(socketCliente);
       int posicionAEscribir = recibirEntero(socketCliente);
+      usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAEscribir, cosaParaEscribir, strlen(cosaParaEscribir));
       enviarContexto(contexto,socketCliente,SUCCESS_READ_MEMORY);
       break;
