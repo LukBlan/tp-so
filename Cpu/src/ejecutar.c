@@ -247,7 +247,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     contexto->registros = recursosCpu->registros;
     mostrarRegistros(contexto->registros);
   } else if (strcmp("MOV_IN", identificador) == 0) {
-    /*int direccionLogica = atoi (segundoParametro);
+    int direccionLogica = atoi (segundoParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = primerParametro;
@@ -269,10 +269,10 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
                         break;
               }
   }
-    */
+    
 	  continuarEjecutando = 1;
   } else if (strcmp("MOV_OUT", identificador) == 0) {
-    /*int direccionLogica = atoi (primerParametro);
+    int direccionLogica = atoi (primerParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = segundoParametro;
@@ -291,8 +291,6 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
                       case SUCCESS:
                         break;
               }
-              
-    */
 	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
