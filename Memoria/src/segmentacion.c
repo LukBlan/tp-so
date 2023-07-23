@@ -262,18 +262,20 @@ Segmento* segmentoBest(t_list* segmentos, int tamanio) {
 	return segmentoElejido;
 }
 
-Segmento* segmentoWorst(t_list* segmentos, int tamanio) {
-	Segmento* unSegmento;
-	int i, worstFitIndex = -1,worstFitSize = -1;
 
-	for (i = 0; i < segmentos->elements_count; i++) {
-	        if (unSegmento->limite && unSegmento->base >= tamanio) {
-	            if (unSegmento->base > worstFitSize) {
-	                worstFitSize = unSegmento->base;
-	                worstFitIndex = i;
-	            }
-	        }
-	    }
-	unSegmento = list_get(segmentos,i);
-	return unSegmento;
+Segmento* segmentoWorst(t_list* segmentos, int tamanio) {
+  int worstFitSize = -1;
+	int worstFitIndex = -1;
+
+	for (int i = 0; i < segmentos->elements_count; i++) {
+	  Segmento* unSegmento = list_get(segmentos, i);
+
+    if (worstFitSize == -1 || unSegmento->limite > worstFitSize) {
+      worstFitSize = unSegmento->limite;
+      worstFitIndex = i;
+    }
+	}
+
+	Segmento* segmentoElejido = list_get(segmentos, worstFitIndex);
+	return segmentoElejido;
 }
