@@ -233,11 +233,12 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int posicion = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int tamanio = recibirEntero(socketCliente);
-      char* cosaAEnviar;
 
-      memcpy(cosaAEnviar, memoriaPrincipal+posicion, tamanio);
-      enviarContexto(contexto, socketCliente,SUCCESS);
-      enviarString(cosaAEnviar,socketCliente);
+      char* cosaAEnviar = malloc(tamanio + 1);
+      memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
+      cosaAEnviar[tamanio] = '\0';
+
+      enviarString(cosaAEnviar, socketCliente);
       liberarContexto(contexto);
       break;
         case MOV_OUT:
@@ -246,7 +247,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       char* cosaAEscribir = recibirString(socketCliente);
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
-      enviarContexto(contexto, socketCliente,SUCCESS);
       liberarContexto(contexto);
       break;
       case F_WRITE_MEMORIA:
@@ -288,7 +288,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarBuffer(buffer);
       break;
     case INVALID_RESOURCE:
-      puts("------------- Entre OUT OF MEMORY -------------");
+      puts("------------- Entre INVALID_RESOURCE -------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesoInvalido = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesoInvalido);
@@ -296,7 +296,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarBuffer(buffer);
       break;
     case SEGMENTATION_FAULT:
-      puts("------------- Entre OUT OF MEMORY -------------");
+      puts("------------- Entre SEGMENTATION_FAULTSEGMENTATION_FAULT -------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesoFault = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesoFault);

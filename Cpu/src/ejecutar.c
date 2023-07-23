@@ -172,51 +172,58 @@ void setearRegistro(char* primerParametro, char* segundoParametro) {
   }
 }
 
-char* valorRegistro(char* primerParametro ) {
-  char* segundoParametro;
+char* valorRegistro(char* primerParametro, int tamanioALeer) {
+  char* segundoParametro = malloc(tamanioALeer + 1);
+
   if (strcmp("AX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.AX);
+    memcpy(segundoParametro, recursosCpu->registros.AX, tamanioALeer);
   } else if (strcmp("BX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.BX);
+    memcpy(segundoParametro, recursosCpu->registros.BX, tamanioALeer);
   } else if (strcmp("CX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.CX);
+    memcpy(segundoParametro, recursosCpu->registros.CX, tamanioALeer);
   } else if (strcmp("DX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.DX);
+    memcpy(segundoParametro, recursosCpu->registros.DX, tamanioALeer);
   } else if (strcmp("EAX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.EAX);
+    memcpy(segundoParametro, recursosCpu->registros.EAX, tamanioALeer);
   } else if (strcmp("EBX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.EBX);
+    memcpy(segundoParametro, recursosCpu->registros.EBX, tamanioALeer);
   } else if (strcmp("ECX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.ECX);
+    memcpy(segundoParametro, recursosCpu->registros.ECX, tamanioALeer);
   } else if (strcmp("EDX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.EDX);
+    memcpy(segundoParametro, recursosCpu->registros.EDX, tamanioALeer);
   } else if (strcmp("RAX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.RAX);
+    memcpy(segundoParametro, recursosCpu->registros.RAX, tamanioALeer);
   } else if (strcmp("RBX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.RBX);
+    memcpy(segundoParametro, recursosCpu->registros.RBX, tamanioALeer);
   } else if (strcmp("RCX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.RCX);
+    memcpy(segundoParametro, recursosCpu->registros.RCX, tamanioALeer);
   } else if (strcmp("RDX", primerParametro) == 0) {
-    strcpy(segundoParametro, recursosCpu->registros.RDX);
+    memcpy(segundoParametro, recursosCpu->registros.RDX, tamanioALeer);
   }
+
+  segundoParametro[tamanioALeer] = '\0';
   return segundoParametro;
 }
 
 int tamanioRegistro(char* primerParametro ) {
-  if (strcmp("AX", primerParametro) == 0 ||strcmp("BX", primerParametro) == 0 ||
- strcmp("CX", primerParametro) == 0 || strcmp("DX", primerParametro) == 0  ) {
-    return 4;
-  } else if (strcmp("EAX", primerParametro) == 0 || strcmp("EBX", primerParametro) == 0 || 
-  strcmp("ECX", primerParametro) == 0 || strcmp("EDX", primerParametro) == 0) {
-    return 8;
-  } else if (strcmp("RAX", primerParametro) == 0 || strcmp("RBX", primerParametro) == 0 || 
-  strcmp("RCX", primerParametro) == 0 || strcmp("RDX", primerParametro) == 0) {
-    return 16;
+  int tamanioTotal;
+
+  if (strlen(primerParametro) == 2) {
+    tamanioTotal = 4;
+  } else if (primerParametro[0] == 'E') {
+    tamanioTotal = 8;
+  } else if (primerParametro[0] == 'R') {
+    tamanioTotal = 16;
   }
+
+  return tamanioTotal;
 }
+
 Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos, int idIngresada) {
+  int cantidadSegmentos = listaDeSegmentos->elements_count;
   int posicion = -1;
-  for(int i = 0; i>list_size(listaDeSegmentos);i++) {
+
+  for(int i = 0; i < cantidadSegmentos; i++) {
 
 	  Segmento* segmentoEncontrado  = list_get(listaDeSegmentos,i);
 	  if(segmentoEncontrado->id == idIngresada){
@@ -226,7 +233,7 @@ Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos, int idIngresada) {
   return list_get(listaDeSegmentos, posicion);
 }
 
-int posicionEnMemoria(int numeroSegmento,int numeroDesplazamiento, contextoEjecucion* contexto){
+int posicionEnMemoria(int numeroSegmento, int numeroDesplazamiento, contextoEjecucion* contexto){
   t_list* listaDeSegmento = contexto -> tablaSegmentos;
   Segmento* segmentoEncontrado = buscarSegmentoPorId(listaDeSegmento, numeroSegmento);
   int baseSegmento = segmentoEncontrado -> base;
@@ -262,18 +269,16 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     }
 
     int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
+
     enviarContexto(contexto, socketMemoria, MOV_IN);
     enviarEntero(posicion,socketMemoria);
     enviarEntero(tamanioALeer,socketMemoria);
-    op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
-    switch(respuestaFS) {
-                      case SUCCESS:
-                        char* parametro = recibirString(socketMemoria);
-                        setearRegistro(primerParametro,parametro);
-                        contexto->registros = recursosCpu->registros;
-                        break;
-              }
-	  continuarEjecutando = 1;
+
+    char* parametro = recibirString(socketMemoria);
+    setearRegistro(primerParametro,parametro);
+    contexto->registros = recursosCpu->registros;
+    continuarEjecutando = 1;
+
   } else if (strcmp("MOV_OUT", identificador) == 0) {
     int direccionLogica = atoi(primerParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
@@ -282,20 +287,17 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     char* registro = segundoParametro;
     int tamanioALeer = tamanioRegistro(registro);
 
+    // Si hay problemas chqueamos aca
     if(numeroDesplazamiento + tamanioALeer > segmento->limite){
-      enviarContexto(contexto, socketKernel,SEGMENTATION_FAULT);
+      enviarContexto(contexto, socketKernel, SEGMENTATION_FAULT);
     }
 
     int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
-    char* valorDeRegistro = valorRegistro(segundoParametro);
+    char* valorDeRegistro = valorRegistro(segundoParametro, tamanioALeer);
+
     enviarContexto(contexto, socketMemoria, MOV_OUT);
     enviarEntero(posicion2,socketMemoria);
     enviarString(valorDeRegistro,socketMemoria);
-     op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
-    switch(respuestaFS) {
-      case SUCCESS:
-        break;
-    }
 	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);

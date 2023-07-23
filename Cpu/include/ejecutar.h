@@ -14,5 +14,5 @@
   int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion);
   int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instruccion);
   void setearRegistro(char* primerParametro, char* segundoParametro);
-  char* valorRegistro(char* primerParametro);
+  char* valorRegistro(char* primerParametro, int tamanioALeer);
 #endif

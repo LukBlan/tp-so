@@ -68,9 +68,9 @@ void termination_handler(int signum){
  }
 
 void agarrarSenial(){
-	struct sigaction nuevaAccion;
-	nuevaAccion.sa_handler = termination_handler;
-	sigaction(SIGTERM,&nuevaAccion, NULL);
-	}
+  struct sigaction nuevaAccion;
+  nuevaAccion.sa_handler = termination_handler;
+  sigaction(SIGTERM, &nuevaAccion, NULL);
+}
 
 
