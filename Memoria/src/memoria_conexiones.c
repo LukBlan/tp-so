@@ -192,7 +192,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
         agregarSegmentoATabla(segmentoNuevo, idProceso);
         agregarSegmentoAContexto(contexto, segmentoNuevo);
-        printf("base nuevo segmento %d\n", segmentoNuevo->base);
+        printf("Segmento elegido base: %d\n", segmentoNuevo->base);
       } else {
         puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
