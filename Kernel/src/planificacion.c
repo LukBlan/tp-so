@@ -450,13 +450,23 @@ int actualizarSiEstaBloqueadoPorArchivo(int idProceso, t_list* segmentosProceso)
   return procesoEncontrado;
 }
 
+int actualizarSiEstaBloqueadoPorRecurso(int idProceso, t_list* segmentosProceso) {
+  int cantidadDeRecursos = listaRecursos->elements_count;
+  int procesoEncontrado = 0;
+    for (int i = 0; i < cantidadDeRecursos; i++) {
+      recursoSolicitados* recurso = list_get(listaRecursos, i);
+      t_list* listaProcesos = recurso->colaBloqueados->elements;
+      procesoEncontrado = actualizarSiEstaEn(idProceso, segmentosProceso, listaProcesos, mutexColaArchivos);
+    }
+    return procesoEncontrado;
+}
+
 void actualizarProceso(int idProceso, t_list* segmentosProceso) {
   if (actualizarSiEstaEjecutandose(idProceso, segmentosProceso)) {
   } else if (actualizarSiEstaEn(idProceso, segmentosProceso, colaReady, mutexColaReady)) {
   } else if (actualizarSiEstaEn(idProceso, segmentosProceso, colaBlock->elements, mutexColaBlock)) {
   } else if (actualizarSiEstaBloqueadoPorArchivo(idProceso, segmentosProceso)) {
-  //} else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
-  //}
+  } else if (actualizarSiEstaBloqueadoPorRecurso(idProceso, segmentosProceso)) {
   }
 }
 
