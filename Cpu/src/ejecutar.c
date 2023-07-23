@@ -251,14 +251,13 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = primerParametro;
-    int tamanioALeer = darTamanioSegunRegistro(registro);
+    int tamanioALeer = tamanioRegistro(registro);
     if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
     }
     int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
-    char* registro = segundoParametro;
-    enviarContexto(contexto, socketMemoria, MOV_OUT);
-    enviarEntero(posicionEnMemoria,socketMemoria);
+    enviarContexto(contexto, socketMemoria, MOV_IN);
+    enviarEntero(posicion,socketMemoria);
     enviarEntero(tamanioALeer,socketMemoria);
     op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
     switch(respuestaFS) {
@@ -268,23 +267,20 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
                         contexto->registros = recursosCpu->registros;
                         break;
               }
-  }
-    
 	  continuarEjecutando = 1;
   } else if (strcmp("MOV_OUT", identificador) == 0) {
     int direccionLogica = atoi (primerParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = segundoParametro;
-    int tamanioALeer = darTamanioSegunRegistro(registro);
+    int tamanioALeer = tamanioRegistro(registro);
     if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
     }
-    int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
-    char* registro = segundoParametro;
+    int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
     char* valorDeRegistro = valorRegistro(segundoParametro);
     enviarContexto(contexto, socketMemoria, MOV_OUT);
-    enviarEntero(posicionEnMemoria,socketMemoria);
+    enviarEntero(posicion2,socketMemoria);
     enviarString(valorDeRegistro,socketMemoria);
      op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
     switch(respuestaFS) {
