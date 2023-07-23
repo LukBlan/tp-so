@@ -127,7 +127,8 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
         continuarEjecutando = 1;
         break;
       case BLOCK:
-         // DO NOTHING
+        contextoEjecucion* contextoAlPedo = recibirContexto(socketKernel);
+        liberarContexto(contextoAlPedo);
         break;
       default:
         puts("Entre por default en F_Open");
@@ -213,19 +214,21 @@ int tamanioRegistro(char* primerParametro ) {
     return 16;
   }
 }
-Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos,int idIngresada){
-  Segmento* seg;
-  for(int i = 0; i>list_size(listaDeSegmentos);i++){
+Segmento* buscarSegmentoPorId(t_list* listaDeSegmentos, int idIngresada) {
+  int posicion = -1;
+  for(int i = 0; i>list_size(listaDeSegmentos);i++) {
+
 	  Segmento* segmentoEncontrado  = list_get(listaDeSegmentos,i);
 	  if(segmentoEncontrado->id == idIngresada){
-    	seg = &segmentoEncontrado;
-      return seg;
+	    posicion = i;
     }
   }
+  return list_get(listaDeSegmentos, posicion);
 }
-int posicionEnMemoria(int numeroSegmento,int numeroDesplazamiento,contextoEjecucion* contexto){
+
+int posicionEnMemoria(int numeroSegmento,int numeroDesplazamiento, contextoEjecucion* contexto){
   t_list* listaDeSegmento = contexto -> tablaSegmentos;
-  Segmento* segmentoEncontrado = buscarSegmentoPorId(listaDeSegmento,numeroSegmento);
+  Segmento* segmentoEncontrado = buscarSegmentoPorId(listaDeSegmento, numeroSegmento);
   int baseSegmento = segmentoEncontrado -> base;
   return baseSegmento + numeroDesplazamiento ;
 }
@@ -252,9 +255,12 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     char* registro = primerParametro;
     int tamanioALeer = tamanioRegistro(registro);
-    if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+    Segmento* segmento = buscarSegmentoPorId(contexto->tablaSegmentos, numeroSegmento);
+
+    if(numeroDesplazamiento + tamanioALeer > segmento->limite){
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
     }
+
     int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
     enviarContexto(contexto, socketMemoria, MOV_IN);
     enviarEntero(posicion,socketMemoria);
@@ -269,14 +275,17 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
               }
 	  continuarEjecutando = 1;
   } else if (strcmp("MOV_OUT", identificador) == 0) {
-    int direccionLogica = atoi (primerParametro);
+    int direccionLogica = atoi(primerParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
+    Segmento* segmento = buscarSegmentoPorId(contexto->tablaSegmentos, numeroSegmento);
     char* registro = segundoParametro;
     int tamanioALeer = tamanioRegistro(registro);
-    if(numeroDesplazamiento + tamanioALeer > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
-      enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
+
+    if(numeroDesplazamiento + tamanioALeer > segmento->limite){
+      enviarContexto(contexto, socketKernel,SEGMENTATION_FAULT);
     }
+
     int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
     char* valorDeRegistro = valorRegistro(segundoParametro);
     enviarContexto(contexto, socketMemoria, MOV_OUT);
@@ -284,9 +293,9 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarString(valorDeRegistro,socketMemoria);
      op_code respuestaFS = obtenerCodigoOperacion(socketMemoria);
     switch(respuestaFS) {
-                      case SUCCESS:
-                        break;
-              }
+      case SUCCESS:
+        break;
+    }
 	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);

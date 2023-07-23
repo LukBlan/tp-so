@@ -135,6 +135,8 @@ t_list* obtenerContenidoSegmentos() {
 }
 
 void compactacion() {
+  int retardoCompactacion = recursosMemoria->configuracion->RETARDO_COMPACTACION * 1000;
+  usleep(retardoCompactacion);
   t_list* listaDeProcesosConContenido = obtenerContenidoSegmentos();
   limpiarArrayBits();
   ocuparMemoriaPrincipal(listaDeProcesosConContenido);

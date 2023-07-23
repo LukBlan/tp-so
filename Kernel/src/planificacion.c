@@ -298,11 +298,12 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
 bool estaEnTablaGlobal (char* nomArchivo) {
   for (int i = 0; i < list_size(tablaGlobalDeArchivos); i++) {
 	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
-        if (strcmp(nomArchivo, tablaActual->nomArchivo) == 0) {
-            return true;  // Name found in the list
-        }
+
+    if (strcmp(nomArchivo, tablaActual->nomArchivo) == 0) {
+      return true;  // Name found in the list
     }
-    return false;  
+  }
+  return false;
 }
 
 void agregarATabla (char* nombreArchivo) {
@@ -310,6 +311,7 @@ void agregarATabla (char* nombreArchivo) {
     tabla1->nomArchivo = nombreArchivo;
     t_queue* colaArchivo = queue_create();
     tabla1->colaBloqueado = colaArchivo;
+    list_add(tablaGlobalDeArchivos, tabla1);
 }
 
 tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
@@ -326,9 +328,9 @@ tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
 
 void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
   proceso->estimadoRafaga = estimacion(proceso);
-    proceso->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(proceso);
+  proceso->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(proceso);
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
-  queue_push (tablaEncontrada -> colaBloqueado,proceso);
+  queue_push(tablaEncontrada -> colaBloqueado, proceso);
 }
 
 int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ) {
@@ -340,7 +342,7 @@ int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre ) {
             break;
       }
     }
-    return posicion;
+  return posicion;
 }
 
 int encontrarEnTablaGlobal(char* nombre) {
@@ -546,11 +548,13 @@ void recibirInstruccion() {
       char* nombreArchivo = recibirString(socketCpu);
       printf("Recibi archivo con nombre %s\n", nombreArchivo);
         if(estaEnTablaGlobal(nombreArchivo)) {
+          puts("-------------------  YA ESTA EN TABLA ESE MALDITO ARCHIVO ------------------");
           agregarATablaArchivo(procesoDevuelto->contexto, nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
+          puts("-------------------  NOOOOOOOOOOOOOOOOOOOOOOO ESTA ------------------");
           agregarATabla(nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketFileSystem, F_OPEN);
           enviarString(nombreArchivo, socketFileSystem);
