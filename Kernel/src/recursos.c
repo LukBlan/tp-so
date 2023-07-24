@@ -20,6 +20,7 @@ pthread_mutex_t mutexColaBlock;
 pthread_mutex_t mutexColaExec;
 pthread_mutex_t mutexColaEnd;
 pthread_mutex_t mutexColaArchivos;
+pthread_mutex_t operandoConMemoria;
 
 pthread_mutex_t mutex_cola;
 pthread_mutex_t mutexcantidadProcesosMemoria;
@@ -171,6 +172,7 @@ void iniciarSemaforos() {
   pthread_mutex_init(&mutexColaBlock, NULL);
   pthread_mutex_init(&mutexColaEnd, NULL);
   pthread_mutex_init(&mutexColaArchivos, NULL);
+  pthread_mutex_init(&operandoConMemoria, NULL);
 
   sem_init(&semProcesoNew, 0, 0);
   sem_init(&semProcesoReady, 0, 0);

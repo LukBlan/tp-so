@@ -87,7 +87,9 @@ void montarServidor() {
     instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
+    pthread_mutex_lock(&operandoConMemoria);
     recibirSegementoMemoria(pcb);
+    pthread_mutex_unlock(&operandoConMemoria);
     agregarConsolaALista(pcb, socketCliente);
     cantidadDeProcesos++;
     agregarANew(pcb);

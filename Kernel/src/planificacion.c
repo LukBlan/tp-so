@@ -289,8 +289,10 @@ void finalizarProceso(PCB* procesoFinalizado, op_code motivo) {
 
   cantidadDeProcesos--;
   avisarProcesoFinalizado(socketConsola, motivo);
+  pthread_mutex_lock(&operandoConMemoria);
   avisarProcesoFinalizado(socketMemoria, motivo);
   enviarEntero(procesoFinalizado->pid, socketMemoria);
+  pthread_mutex_unlock(&operandoConMemoria);
   terminarConsola(consolaFinalizada, posicionProceso);
 }
 
@@ -580,13 +582,14 @@ void recibirInstruccion() {
     case DELETE_SEGMENT:
       puts("-------------------- Llego DELETE_SEGMENT --------------------");
       int idSeg = recibirEntero(socketCpu);
-
+      pthread_mutex_lock(&operandoConMemoria);
       enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
       enviarEntero(procesoEjecutandose->pid, socketMemoria);
       enviarEntero(idSeg, socketMemoria);
 
       obtenerCodigoOperacion(socketMemoria);
       nuevoContexto = recibirContexto(socketMemoria);
+      pthread_mutex_unlock(&operandoConMemoria);
       actualizarContexto(procesoEjecutandose, nuevoContexto);
       enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
       recibirInstruccion();
@@ -758,6 +761,7 @@ void recibirInstruccion() {
       printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       int idSegmento = recibirEntero(socketCpu);
       int tamanioSegmento = recibirEntero(socketCpu);
+      pthread_mutex_lock(&operandoConMemoria);
 
       enviarContexto(procesoDevuelto->contexto, socketMemoria, CREATE_SEGMENT);
       enviarEntero(procesoEjecutandose->pid, socketMemoria);
@@ -771,6 +775,7 @@ void recibirInstruccion() {
           contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
           actualizarContexto(procesoEjecutandose, nuevoActualizado);
           enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
+          pthread_mutex_unlock(&operandoConMemoria);
           recibirInstruccion();
           break;
 
@@ -782,6 +787,7 @@ void recibirInstruccion() {
           actualizarSegmentosProcesos(tablaDeSegmentos);
           mostrarContexto(procesoEjecutandose->contexto);
           enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
+          pthread_mutex_unlock(&operandoConMemoria);
           recibirInstruccion();
           break;
 
@@ -789,12 +795,14 @@ void recibirInstruccion() {
           contextoEjecucion* recibeAlgoAlPedo = recibirContexto(socketMemoria);
           sacarDeEjecutando(EXIT,procesoDevuelto);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
+          pthread_mutex_unlock(&operandoConMemoria);
           finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);
           break;
         default:
           puts("Como carajo llegue al defaul de create segment");
           break;
       }
+
       break;
       case SEGMENTATION_FAULT:
           sacarDeEjecutando(EXIT,procesoDevuelto);
