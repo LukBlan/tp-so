@@ -35,13 +35,13 @@ float estimacion(PCB* proceso) {
   t_configuracion* config = recursosKernel->configuracion;
   float alfa = config->HRRN_ALFA;
   float estimacionAnterior = proceso->estimadoRafaga;
-  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
+  int rafagaPrevia = proceso->rafagaRealPrevia ;
   float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
   return resultado;
 }
 
 float calcularResponseRatio (PCB* proceso) {
-  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))*1000/estimacion(proceso);
+  return ((tiempoAhora()-proceso->llegadaReady)+estimacion(proceso))/estimacion(proceso);
 }
 
 bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
