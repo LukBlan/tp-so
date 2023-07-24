@@ -35,7 +35,7 @@ float estimacion(PCB* proceso) {
   t_configuracion* config = recursosKernel->configuracion;
   float alfa = config->HRRN_ALFA;
   float estimacionAnterior = proceso->estimadoRafaga;
-  int rafagaPrevia = proceso->rafagaRealPrevia * 1000 ;
+  int rafagaPrevia = proceso->rafagaRealPrevia ;
   float resultado = alfa*rafagaPrevia + (1-alfa) * estimacionAnterior;
   return resultado;
 }
@@ -51,7 +51,7 @@ bool ordenarSegunCalculoHRRN(void* proceso1, void* proceso2) {
 PCB* sacarProcesoMayorHRRN() {
   PCB* procesoAEjecutar;
   pthread_mutex_lock(&mutexColaReady);
-  list_sort(colaReady, &ordenarSegunCalculoHRRN);
+  list_sort(colaReady, (void*)ordenarSegunCalculoHRRN);
   procesoAEjecutar = list_remove (colaReady,0);
   pthread_mutex_unlock(&mutexColaReady);
   return procesoAEjecutar;
@@ -103,8 +103,7 @@ void *io() {
 }
 
 void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
-    procesoBloqueado->estimadoRafaga = estimacion(procesoBloqueado);
-    procesoBloqueado->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+
     pthread_mutex_lock(&mutexColaBlock);
 
     queue_push(colaBlock, procesoBloqueado);
@@ -117,8 +116,7 @@ void agregar_proceso_bloqueado(PCB *procesoBloqueado) {
     sem_post(&largoPlazo);
 }
 void agregar_proceso_bloqueado_io(PCB *procesoBloqueado) {
-    procesoBloqueado->estimadoRafaga = estimacion(procesoBloqueado);
-    procesoBloqueado->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(procesoBloqueado);
+
     pthread_mutex_lock(&mutexColaBlock);
 
     queue_push(colaBlock, procesoBloqueado);
@@ -232,7 +230,6 @@ void cambiarEstado(estadoProceso estado, PCB* proceso) {
 
 void agregarAListo(PCB* proceso) {
   t_log* logger = recursosKernel->logger;
-
   pthread_mutex_lock(&mutexColaReady);
   list_add(colaReady, proceso);
   log_info(logger, "Proceso: [%d] se movio a listo", proceso->pid);
@@ -240,8 +237,10 @@ void agregarAListo(PCB* proceso) {
   sem_post(&semProcesoReady);
 }
 
-void sacarDeEjecutando(estadoProceso estado) {
-  t_log* logger = recursosKernel->logger;
+void sacarDeEjecutando(estadoProceso estado,PCB* proceso) {
+	  proceso->estimadoRafaga = estimacion(proceso);
+	  proceso->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(proceso);
+	t_log* logger = recursosKernel->logger;
 
   pthread_mutex_lock(&mutexColaExec);
   log_info(logger, "Proceso: [%d] salío de EJECUTANDO.", procesoEjecutandose->pid);
@@ -327,8 +326,6 @@ tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
 }
 
 void bloquearEnCola(char* nombreArchivo, PCB* proceso) {
-  proceso->estimadoRafaga = estimacion(proceso);
-  proceso->rafagaRealPrevia = calcular_tiempo_rafaga_real_anterior(proceso);
   tablaGlobal* tablaEncontrada = buscarEnTablaGlobal(nombreArchivo);
   queue_push(tablaEncontrada -> colaBloqueado, proceso);
 }
@@ -511,7 +508,7 @@ void recibirInstruccion() {
   switch (codigoOperacion) {
     case YIELD:
       puts("-------------------- Llego YIELD --------------------");
-      sacarDeEjecutando(READY);
+      sacarDeEjecutando(READY,procesoDevuelto);
       agregarAListo(procesoDevuelto);
       break;
 
@@ -522,7 +519,7 @@ void recibirInstruccion() {
       printf("Tamanio %d", tamanioNuevo);
       puts("");
       PCB* procesoTruncado = procesoEjecutandose;
-      sacarDeEjecutando(BLOCK);
+      sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
 
       enviarContexto(procesoDevuelto->contexto,socketFileSystem, F_TRUNCATE);
@@ -551,7 +548,7 @@ void recibirInstruccion() {
           puts("-------------------  YA ESTA EN TABLA ESE MALDITO ARCHIVO ------------------");
           agregarATablaArchivo(procesoDevuelto->contexto, nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
-          sacarDeEjecutando(BLOCK);
+          sacarDeEjecutando(BLOCK,procesoDevuelto);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
           puts("-------------------  NOOOOOOOOOOOOOOOOOOOOOOO ESTA ------------------");
@@ -591,7 +588,6 @@ void recibirInstruccion() {
       obtenerCodigoOperacion(socketMemoria);
       nuevoContexto = recibirContexto(socketMemoria);
       actualizarContexto(procesoEjecutandose, nuevoContexto);
-
       enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
       recibirInstruccion();
       break;
@@ -631,7 +627,7 @@ void recibirInstruccion() {
     case F_READ:
       puts("-------------------- Llego F_READ --------------------");
       PCB* procesoQueLeyo = procesoEjecutandose;
-      sacarDeEjecutando(BLOCK);
+      sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
       char* nombreArchivoALeer = recibirString(socketCpu);
       int posicionEnMemoriaAleer = recibirEntero(socketCpu);
@@ -659,7 +655,7 @@ void recibirInstruccion() {
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");
       PCB* procesoQueEscribio = procesoEjecutandose;
-      sacarDeEjecutando(BLOCK);
+      sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
       char* nombreArchivoAEscribir = recibirString(socketCpu);
       int posicionEnMemoria = recibirEntero(socketCpu);
@@ -687,14 +683,14 @@ void recibirInstruccion() {
     case IO:
       puts("-------------------- Llego IO --------------------");
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
-      sacarDeEjecutando(BLOCK);
+      sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado_io(procesoDevuelto);
       break;
 
     case EXIT:
       puts("-------------------- Llego Exit --------------------");
       PCB* procesoTerminado = procesoDevuelto;
-      sacarDeEjecutando(EXITSTATE);
+      sacarDeEjecutando(EXITSTATE,procesoDevuelto);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
       finalizarProceso(procesoTerminado, SUCCESS);
       liberarPcb(procesoTerminado);
@@ -716,12 +712,12 @@ void recibirInstruccion() {
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO", procesoDevuelto->pid);
           bloquearProcesoPorRecurso(procesoDevuelto, posicionRecurso);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
-          sacarDeEjecutando(BLOCK);
+          sacarDeEjecutando(BLOCK,procesoDevuelto);
         }
       } else {
         PCB* procesoTerminado = procesoEjecutandose;
         enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
-        sacarDeEjecutando(EXIT);
+        sacarDeEjecutando(EXIT,procesoDevuelto);
         log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
         finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
         liberarPcb(procesoTerminado);
@@ -750,7 +746,7 @@ void recibirInstruccion() {
       } else {
         PCB* procesoTerminado = procesoEjecutandose;
         enviarContexto(procesoDevuelto->contexto, socketCpu, EXIT);
-        sacarDeEjecutando(EXIT);
+        sacarDeEjecutando(EXIT,procesoDevuelto);
         log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: INVALID RESOURCE", proceso->pid);
         finalizarProceso(procesoDevuelto, INVALID_RESOURCE);
         liberarPcb(procesoTerminado);
@@ -792,7 +788,7 @@ void recibirInstruccion() {
 
         case OUT_OF_MEMORY:
           contextoEjecucion* recibeAlgoAlPedo = recibirContexto(socketMemoria);
-          sacarDeEjecutando(EXIT);
+          sacarDeEjecutando(EXIT,procesoDevuelto);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
           finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);
           break;
@@ -802,14 +798,14 @@ void recibirInstruccion() {
       }
       break;
       case SEGMENTATION_FAULT:
-          sacarDeEjecutando(EXIT);
+          sacarDeEjecutando(EXIT,procesoDevuelto);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SEGMENTATION FAULT", proceso->pid);
           finalizarProceso(procesoDevuelto, SEGMENTATION_FAULT);
           break;
 
     default:
       puts("-------------------- Entre por default --------------------");
-      sacarDeEjecutando(READY);
+      sacarDeEjecutando(READY,procesoDevuelto);
       agregarAListo(procesoDevuelto);
       break;
   }

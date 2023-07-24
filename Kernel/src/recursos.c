@@ -87,7 +87,7 @@ void cargarConfiguracion(char* pathConfiguracion) {
     config->PUERTO_ESCUCHA = string_duplicate(config_get_string_value(fileConfig, "PUERTO_ESCUCHA"));
     config->ALGORITMO_PLANIFICACION = string_duplicate(config_get_string_value(fileConfig,"ALGORITMO_PLANIFICACION"));
     config->ESTIMACION_INICIAL = config_get_int_value(fileConfig,"ESTIMACION_INICIAL");
-    config->HRRN_ALFA = config_get_int_value(fileConfig,"HRRN_ALFA");
+    config->HRRN_ALFA = config_get_double_value(fileConfig,"HRRN_ALFA");
     config->GRADO_MAX_MULTIPROGRAMACION = config_get_int_value(fileConfig,"GRADO_MAX_MULTIPROGRAMACION");
     config->RECURSOS = obtenerListaDeRecursos(fileConfig);
     config->INSTANCIAS_RECURSOS = obtenerListaDeInstancias(fileConfig);
