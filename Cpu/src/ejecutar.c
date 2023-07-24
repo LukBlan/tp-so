@@ -265,22 +265,22 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     int tamanioALeer = tamanioRegistro(registro);
     Segmento* segmento = buscarSegmentoPorId(contexto->tablaSegmentos, numeroSegmento);
 
-    if(numeroDesplazamiento + tamanioALeer > segmento->limite){
+    if(numeroDesplazamiento + tamanioALeer > segmento->limite) {
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
+      continuarEjecutando = 0;
+    } else {
+      int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
+
+      enviarContexto(contexto, socketMemoria, MOV_IN);
+      enviarEntero(posicion,socketMemoria);
+      enviarEntero(tamanioALeer,socketMemoria);
+
+      char* parametro = recibirString(socketMemoria);
+      printf("El parametro recibido es %s\n", parametro);
+      setearRegistro(primerParametro,parametro);
+      contexto->registros = recursosCpu->registros;
+      continuarEjecutando = 1;
     }
-
-    int posicion = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
-
-    enviarContexto(contexto, socketMemoria, MOV_IN);
-    enviarEntero(posicion,socketMemoria);
-    enviarEntero(tamanioALeer,socketMemoria);
-
-    char* parametro = recibirString(socketMemoria);
-    printf("El parametro recibido es %s\n", parametro);
-    setearRegistro(primerParametro,parametro);
-    contexto->registros = recursosCpu->registros;
-    continuarEjecutando = 1;
-
   } else if (strcmp("MOV_OUT", identificador) == 0) {
     int direccionLogica = atoi(primerParametro);
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
@@ -292,17 +292,20 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     // Si hay problemas chqueamos aca
     if(numeroDesplazamiento + tamanioALeer > segmento->limite){
       enviarContexto(contexto, socketKernel, SEGMENTATION_FAULT);
+      continuarEjecutando = 0;
+    } else {
+      int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
+
+      char* valorDeRegistro = valorRegistro(segundoParametro, tamanioALeer);
+      enviarContexto(contexto, socketMemoria, MOV_OUT);
+      enviarEntero(posicion2,socketMemoria);
+      enviarString(valorDeRegistro,socketMemoria);
+      obtenerCodigoOperacion(socketMemoria);
+      contextoEjecucion* contextoAlPedo = recibirContexto(socketMemoria);
+      continuarEjecutando = 1;
     }
 
-    int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
-    char* valorDeRegistro = valorRegistro(segundoParametro, tamanioALeer);
 
-    enviarContexto(contexto, socketMemoria, MOV_OUT);
-    enviarEntero(posicion2,socketMemoria);
-    enviarString(valorDeRegistro,socketMemoria);
-    obtenerCodigoOperacion(socketMemoria);
-    contextoEjecucion* contextoAlPedo = recibirContexto(socketMemoria);
-	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
     char* nombreArchivo = primerParametro;
@@ -329,8 +332,19 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarEntero(tamainoSegmento, socketKernel);
 
     liberarContexto(contexto);
-    obtenerCodigoOperacion(socketKernel);
+    op_code respuestaKernelCreacion = obtenerCodigoOperacion(socketKernel);
     contexto = recibirContexto(socketKernel);
+    switch(respuestaKernelCreacion) {
+      case SUCCESS:
+        continuarEjecutando = 1;
+        break;
+      case OUT_OF_MEMORY:
+        continuarEjecutando = 0;
+        break;
+      default:
+        puts("Entre por el default de create_segment");
+        break;
+    }
   }
   return continuarEjecutando;
 }

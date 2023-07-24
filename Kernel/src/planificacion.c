@@ -731,13 +731,14 @@ void recibirInstruccion() {
       puts("-------------------- Llego SIGNAL --------------------");
       char* recursoPedidoSignal = recibirString(socketCpu);
       int posicionRecursoSignal = validarRecurso(recursoPedidoSignal);
-      if (posicionRecurso >= 0) {
-        aumentarRecurso(posicionRecursoSignal);
+      if (posicionRecursoSignal >= 0) {
         if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
+          aumentarRecurso(posicionRecursoSignal);
           puts("Candtidad de instancias mayor a 0");
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           recibirInstruccion();
         } else {
+          aumentarRecurso(posicionRecursoSignal);
           puts("Candtidad de instancias menor a 0");
           PCB* procesoBloqueado = obtenerProcesoBloqueado(posicionRecursoSignal);
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
@@ -796,6 +797,7 @@ void recibirInstruccion() {
           sacarDeEjecutando(EXIT,procesoDevuelto);
           log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: OUT OF MEMORY", proceso->pid);
           pthread_mutex_unlock(&operandoConMemoria);
+          enviarContexto(procesoDevuelto->contexto, socketCpu, OUT_OF_MEMORY);
           finalizarProceso(procesoDevuelto, OUT_OF_MEMORY);
           break;
         default:
