@@ -148,6 +148,14 @@ void enviarString(char* valorAEnviar, int socket) {
 
   memcpy(buffer->stream, &(cantidadCaracters), sizeof(int));
   memcpy(buffer->stream + sizeof(int), valorAEnviar, cantidadCaracters);
+
+
+  int cantidadCaracteresDeserializados;
+    memcpy(&(cantidadCaracteresDeserializados), buffer->stream, sizeof(int));
+    char* stringDeserializado = malloc(cantidadCaracteresDeserializados);
+    memcpy(stringDeserializado, buffer->stream + sizeof(int), cantidadCaracteresDeserializados);
+  printf("Cantidad caracteres: %d, string %s\n", cantidadCaracteresDeserializados, stringDeserializado);
+
   t_paquete* paquete = crearPaquete(buffer, ENTERO);
   enviar_paquete(paquete, socket);
   liberarPaquete(paquete);

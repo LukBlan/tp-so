@@ -804,8 +804,6 @@ void recibirInstruccion() {
 
     default:
       puts("-------------------- Entre por default --------------------");
-      sacarDeEjecutando(READY,procesoDevuelto);
-      agregarAListo(procesoDevuelto);
       break;
   }
 }

@@ -87,7 +87,6 @@ void recibirContextoAEjecutar() {
     switch(codigoOperacion) {
       case Pcb:
         contextoEjecucion* contexto = recibirContexto(socketKernel);
-        mostrarContexto(contexto);
         ejecutarContexto(contexto);
         break;
       default:

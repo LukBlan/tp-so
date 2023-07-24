@@ -87,7 +87,6 @@ void montarServidor() {
     instrucciones = obtenerListaInstruciones(socketCliente);
     mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
-    sleep(5);
     recibirSegementoMemoria(pcb);
     agregarConsolaALista(pcb, socketCliente);
     cantidadDeProcesos++;

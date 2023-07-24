@@ -75,6 +75,7 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
         continuarEjecutando = 1;
         break;
       case BLOCK:
+        liberarContexto(contexto);
         continuarEjecutando = 0;
          break;
       default:
@@ -275,6 +276,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarEntero(tamanioALeer,socketMemoria);
 
     char* parametro = recibirString(socketMemoria);
+    printf("El parametro recibido es %s\n", parametro);
     setearRegistro(primerParametro,parametro);
     contexto->registros = recursosCpu->registros;
     continuarEjecutando = 1;
@@ -298,6 +300,8 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketMemoria, MOV_OUT);
     enviarEntero(posicion2,socketMemoria);
     enviarString(valorDeRegistro,socketMemoria);
+    obtenerCodigoOperacion(socketMemoria);
+    contextoEjecucion* contextoAlPedo = recibirContexto(socketMemoria);
 	  continuarEjecutando = 1;
   } else if (strcmp("F_SEEK", identificador) == 0) {
     int posicion = atoi(segundoParametro);
