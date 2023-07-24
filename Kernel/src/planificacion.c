@@ -592,8 +592,8 @@ void recibirInstruccion() {
       nuevoContexto = recibirContexto(socketMemoria);
       actualizarContexto(procesoEjecutandose, nuevoContexto);
 
-      sacarDeEjecutando(READY);
-      agregarAListo(procesoDevuelto);
+      enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
+      recibirInstruccion();
       break;
 
     case F_CLOSE:
