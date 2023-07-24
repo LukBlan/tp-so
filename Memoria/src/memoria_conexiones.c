@@ -239,6 +239,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
       cosaAEnviar[tamanio] = '\0';
 
+      enviarContexto(contexto, socketCliente, SUCCESS);
       enviarString(cosaAEnviar, socketCliente);
       liberarContexto(contexto);
       break;
@@ -250,8 +251,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       char* cosaAEscribir = recibirString(socketCliente);
       usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
+      enviarContexto(contexto, socketCliente, SUCCESS);
       liberarContexto(contexto);
       break;
+
       case F_WRITE_MEMORIA:
       puts("Llego F_WRITE");
       contexto = recibirContexto(socketCliente);

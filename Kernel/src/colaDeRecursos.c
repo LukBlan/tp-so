@@ -40,13 +40,16 @@ int validarRecurso(char* recursoPedido) {
 int validarInstanciasDeRecurso(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
   int cantidadInstancias = recurso->cantidad_inst_recurso;
+  printf("Recurso: %s %d\n", recurso->recurso, recurso->cantidad_inst_recurso);
 
   return (cantidadInstancias > 0)? 1 : 0;
 }
 
 void disminuirInstanciasRecurso(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  printf("Cantidad de recursos: %d\n", recurso->cantidad_inst_recurso);
   recurso->cantidad_inst_recurso -= 1;
+  printf("Cantidad de recursos: %d\n", recurso->cantidad_inst_recurso);
 }
 
 void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso) {
