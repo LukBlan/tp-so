@@ -591,7 +591,6 @@ void recibirInstruccion() {
       enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
       recibirInstruccion();
       break;
-
     case F_CLOSE:
       puts("-------------------- Llego F_CLOSE --------------------");
       char* nombrArchivo = recibirString(socketCpu);

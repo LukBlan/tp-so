@@ -239,7 +239,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
       cosaAEnviar[tamanio] = '\0';
 
-      enviarContexto(contexto, socketCliente, SUCCESS);
       enviarString(cosaAEnviar, socketCliente);
       liberarContexto(contexto);
       break;

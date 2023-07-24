@@ -273,9 +273,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     enviarContexto(contexto, socketMemoria, MOV_IN);
     enviarEntero(posicion,socketMemoria);
     enviarEntero(tamanioALeer,socketMemoria);
-    obtenerCodigoOperacion(socketMemoria);
 
-    contextoEjecucion* contextoAlPedo = recibirContexto(socketMemoria);
     char* parametro = recibirString(socketMemoria);
     setearRegistro(primerParametro,parametro);
     contexto->registros = recursosCpu->registros;
