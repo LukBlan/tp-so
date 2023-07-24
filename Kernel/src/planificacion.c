@@ -703,17 +703,18 @@ void recibirInstruccion() {
       int posicionRecurso = validarRecurso(recursoPedido);
       if (posicionRecurso >= 0) {
         if(validarInstanciasDeRecurso(posicionRecurso)) {
+          disminuirInstanciasRecurso(posicionRecurso);
           puts("Candtidad de instancias mayor a 0");
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           recibirInstruccion();
         } else {
+          disminuirInstanciasRecurso(posicionRecurso);
           puts("Candtidad de instancias menor a 0");
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO", procesoDevuelto->pid);
           bloquearProcesoPorRecurso(procesoDevuelto, posicionRecurso);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK,procesoDevuelto);
         }
-        disminuirInstanciasRecurso(posicionRecurso);
       } else {
         PCB* procesoTerminado = procesoEjecutandose;
         enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
