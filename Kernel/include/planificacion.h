@@ -32,7 +32,7 @@
   void agregar_proceso_bloqueado(PCB *procesoBloqueado);
   char* asignarStringLiteral(char* stringLiteral);
   char* estadoAsString(estadoProceso estado);
-  void sacarDeEjecutando(estadoProceso estado);
+  void sacarDeEjecutando(estadoProceso estado,PCB* proceso);
   void actualizarContexto(PCB* proceso, contextoEjecucion* nuevoContexto);
   int buscarSocket(int pidProceso);
   void terminarConsola(procesoConsola* consolaFinalizada, int posicionProceso);
