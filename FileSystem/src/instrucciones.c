@@ -193,6 +193,7 @@ contextoEjecucion* fcreate(char* nomArchivo, contextoEjecucion* contexto){
 	  return contexto;
   }
   puts("-2.1");
+  log_info(recursosFileSystem->logger, "Crear Archivo - Nombre: %s", nomArchivo);
 	char* path_archivo = generarPathFCB(nomArchivo);
    
 	puts("-2.2");
@@ -246,7 +247,7 @@ uint32_t buscar_bloque_libre() {
   int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
 
   for(int i = 0; i < bytesDelBitarray; i++) {
-    log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado Actual: 0", i);
+    log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado Actual: %d", i,bitarray_test_bit(bitMapBloque,i));
     if(bitarray_test_bit(bitMapBloque, i) == 0) {
       bitarray_set_bit(bitMapBloque, i);
       log_info(recursosFileSystem->logger, "Acceso a Bitmap - Bloque: %d - Estado Modificado: 1", i);
@@ -277,7 +278,9 @@ void generarPunteroIndirecto(char* nomArchivo,t_config* fcb){
 
 contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int nuevoTamanio) {
   //FILE* fileDescriptor = contexto->archivosAbiertos->punteroArchivo;
-  puts("->1");
+  log_info(recursosFileSystem->logger, "Truncar Archivo: %s - Tamaño: %d", nomArchivo,nuevoTamanio);
+
+	puts("->1");
   t_config* fcb = obtener_archivo(nomArchivo);
   int tamanioViejo = config_get_int_value(fcb,"file_size");
   int tamanioRestante = nuevoTamanio;
