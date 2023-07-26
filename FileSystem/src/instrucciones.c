@@ -309,8 +309,6 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
   return contexto;
 }
 
-sfdasdfasdf
-
 int darNumeroDeBloques(int bytes){
   div_t division = div(bytes, recursosFileSystem->superBloque->BLOCK_SIZE);
   int bloque = division.quot;
@@ -371,6 +369,7 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		
 	}
 }
+
 char* fLectura(char* nomArchivo, int posicion, int tamanio){
 
     t_config* fcb = obtener_archivo(nomArchivo);

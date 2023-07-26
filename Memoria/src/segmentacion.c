@@ -181,7 +181,7 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
   t_list* segmentosDisponibles = list_create();
   int base = 0;
   int tamanio = 0 ;
-
+  printf("Busco segmento de tamanio %d\n", tamanioMinimo);
   //mutex a bitarray
   while((base / 8) < (recursosMemoria->configuracion->TAM_MEMORIA)) {
     Segmento* unSegmento = malloc(sizeof(Segmento));
@@ -195,8 +195,7 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
     base += tamanio;
 
     if ((tamanio / 8) >= tamanioMinimo) {
-      printf("Busco segmento de tamanio %d\n", tamanioMinimo);
-      printf("Encontre segmento base %d tamanio %d\n", unSegmento->base, unSegmento->limite);
+      printf("--> base %d\n tamanio %d\n", unSegmento->base, unSegmento->limite);
       list_add(segmentosDisponibles, unSegmento);
     } else {
       free(unSegmento);
@@ -214,7 +213,7 @@ void ocuparMemoria(void* tareas, int base, int size) {
 
 int puedoGuardar(int quieroGuardar) {
     int tamanioLibre = tamanioTotalDisponible();
-    printf("Hay disponible %d de memoria", tamanioLibre);
+    printf("Hay disponible %d de memoria\n", tamanioLibre);
     return (quieroGuardar <= tamanioLibre)? 1 : 0;
 }
 

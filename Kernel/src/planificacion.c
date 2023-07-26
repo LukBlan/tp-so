@@ -418,6 +418,7 @@ void actualizarSegmentos(t_list* segmentosDesactualizados, t_list* segmentosNuev
 int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
   int procesoEncontrado = 0;
   if (procesoEjecutandose->pid == idProceso) {
+    printf("Proceso: %d\n", procesoEjecutandose->pid);
     actualizarSegmentos(procesoEjecutandose->contexto->tablaSegmentos, segmentosProceso);
     procesoEncontrado = 1;
   }
@@ -426,13 +427,14 @@ int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
 
 int actualizarSiEstaEn(int idProceso, t_list* segmentosProceso, t_list* colaProcesos, pthread_mutex_t mutextCola) {
   int procesoEncontrado = 0;
-  int cantidadDeProcesosEnReady = colaReady->elements_count;
+  int cantidadDeProcesosEnReady = colaProcesos->elements_count;
 
   for (int i = 0; i < cantidadDeProcesosEnReady; i++) {
     pthread_mutex_lock(&mutextCola);
     PCB* pcb = list_get(colaProcesos, i);
     pthread_mutex_unlock(&mutextCola);
     if (pcb->pid == idProceso) {
+      printf("Proceso: %d\n", pcb->pid);
       actualizarSegmentos(pcb->contexto->tablaSegmentos, segmentosProceso);
       procesoEncontrado = 1;
     }

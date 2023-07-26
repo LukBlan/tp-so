@@ -204,8 +204,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         puts("EEEEEEEEEEnviado Tabla");
         enviarTablaDeSegmentos(tablaDeSegmentosPorProceso, socketCliente, COMPACTACION);
       } else {
-        printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
-        printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
         enviarContexto(contexto, socketCliente, respuestaMemoria);
       }
 
@@ -217,8 +215,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int idPro = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int idSeg = recibirEntero(socketCliente);
-      printf("Segmento Id %d\n", idSeg);
-      printf("Proceso Id %d\n", idPro);
+      printf("Proceso: %d Segmento %d\n", idPro, idSeg);
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
       elimnarSegmentoDeBitArray(contexto, posicionEnContexto);
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
