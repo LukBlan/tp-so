@@ -95,6 +95,7 @@ int generarCantidad (int tamanioEnBytes){
 
 }
 void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
+  puts("01");
   int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
   int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
   t_config* fcb = obtener_archivo(nomArchivo);
@@ -106,37 +107,41 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
   int bloquesNuevos = darNumeroDeBloques(tamanioNuevo);
   int offset = darOffset(tamanioNuevo);
   int bloquesAAgregar = bloquesNuevos - bloquesViejos;
-
+  puts("02");
   if(offset != 0) {
     bloquesAAgregar ++;
   }
-
+  puts("03");
   int posicionAAgregar = (cantidad+ 1)*sizeof(uint32_t);
   int continuarBuscando = 1;
   int cantidadBloquesEncontrados = 0;
 
 
   for(int j = bloquesAAgregar ; j>0; j--) {
- 
       pthread_mutex_lock(&mutexBitMap);
         uint32_t bloqueAUsar = buscar_bloque_libre();
         uint32_t* puntero = malloc(sizeof(uint32_t));
         *puntero = bloqueAUsar;
+        puts("Antesssssssssssssssssss");
         memcpy(arrayDePunteros+posicionAAgregar,puntero,sizeof(uint32_t));
         msync(recursosFileSystem->bitMap->bitarray, bytesDelBitarray, MS_SYNC);
+        pthread_mutex_unlock(&mutexBitMap);
+        puts("Despuesssssssssss");
         posicionAAgregar += sizeof(uint32_t);
         cantidad++;
         cantidadBloquesEncontrados++;
       }
-      pthread_mutex_unlock(&mutexBitMap);
 
+      puts("04");
   memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
   pthread_mutex_lock(&mutexBloques);
   memcpy(bloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, sizeof(uint32_t));
+  puts("05");
   pthread_mutex_unlock(&mutexBloques);
   char* tamanioEnTexto = malloc(10);
   sprintf(tamanioEnTexto,"%d",tamanioNuevo);
   config_set_value(fcb,"file_size",tamanioEnTexto);
+  puts("06");
   config_save(fcb);
 }
 
@@ -304,6 +309,8 @@ contextoEjecucion* ftruncar (char* nomArchivo, contextoEjecucion* contexto, int 
   return contexto;
 }
 
+sfdasdfasdf
+
 int darNumeroDeBloques(int bytes){
   div_t division = div(bytes, recursosFileSystem->superBloque->BLOCK_SIZE);
   int bloque = division.quot;
@@ -333,19 +340,19 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	int offset = darOffset(posicion);
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
 	int excedente = tamanio - restoAEscribir;
-
+	puts("2");
 	int tamanioAEscribirEnPrimerBloque = restoAEscribir;
 	if(tamanio < restoAEscribir){
 		tamanioAEscribirEnPrimerBloque = tamanio;
 	}
-
+	puts("3");
 	uint32_t* arrayDePunteros = darArrayDePunteros(fcb); //--
 
 	int bloqueAEscribir = buscar_bloque(fcb, bloque, arrayDePunteros); //--
-	
+	puts("4");
 	//retardo
 	memcpy(bloque+bloqueAEscribir + offset, datos, tamanioAEscribirEnPrimerBloque);
-
+	puts("5");
 	if(excedente > 0){
 		int bloquesCompletos = darNumeroDeBloques(excedente);
 		int offset_ultimo_bloque = darOffset(excedente);
@@ -356,10 +363,11 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 			memcpy(bloque+pos_bloque_actual, datos + desplazamiento, recursosFileSystem->superBloque->BLOCK_SIZE);
 			desplazamiento += recursosFileSystem->superBloque->BLOCK_SIZE;
 		}
+		puts("6");
 		int ultimaPosicion = buscar_bloque(fcb, bloque + i, arrayDePunteros); //--
 
 		memcpy(bloque+ultimaPosicion, datos + desplazamiento, offset_ultimo_bloque);
-
+		puts("7");
 		
 	}
 }

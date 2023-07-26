@@ -259,9 +259,11 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioAEscribir = recibirEntero(socketCliente);
-      char* cosaEscrita = malloc(tamanioAEscribir);
+      char* cosaEscrita = malloc(tamanioAEscribir + 1);
       usleep(retardoMemoria);
       memcpy(cosaEscrita, memoriaPrincipal+direccionAEscribir, tamanioAEscribir);
+
+      cosaEscrita[tamanioAEscribir] = '\0';
       enviarContexto(contexto,socketCliente,SUCCESS_WRITE_MEMORY);
       enviarString(cosaEscrita, socketCliente);
       break;

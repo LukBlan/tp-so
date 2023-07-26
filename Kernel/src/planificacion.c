@@ -622,8 +622,10 @@ void recibirInstruccion() {
       arch->punteroArchivo = posicion;
       puts("5");
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
+
       puts("6");
       free(nomArchivo);
+      recibirInstruccion();
       break;
 
     case F_READ:
@@ -732,13 +734,12 @@ void recibirInstruccion() {
       char* recursoPedidoSignal = recibirString(socketCpu);
       int posicionRecursoSignal = validarRecurso(recursoPedidoSignal);
       if (posicionRecursoSignal >= 0) {
+        aumentarRecurso(posicionRecursoSignal);
         if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
-          aumentarRecurso(posicionRecursoSignal);
           puts("Candtidad de instancias mayor a 0");
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           recibirInstruccion();
         } else {
-          aumentarRecurso(posicionRecursoSignal);
           puts("Candtidad de instancias menor a 0");
           PCB* procesoBloqueado = obtenerProcesoBloqueado(posicionRecursoSignal);
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);

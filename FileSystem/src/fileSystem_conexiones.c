@@ -134,6 +134,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
           puts("Volvi de memoria");
           contexto = recibirContexto(socketMemoria);
           char* datosParaEscribir = recibirString(socketMemoria);
+          puts("1");
           fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
           enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
           liberarContexto(contexto);
