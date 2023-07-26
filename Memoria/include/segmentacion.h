@@ -32,7 +32,7 @@
   t_list* obtenerContenidoSegmentos();
   int tamanioTotalDisponible(void);
   void liberarListaSegmentos(t_list* segmentos);
-  void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base);
+  void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base, int idProceso);
   void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base);
   void ocuparMemoriaPrincipal(t_list* listaDeProcesosConContenido);
   void compactacion();

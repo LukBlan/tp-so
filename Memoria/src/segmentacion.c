@@ -56,29 +56,30 @@ void liberarListaSegmentos(t_list* segmentos) {
     Segmento* segmentoNuevo = list_get(segmentos, i);
     free(segmentoNuevo);
   }
-
   list_destroy(segmentos);
 }
 
-void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base) {
+void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base, int idProceso) {
   memcpy(memoriaPrincipal + segmento->base, contenidoSegmento->contenido, segmento->limite);
-  printf("Segmento %d base %d pasa a ", segmento->id, segmento->base);
   segmento->base = *base;
   *base += segmento->limite;
-  printf("base %d\n", segmento->base);
+  log_info(
+    recursosMemoria->logger,
+    "PID: <%d> - Segmento: <%d> - Base: <%d> - Tamaño <%d>",
+    idProceso, segmento->id, segmento->base, segmento->limite
+  );
   ocuparBitArray(segmento);
 }
 
 void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base) {
   int cantidadSegmentos = segmentosProceso->segmentos_proceso->elements_count;
-  printf("Cantidad de segmentos %d\n", cantidadSegmentos);
   t_list* listaContenido = contenidoProceso->segmentos_proceso;
   t_list* listaSegmentos = segmentosProceso->segmentos_proceso;
 
   for (int i = 0; i < cantidadSegmentos; i++) {
     Segmento* segmento = list_get(listaSegmentos, i);
     contenidoSegmento* contenido = list_get(listaContenido, i);
-    ocuparMemoriaSegmento(segmento, contenido, base);
+    ocuparMemoriaSegmento(segmento, contenido, base, segmentosProceso->id);
   }
 }
 
@@ -91,7 +92,6 @@ void ocuparMemoriaPrincipal(t_list* listaDeProcesosConContenido) {
     tablaDeSegmento* contenidoProceso = list_get(listaDeProcesosConContenido, i);
     tablaDeSegmento* segmentosProceso = list_get(tablaDeSegmentosPorProceso, i);
     ocuparMemoriaProceso(contenidoProceso, segmentosProceso, &base);
-    printf("Proceso id %d\n", segmentosProceso->id);
   }
 }
 
@@ -126,7 +126,6 @@ t_list* obtenerContenidoSegmentos() {
   int cantidadProcesos = tablaDeSegmentosPorProceso->elements_count;
   t_list* contenidoSegmentos = list_create() ;
   for (int i = 0; i < cantidadProcesos; i++) {
-    printf("Cargando Proceso numero %d\n", i);
     tablaDeSegmento* contenidoProceso = malloc(sizeof(tablaDeSegmento));
     obtenerContenidoPorProceso(i, contenidoProceso);
     list_add(contenidoSegmentos, contenidoProceso);
@@ -152,7 +151,7 @@ Segmento* buscarCandidato(int tamanio) {
   todosLosSegLibres = buscarSegmentoSegunTamanio(tamanio);
 
   if(list_is_empty(todosLosSegLibres)) {
-    puts("....... Estamos Compactando ......");
+    log_info(recursosMemoria->logger, "Solicitud de Compactación");
     compactacion();
     segmentoEncontrado = buscarCandidato(tamanio);
   } else if (list_size(todosLosSegLibres) == 1) {
@@ -181,7 +180,6 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
   t_list* segmentosDisponibles = list_create();
   int base = 0;
   int tamanio = 0 ;
-  printf("Busco segmento de tamanio %d\n", tamanioMinimo);
   //mutex a bitarray
   while((base / 8) < (recursosMemoria->configuracion->TAM_MEMORIA)) {
     Segmento* unSegmento = malloc(sizeof(Segmento));
@@ -195,7 +193,6 @@ t_list* buscarSegmentoSegunTamanio(int tamanioMinimo) {
     base += tamanio;
 
     if ((tamanio / 8) >= tamanioMinimo) {
-      printf("--> base %d\n tamanio %d\n", unSegmento->base, unSegmento->limite);
       list_add(segmentosDisponibles, unSegmento);
     } else {
       free(unSegmento);
@@ -213,7 +210,6 @@ void ocuparMemoria(void* tareas, int base, int size) {
 
 int puedoGuardar(int quieroGuardar) {
     int tamanioLibre = tamanioTotalDisponible();
-    printf("Hay disponible %d de memoria\n", tamanioLibre);
     return (quieroGuardar <= tamanioLibre)? 1 : 0;
 }
 
