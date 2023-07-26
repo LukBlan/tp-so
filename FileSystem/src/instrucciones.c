@@ -112,7 +112,7 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
     bloquesAAgregar ++;
   }
   puts("03");
-  int posicionAAgregar = (cantidad+ 1)*sizeof(uint32_t);
+  int posicionAAgregar = (cantidad)*sizeof(uint32_t);
   int continuarBuscando = 1;
   int cantidadBloquesEncontrados = 0;
 
