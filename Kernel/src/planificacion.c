@@ -606,6 +606,7 @@ void recibirInstruccion() {
       }
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS_CLOSE);
       free(nombrArchivo);
+      recibirInstruccion();
       break;
 
     case F_SEEK:
