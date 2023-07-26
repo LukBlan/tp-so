@@ -321,7 +321,6 @@ tablaGlobal* buscarEnTablaGlobal(char* nombreArchivo) {
 	  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, i);
         if (strcmp(nombreArchivo, tablaActual->nomArchivo) == 0) {
             tabla = tablaActual;
-            break;
         }
     }
     return tabla;  
