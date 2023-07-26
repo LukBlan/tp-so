@@ -114,7 +114,6 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
   puts("03");
   int posicionAAgregar = (cantidad)*sizeof(uint32_t);
   int continuarBuscando = 1;
-  int cantidadBloquesEncontrados = 0;
 
 
   for(int j = bloquesAAgregar ; j>0; j--) {
@@ -129,13 +128,11 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
         puts("Despuesssssssssss");
         posicionAAgregar += sizeof(uint32_t);
         cantidad++;
-        cantidadBloquesEncontrados++;
       }
 
       puts("04");
-  memcpy(arrayDePunteros,&cantidad,sizeof(uint32_t));
   pthread_mutex_lock(&mutexBloques);
-  memcpy(bloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, sizeof(uint32_t));
+  memcpy(bloque + (punteroIndirecto * tamanioBloque) , arrayDePunteros, tamanioBloque);
   puts("05");
   pthread_mutex_unlock(&mutexBloques);
   char* tamanioEnTexto = malloc(10);
@@ -337,6 +334,7 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
     t_config* fcb = obtener_archivo(nomArchivo);
 	int bloque2 = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
+	int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
 	int excedente = tamanio - restoAEscribir;
 	puts("2");
@@ -345,9 +343,15 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		tamanioAEscribirEnPrimerBloque = tamanio;
 	}
 	puts("3");
-	uint32_t* arrayDePunteros = darArrayDePunteros(fcb); //--
+	 uint32_t* arrayPunteros;//--
+	if(bloque2 != 0 || excedente > 0){
+			arrayPunteros = malloc(tamanioBloque); //--
+			int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
+			int pos_bloque_punteros = puntero_indirecto*tamanioBloque;
+			memcpy(arrayPunteros, bloque + pos_bloque_punteros, tamanioBloque);
+		}
 
-	int bloqueAEscribir = buscar_bloque(fcb, bloque2, arrayDePunteros); //--
+	int bloqueAEscribir = buscar_bloque(fcb, bloque2, arrayPunteros); //--
 	puts("4");
 	//retardo
 	memcpy(bloque+bloqueAEscribir + offset, datos, tamanioAEscribirEnPrimerBloque);
@@ -358,12 +362,12 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 		int desplazamiento = restoAEscribir;
         int i;
 		for( i = 1; i < bloquesCompletos + 1; i++){
-			int pos_bloque_actual = buscar_bloque(fcb, bloque2 + i, arrayDePunteros);
+			int pos_bloque_actual = buscar_bloque(fcb, bloque2 + i, arrayPunteros);
 			memcpy(bloque+pos_bloque_actual, datos + desplazamiento, recursosFileSystem->superBloque->BLOCK_SIZE);
 			desplazamiento += recursosFileSystem->superBloque->BLOCK_SIZE;
 		}
 		puts("6");
-		int ultimaPosicion = buscar_bloque(fcb, bloque2 + i, arrayDePunteros); //--
+		int ultimaPosicion = buscar_bloque(fcb, bloque2 + i, arrayPunteros); //--
 
 		memcpy(bloque+ultimaPosicion, datos + desplazamiento, offset_ultimo_bloque);
 		puts("7");
