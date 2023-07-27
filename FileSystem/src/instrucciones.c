@@ -7,7 +7,7 @@
 #include <instrucciones.h>
 #include <commons/bitarray.h>
 
-int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
+
 
 bool existe_fcb(char* nombre_archivo) {
 	for(int i = 0; i < list_size(listaDeFCB); i++){
@@ -96,7 +96,7 @@ int generarCantidad (int tamanioEnBytes){
 
 }
 void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
-  puts("01");
+int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
   int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
   int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
   t_config* fcb = obtener_archivo(nomArchivo);
@@ -148,7 +148,8 @@ void ocuparBloque( char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
 }
 
 void desocuparBloque (char* nomArchivo,int tamanioNuevo,int tamanioViejo) {
-  int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
+	int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
+	int bloquesDelSist= recursosFileSystem->superBloque->BLOCK_COUNT;
   int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
   t_config* fcb = obtener_archivo(nomArchivo);
   int punteroIndirecto = config_get_int_value(fcb,"punteroIndirecto");
@@ -332,6 +333,7 @@ int darOffset(int bytes){
 }
 
 uint32_t* darArrayDePunteros(t_config* fcb){
+	int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
   uint32_t* arrayDePunteros = malloc(recursosFileSystem->superBloque->BLOCK_SIZE);
   char* nombre = config_get_string_value (fcb,"nombre_archivo");
   int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
@@ -344,7 +346,7 @@ uint32_t* darArrayDePunteros(t_config* fcb){
   return arrayDePunteros;
 }
 void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
-
+	int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
     t_config* fcb = obtener_archivo(nomArchivo);
 	int bloque2 = darNumeroDeBloques(posicion);
 	int offset = darOffset(posicion);
@@ -390,7 +392,7 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 }
 
 char* fLectura(char* nomArchivo, int posicion, int tamanio){
-
+	int retardoBloque = recursosFileSystem->configuracion->RETARDO_ACCESO_BLOQUE * 1000;
     t_config* fcb = obtener_archivo(nomArchivo);
 
 	int bloque2 = darNumeroDeBloques(posicion);
@@ -426,7 +428,7 @@ char* fLectura(char* nomArchivo, int posicion, int tamanio){
 
 			desplazamientoLeido += tamanioBloque;
 		}
-		int ultimaPosicion = buscar_bloque(fcb, bloque + extra, arrayDePunteros); //--
+		int ultimaPosicion = buscar_bloque(fcb, bloque + extra, arrayDePunteros);
     log_info(recursosFileSystem->logger, "Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d", nomArchivo, bloque2+extra, ultimaPosicion/tamanioBloque);
     usleep(retardoBloque);
 		memcpy(datosLeidos + desplazamientoLeido, bloque + ultimaPosicion, offsetBloque);
