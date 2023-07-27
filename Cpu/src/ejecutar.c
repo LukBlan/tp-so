@@ -139,6 +139,7 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
   } else if (strcmp("F_CLOSE", identificador) == 0) {
     enviarContexto(contexto, socketKernel, F_CLOSE);
     enviarString(primerParametro, socketKernel);
+    obtenerCodigoOperacion(socketKernel);
     contexto = recibirContexto(socketKernel);
     continuarEjecutando = 1;
   }
