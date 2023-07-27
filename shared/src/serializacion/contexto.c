@@ -59,7 +59,6 @@ t_list* deserializarSegmentos(t_buffer* buffer, int* posicion) {
 
   memcpy(&(cantidadSegmentos), buffer->stream + *posicion, sizeof(int));
   *posicion += sizeof(int);
-  printf("Deserialize segmentos %d\n", cantidadSegmentos);
   for (int i = 0; i < cantidadSegmentos; i++) {
     Segmento* segmento = malloc(sizeof(Segmento));
 
@@ -156,7 +155,6 @@ void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, i
 
   memcpy(buffer->stream + *posicion, &(cantidadArchivos), sizeof(int));
   *posicion += sizeof(int);
-  printf("Cantidad de archivos serializados %d\n", cantidadArchivos);
 
   for (int i = 0; i < cantidadArchivos; i++) {
     archivoAbierto* archivo = list_get(listaArchivos, i);
@@ -169,11 +167,9 @@ void serializarArchivosAbiertos(t_buffer* buffer, contextoEjecucion* contexto, i
     memcpy(buffer->stream + *posicion, nombreArchivo, cantidadCaracteres);
     *posicion += cantidadCaracteres;
 
-    printf("Nombre Archivo: %s Dirrecion %d\n",nombreArchivo, archivo->punteroArchivo);
     memcpy(buffer->stream + *posicion, &(archivo->punteroArchivo), sizeof(int));
     *posicion += sizeof(int);
   }
-  puts("aa");
 }
 
 t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {

@@ -90,6 +90,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       printf("Recibi cantidad de archivos = %d\n", contexto->archivosAbiertos->elements_count);
       char* nomArchivo = recibirString(socketCliente);
+      log_info(recursosFileSystem->logger, "Abrir Archivo - Nombre: %s", nomArchivo);
       printf("Recibi archivo con nombre %s\n", nomArchivo);
       puts("a");
       contexto = fcreate(nomArchivo, contexto);
@@ -124,6 +125,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioWrite = recibirEntero(socketCliente);
       int posicionWrite = recibirEntero(socketCliente);
+      log_info(recursosFileSystem->logger, "Escribir de Archivo - Nombre: %s -Puntero: %d - Memoria: %d- Tamaño: %d ", nombreDeArchivo,posicionWrite,direccionAEscribir,tamanioWrite);
       enviarContexto(contexto,socketMemoria,F_WRITE_MEMORIA);
       enviarEntero(direccionAEscribir,socketMemoria);
       enviarEntero(tamanioWrite,socketMemoria);
@@ -153,7 +155,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
         int direccionALeer = recibirEntero(socketCliente);
         int tamanioARead = recibirEntero(socketCliente);
         int posicionARead = recibirEntero(socketCliente);
+        log_info(recursosFileSystem->logger, "Lectura de Archivo - Nombre: %s -Puntero: %d - Memoria: %d- Tamaño: %d ", nombreArchivoLeer,posicionARead,direccionALeer,tamanioARead);
         char* datoLeido = fLectura(nombreArchivoLeer,posicionARead,tamanioARead);
+
         enviarContexto(contexto,socketMemoria,F_READ);
         enviarString(datoLeido,socketMemoria);
         enviarEntero(posicionARead,socketMemoria);

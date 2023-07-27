@@ -140,6 +140,7 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     enviarContexto(contexto, socketKernel, F_CLOSE);
     enviarString(primerParametro, socketKernel);
     contexto = recibirContexto(socketKernel);
+    continuarEjecutando = 1;
   }
     
   return continuarEjecutando;

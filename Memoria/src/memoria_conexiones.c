@@ -71,7 +71,6 @@ void agregarSegmentoATabla(Segmento* segmentoNuevo, int idProceso) {
   int posicionEnTabla = obtenerPosicionProcesoEnTabla(idProceso);
   tablaDeSegmento* nuevaTabla = list_get(tablaDeSegmentosPorProceso, posicionEnTabla);
   list_add(nuevaTabla->segmentos_proceso, segmentoNuevo);
-  printf("El proceso %d tiene %d segmentos\n", idProceso, nuevaTabla->segmentos_proceso->elements_count);
 }
 
 void agregarSegmentoAContexto(contextoEjecucion* contexto, Segmento* segmentoNuevo) {
@@ -91,10 +90,6 @@ int obtenerPosicionSegmento(contextoEjecucion* contexto, int idSeg) {
       posicion = i;
     }
   }
-
-  if (posicion == -1) {
-    log_error(recursosMemoria->logger, "El segmento a elimnar NO esta en el contexto");
-  }
   return posicion;
 }
 
@@ -102,9 +97,12 @@ void eliminarSegmentoDeTabla(int idProceso, int posicionEnContexto) {
   int posicionEnTabla = obtenerPosicionProcesoEnTabla(idProceso);
   tablaDeSegmento* tablaSegmento = list_get(tablaDeSegmentosPorProceso, posicionEnTabla);
   t_list* listaSegmentos = tablaSegmento->segmentos_proceso;
-  printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
   Segmento* segmento = list_remove(listaSegmentos, posicionEnContexto - 1);
-  printf("Cantidad segmentos %d en proceso %d\n", listaSegmentos->elements_count, idProceso);
+  log_info(
+    recursosMemoria->logger,
+    "PID: <%d> - Eliminar Segmento: <%d> - Base: <%d> - TAMAÑO: <%d>",
+    idProceso, segmento->id, segmento->base, segmento->limite
+  );
   free(segmento);
 }
 
@@ -154,14 +152,13 @@ void eliminarSegmentosDeProceso(int procesoId) {
 }
 
 void procesarOperacion(op_code codigoOperacion, int socketCliente) {
+  t_log* logger = recursosMemoria->logger;
   t_buffer* buffer;
   contextoEjecucion* contexto;
   int retardoMemoria = recursosMemoria->configuracion->RETARDO_MEMORIA * 1000;
 
-  printf("Estoy procesando conexion %d\n", codigoOperacion);
   switch (codigoOperacion) {
     case HANDSHAKE:
-      puts("------------- Entre handshake -------------");
       int valorRecibido = 0;
       log_info(recursosMemoria->logger, "Recibido Pedido de Handshake, Respondiendo");
       recv(socketCliente, &valorRecibido, sizeof(int), 0);
@@ -169,19 +166,17 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
     case Pcb:
-      puts("------------ Entre pcb ----------------");
       tablaDeSegmento* nuevaTabla = malloc(sizeof(tablaDeSegmento));
       nuevaTabla->id = idProceso++;
+      log_info(logger, "Creación de Proceso PID: <%d>", nuevaTabla->id);
       nuevaTabla->segmentos_proceso = list_create();
       list_add(tablaDeSegmentosPorProceso, nuevaTabla);
-      printf("cantidad de procesos %d\n", tablaDeSegmentosPorProceso->elements_count);
       buffer = obtenerBuffer(socketCliente);
       enviarSegmentoCero(socketCliente);
       liberarBuffer(buffer);
       break;
 
     case CREATE_SEGMENT:
-      puts("----------- Entre Create_Segmento ---------------");
       contexto = recibirContexto(socketCliente);
       int idProceso = recibirEntero(socketCliente);
       int idSegmento = recibirEntero(socketCliente);
@@ -189,23 +184,21 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       respuestaMemoria = Pcb; // Se usa cuando se compacta
 
       if (puedoGuardar(tamanioSegmento)) {
-        printf("Create segment %d %d\n", idSegmento, tamanioSegmento);
         usleep(retardoMemoria);
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
+        log_info(logger,
+                "PID: <%d> - Crear Segmento: <%d> - Base: <%d> - TAMAÑO: <%d>",
+                idProceso, segmentoNuevo->id, segmentoNuevo->base, segmentoNuevo->limite
+        );
         agregarSegmentoATabla(segmentoNuevo, idProceso);
         agregarSegmentoAContexto(contexto, segmentoNuevo);
-        printf("Segmento elegido base: %d\n", segmentoNuevo->base);
       } else {
-        puts("Out of Memory");
         respuestaMemoria = OUT_OF_MEMORY;
       }
 
       if (respuestaMemoria == COMPACTACION) {
-        puts("EEEEEEEEEEnviado Tabla");
         enviarTablaDeSegmentos(tablaDeSegmentosPorProceso, socketCliente, COMPACTACION);
       } else {
-        printf("Segmentos en Contexto %d\n", contexto->tablaSegmentos->elements_count);
-        printf("Envia Respuesta a Kernel codigo %d\n", respuestaMemoria);
         enviarContexto(contexto, socketCliente, respuestaMemoria);
       }
 
@@ -213,12 +206,9 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
     case DELETE_SEGMENT:
-      puts("--------------- Entre Delete_Segment -------------");
       contexto = recibirContexto(socketCliente);
       int idPro = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int idSeg = recibirEntero(socketCliente);
-      printf("Segmento Id %d\n", idSeg);
-      printf("Proceso Id %d\n", idPro);
       int posicionEnContexto = obtenerPosicionSegmento(contexto, idSeg);
       elimnarSegmentoDeBitArray(contexto, posicionEnContexto);
       eliminarSegmentoDeTabla(idPro, posicionEnContexto);
@@ -279,37 +269,33 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
     case SUCCESS:
-      puts("------------- Entre Success ----------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesSucess = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesSucess);
       int cantidadDeCeros = contarCantidadDe(1024, 0);
-      printf("El proceso termino con una cantidad de 0 = a %d\n", cantidadDeCeros);
+      log_info(logger, "Eliminación de Proceso PID: <%d>", idProcesSucess);
       liberarBuffer(buffer);
       break;
 
     case OUT_OF_MEMORY:
-      puts("------------- Entre OUT OF MEMORY -------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesOut = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesOut);
-
+      log_info(logger, "Eliminación de Proceso PID: <%d>", idProcesOut);
       liberarBuffer(buffer);
       break;
     case INVALID_RESOURCE:
-      puts("------------- Entre INVALID_RESOURCE -------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesoInvalido = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesoInvalido);
-
+      log_info(logger, "Eliminación de Proceso PID: <%d>", idProcesoInvalido);
       liberarBuffer(buffer);
       break;
     case SEGMENTATION_FAULT:
-      puts("------------- Entre SEGMENTATION_FAULTSEGMENTATION_FAULT -------------");
       buffer = obtenerBuffer(socketCliente);
       int idProcesoFault = recibirEntero(socketCliente);
       eliminarSegmentosDeProceso(idProcesoFault);
-
+      log_info(logger, "Eliminación de Proceso PID: <%d>", idProcesoFault);
       liberarBuffer(buffer);
       break;
     default:
