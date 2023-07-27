@@ -351,25 +351,24 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
 	int tamanioBloque= recursosFileSystem->superBloque->BLOCK_SIZE;
 	int restoAEscribir = recursosFileSystem->superBloque->BLOCK_SIZE - offset;
 	int excedente = tamanio - restoAEscribir;
-	puts("2");
 	int tamanioAEscribirEnPrimerBloque = restoAEscribir;
 	if(tamanio < restoAEscribir){
 		tamanioAEscribirEnPrimerBloque = tamanio;
 	}
-	puts("3");
 	 uint32_t* arrayPunteros;//--
 	if(bloque2 != 0 || excedente > 0){
 			arrayPunteros = malloc(tamanioBloque); //--
 			int puntero_indirecto = config_get_int_value(fcb, "punteroIndirecto");
 			int pos_bloque_punteros = puntero_indirecto*tamanioBloque;
+       usleep(retardoBloque);
+  log_info(recursosFileSystem->logger, "Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d", nomArchivo, 1, puntero_indirecto);
 			memcpy(arrayPunteros, bloque + pos_bloque_punteros, tamanioBloque);
 		}
 
 	int bloqueAEscribir = buscar_bloque(fcb, bloque2, arrayPunteros); //--
-	puts("4");
-	//retardo
+	  log_info(recursosFileSystem->logger, "Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d", nomArchivo, bloque2, bloqueAEscribir/tamanioBloque);
+    usleep(retardoBloque);
 	memcpy(bloque + bloqueAEscribir + offset, datos, tamanioAEscribirEnPrimerBloque);
-	puts("5");
 	if(excedente > 0){
 		int bloquesCompletos = darNumeroDeBloques(excedente);
 		int offset_ultimo_bloque = darOffset(excedente);
@@ -377,14 +376,15 @@ void fEscritura(char* nomArchivo, int posicion, char* datos, int tamanio){
     int i;
 		for( i = 1; i < bloquesCompletos + 1; i++){
 			int pos_bloque_actual = buscar_bloque(fcb, bloque2 + i, arrayPunteros);
+      log_info(recursosFileSystem->logger, "Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d", nomArchivo, bloquesCompletos+i, pos_bloque_actual/tamanioBloque);
+    usleep(retardoBloque);
 			memcpy(bloque+pos_bloque_actual, datos + desplazamiento, recursosFileSystem->superBloque->BLOCK_SIZE);
 			desplazamiento += recursosFileSystem->superBloque->BLOCK_SIZE;
 		}
-		puts("6");
 		int ultimaPosicion = buscar_bloque(fcb, bloque2 + i, arrayPunteros); //--
-
+    log_info(recursosFileSystem->logger, "Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d", nomArchivo, bloquesCompletos+i, ultimaPosicion/tamanioBloque);
+    usleep(retardoBloque);
 		memcpy(bloque+ultimaPosicion, datos + desplazamiento, offset_ultimo_bloque);
-		puts("7");
 		
 	}
 }
