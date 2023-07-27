@@ -23,4 +23,6 @@ uint32_t* darArrayDePunteros(t_config* fcb);
 char* fLectura(char* nomArchivo, int posicion, int tamanio);
 uint32_t buscar_bloque_libre();
 
+extern int retardoBloque;
+
 #endif
