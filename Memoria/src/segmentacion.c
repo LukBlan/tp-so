@@ -60,8 +60,8 @@ void liberarListaSegmentos(t_list* segmentos) {
 }
 
 void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegmento, int* base, int idProceso) {
-  memcpy(memoriaPrincipal + segmento->base, contenidoSegmento->contenido, segmento->limite);
   segmento->base = *base;
+  memcpy(memoriaPrincipal + segmento->base, contenidoSegmento->contenido, segmento->limite);
   *base += segmento->limite;
   log_info(
     recursosMemoria->logger,
@@ -113,9 +113,12 @@ void obtenerContenidoPorProceso(int idProceso, tablaDeSegmento* contenidoProceso
   for (int i = 0; i < cantidadSegmentos; i++) {
     contenidoSegmento* contenido = malloc(sizeof(contenidoSegmento));
     Segmento* segmento = list_get(listaSegmentos, i);
+    char* contenidoSring = malloc(5);
     void* contenidoMemoria = malloc(segmento->limite);
     memcpy(contenidoMemoria, memoriaPrincipal + segmento->base, segmento->limite);
-
+    memcpy(contenidoSring, contenidoMemoria, 4);
+    contenidoSring[4] = '\0';
+    printf("El contenido es %s\n", contenidoSring);
     contenido->idSegmento = segmento->id;
     contenido->contenido = contenidoMemoria;
     list_add(contenidoProceso->segmentos_proceso, contenido);

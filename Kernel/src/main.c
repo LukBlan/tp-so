@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
 
   iniciarListaDeRecursos();
   iniciarTablaGlobal();
+
   iniciarColas();
   iniciarSemaforos();
   comenzarPlanificadores();

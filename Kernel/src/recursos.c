@@ -170,7 +170,10 @@ void iniciarSemaforos() {
   pthread_mutex_init(&mutexColaReady, NULL);
   pthread_mutex_init(&mutexColaExec, NULL);
   pthread_mutex_init(&mutexColaBlock, NULL);
+
   pthread_mutex_init(&mutexColaEnd, NULL);
+
+
   pthread_mutex_init(&mutexColaArchivos, NULL);
   pthread_mutex_init(&operandoConMemoria, NULL);
 

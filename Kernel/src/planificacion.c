@@ -167,6 +167,7 @@ void planificador_largo_plazo() {
   log_info(logger, "Inicio PLanificador LARGO PLAZO en [%s]", config->ALGORITMO_PLANIFICACION);
   while (1) {
     sem_wait(&largoPlazo);
+    puts("Me llego un proceso");
     if (sePuedeAgregarMasProcesos()) {
       PCB *procesoSaliente = queue_pop(colaNew);
       agregarAListo(procesoSaliente);
