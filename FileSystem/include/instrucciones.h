@@ -22,5 +22,8 @@ char* generarPathFCB(char* nomArchivo);
 uint32_t* darArrayDePunteros(t_config* fcb);
 char* fLectura(char* nomArchivo, int posicion, int tamanio);
 uint32_t buscar_bloque_libre();
+int buscar_bloque(t_config* archivo_fcb, int bloque, uint32_t* arrayDePunteros);
+
+extern int retardoBloque;
 
 #endif
