@@ -62,7 +62,7 @@ typedef struct{
   
   void crearRecursosFileSystem();
   void cargarLogger(char* pathLogger);
-  void cargarConfiguracion(char* pathArchivoConfiguracion);
+  void cargarConfiguracion(char* pathConfiguracin);
   void liberarRecursos();
   void agarrarSenial();
   void termination_handler(int signum);
@@ -71,5 +71,6 @@ typedef struct{
   void cargarSuperbloque();
   void generarListaDeFCB();
   void iniciarFCBExistente();
+  void inicializarSemaforos();
 
 #endif

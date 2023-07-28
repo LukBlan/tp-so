@@ -6,6 +6,7 @@
 #include <utils.h>
 #include <dirent.h>
 #include <signal.h>
+#include <string.h>
 
 void* bitmapMapeado;
 t_bitarray* bitMapBloque;
@@ -97,7 +98,6 @@ void iniciarFCBExistente() {
 	struct dirent* fcb;
 
 	if (directorioFCB == NULL) {
-    puts("No existe directorio");
 		exit(1);
 	}
 

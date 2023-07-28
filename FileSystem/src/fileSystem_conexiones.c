@@ -82,44 +82,29 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
   t_buffer* buffer;
   contextoEjecucion* contexto;
   int socketMemoria = recursosFileSystem->conexiones->socketMemoria;
-  printf("Estoy procesando conexion %d\n", codigoOperacion);
 
   switch (codigoOperacion) {
     case F_OPEN:
-      puts ("-------------- Llego F_open --------------");
       contexto = recibirContexto(socketCliente);
-      printf("Recibi cantidad de archivos = %d\n", contexto->archivosAbiertos->elements_count);
+
       char* nomArchivo = recibirString(socketCliente);
       log_info(recursosFileSystem->logger, "Abrir Archivo - Nombre: %s", nomArchivo);
-      printf("Recibi archivo con nombre %s\n", nomArchivo);
-      puts("a");
       contexto = fcreate(nomArchivo, contexto);
-      puts("b");
       enviarContexto(contexto,socketCliente, SUCCESS_OPEN);
       liberarContexto(contexto);
     break;
 
     case F_TRUNCATE:
-      puts ("-------------- Llego F_truncate --------------");
       contexto = recibirContexto(socketCliente);
       char* nombreArchivo = recibirString(socketCliente);
       int tamanio = recibirEntero(socketCliente);
-      printf("Tamanio %d\n", tamanio);
-      puts("");
-
-      printf("Recibi archivo con nombre %s\n", nombreArchivo);
-      puts("a");
       contexto = ftruncar(nombreArchivo, contexto,tamanio);
-      puts("b");
-      printf("Tamanio nuevo %d", tamanio);
-      puts("");
 
       enviarContexto(contexto, socketCliente, SUCCESS_TRUNCATE);
       liberarContexto(contexto);
       break;
 
       case F_WRITE:
-      puts("-------------- Llego F_Write --------------");
       contexto=recibirContexto(socketCliente);
       char* nombreDeArchivo = recibirString(socketCliente);
       int direccionAEscribir = recibirEntero(socketCliente);
@@ -133,30 +118,27 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
       switch(respuestaMemoriaEscritura) {
         case SUCCESS_WRITE_MEMORY:
-          puts("Volvi de memoria");
           contexto = recibirContexto(socketMemoria);
           char* datosParaEscribir = recibirString(socketMemoria);
-          puts("1");
+
           fEscritura(nombreDeArchivo,posicionWrite,datosParaEscribir,tamanioWrite);
           enviarContexto(contexto,socketCliente,SUCCESS_WRITE);
           liberarContexto(contexto);
           break;
 
           default:
-            puts("llegue por default");
             break;
       }
       break;
       
       case F_READ:
-        puts("-------------- Llego F_Read --------------");
         contexto = recibirContexto(socketCliente);
         char* nombreArchivoLeer = recibirString(socketCliente);
-        int direccionALeer = recibirEntero(socketCliente);
         int tamanioARead = recibirEntero(socketCliente);
         int posicionARead = recibirEntero(socketCliente);
-        log_info(recursosFileSystem->logger, "Lectura de Archivo - Nombre: %s -Puntero: %d - Memoria: %d- Tamaño: %d ", nombreArchivoLeer,posicionARead,direccionALeer,tamanioARead);
-        char* datoLeido = fLectura(nombreArchivoLeer,posicionARead,tamanioARead);
+        int posicionArch = recibirEntero(socketCliente);
+        log_info(recursosFileSystem->logger, "Lectura de Archivo - Nombre: %s -Puntero: %d - Memoria: %d- Tamaño: %d ", nombreArchivoLeer,posicionArch,posicionARead,tamanioARead);
+        char* datoLeido = fLectura(nombreArchivoLeer,posicionArch,tamanioARead);
 
         enviarContexto(contexto,socketMemoria,F_READ);
         enviarString(datoLeido,socketMemoria);
@@ -165,20 +147,17 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
 
         switch(respuestaMemoria) {
           case SUCCESS_READ_MEMORY:
-            puts("Volvi de memoria");
             contexto = recibirContexto(socketMemoria);
             enviarContexto(contexto,socketCliente,SUCCESS_READ);
             liberarContexto(contexto);
             break;
 
           default:
-            puts("llegue por default");
             break;
         }
       break;
 
     default:
-      puts("-------------- Llego Default --------------");
       /*
       close(socketCliente);
       */
