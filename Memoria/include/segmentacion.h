@@ -13,6 +13,7 @@
   extern Segmento* segmentoCero;
   extern t_list* tablaDeSegmentosPorProceso;
   extern op_code respuestaMemoria;
+  extern int clienteActual;
 
   typedef struct {
     int idSegmento;

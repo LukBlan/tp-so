@@ -10,6 +10,8 @@ char* arrayDeHuecos;
 t_bitarray* bitMapSegmento;
 t_list* tablaDeSegmentosPorProceso;
 op_code respuestaMemoria;
+int clienteActual;
+
 
 void iniciarSegmentacion() {
     int tamanio = recursosMemoria->configuracion->TAM_MEMORIA;
@@ -136,7 +138,17 @@ t_list* obtenerContenidoSegmentos() {
   return contenidoSegmentos;
 }
 
+contextoEjecucion* generarContextoAlPedo() {
+  contextoEjecucion* nuevoContexto = malloc(sizeof(contextoEjecucion));
+  nuevoContexto->archivosAbiertos = list_create();
+  nuevoContexto->instrucciones = list_create();
+  nuevoContexto->tablaSegmentos = list_create();
+  return nuevoContexto;
+}
+
 void compactacion() {
+  contextoEjecucion* contextoAlRePedo = generarContextoAlPedo();
+  enviarContexto(contextoAlRePedo, clienteActual, COMPACTACION);
   int retardoCompactacion = recursosMemoria->configuracion->RETARDO_COMPACTACION * 1000;
   usleep(retardoCompactacion);
   t_list* listaDeProcesosConContenido = obtenerContenidoSegmentos();

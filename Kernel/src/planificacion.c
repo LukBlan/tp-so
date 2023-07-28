@@ -793,8 +793,11 @@ void recibirInstruccion() {
           break;
 
         case COMPACTACION:
-          puts("Entre en compactacion");
+          contextoEjecucion* contextoAlRePedo = recibirContexto(socketMemoria);
+          puts("RECIBOOOOOOOOOOOOOO PEDIDOOOOOOOOOO");
+          obtenerCodigoOperacion(socketMemoria);
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
+          puts("RECIBOOOOOOOOOOOOOO TABLAAAAAAAAAAAA");
           mostrarContexto(procesoEjecutandose->contexto);
           mostrarTablaDeSegmentos(tablaDeSegmentos);
           actualizarSegmentosProcesos(tablaDeSegmentos);
