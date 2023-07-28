@@ -7,7 +7,11 @@
   #include <estructuras.h>
   #include <recursos.h>
 
+<<<<<<< HEAD
   extern int idProcesoEjecutandose;
+=======
+extern int idProcesoEjecutandose;
+>>>>>>> a2b1946aedc9a27fb9c0c7401f0b13b0623f1b0a
 
   void ejecutarContexto(contextoEjecucion* contexto);
   int ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instruccion);
