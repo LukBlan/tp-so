@@ -8,7 +8,6 @@
 #include <utils.h>
 #include <colaDeRecursos.h>
 
-
 t_list* tablaGlobalDeArchivos;
 int cantidadDeProcesos = 0;
 
@@ -533,10 +532,14 @@ void recibirInstruccion() {
 
       op_code respuestaTruncado = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
+
       switch(respuestaTruncado) {
         case SUCCESS_TRUNCATE:
+
         actualizarContexto(procesoTruncado, nuevoTruncado);
+
         agregarAListo(procesoDevuelto);
+
         break;
 
         default:
@@ -612,7 +615,6 @@ void recibirInstruccion() {
 
     case F_SEEK:
       puts("-------------------- Llego F_SEEK --------------------");
-
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       puts("1");
@@ -755,7 +757,6 @@ void recibirInstruccion() {
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           agregarAListo(procesoBloqueado);
-
           recibirInstruccion();
         }
       } else {
@@ -793,11 +794,8 @@ void recibirInstruccion() {
           break;
 
         case COMPACTACION:
-          contextoEjecucion* contextoAlRePedo = recibirContexto(socketMemoria);
-          puts("RECIBOOOOOOOOOOOOOO PEDIDOOOOOOOOOO");
-          obtenerCodigoOperacion(socketMemoria);
+          puts("Entre en compactacion");
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
-          puts("RECIBOOOOOOOOOOOOOO TABLAAAAAAAAAAAA");
           mostrarContexto(procesoEjecutandose->contexto);
           mostrarTablaDeSegmentos(tablaDeSegmentos);
           actualizarSegmentosProcesos(tablaDeSegmentos);

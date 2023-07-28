@@ -182,7 +182,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
       respuestaMemoria = Pcb; // Se usa cuando se compacta
-      clienteActual = socketCliente;
+
       if (puedoGuardar(tamanioSegmento)) {
         usleep(retardoMemoria);
         Segmento* segmentoNuevo = crearSegmento(idSegmento, tamanioSegmento);
@@ -219,12 +219,12 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
     case MOV_IN:
-      puts("--------------- Entre MOV_IN -------------");
       contexto = recibirContexto(socketCliente);
       int posicion = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int tamanio = recibirEntero(socketCliente);
 
       char* cosaAEnviar = malloc(tamanio + 1);
+
       usleep(retardoMemoria);
       memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
       cosaAEnviar[tamanio] = '\0';
@@ -234,10 +234,10 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
       case MOV_OUT:
-      puts("--------------- Entre MOV_OUT -------------");
       contexto = recibirContexto(socketCliente);
       int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       char* cosaAEscribir = recibirString(socketCliente);
+
       usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
       enviarContexto(contexto, socketCliente, SUCCESS);
@@ -245,11 +245,15 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
       case F_WRITE_MEMORIA:
-      puts("Llego F_WRITE");
       contexto = recibirContexto(socketCliente);
       int direccionAEscribir = recibirEntero(socketCliente);
       int tamanioAEscribir = recibirEntero(socketCliente);
       char* cosaEscrita = malloc(tamanioAEscribir + 1);
+      log_info(
+        logger,
+        "PID: <pid> - Acción: <LEER> - Dirección física: <%d> - Tamaño: <%d> - Origen: <FS>",
+        direccionAEscribir, tamanioAEscribir
+      );
       usleep(retardoMemoria);
       memcpy(cosaEscrita, memoriaPrincipal+direccionAEscribir, tamanioAEscribir);
 
@@ -259,10 +263,14 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       break;
 
       case F_READ:
-      puts("Llego F_READ");
       contexto = recibirContexto(socketCliente);
       char* cosaParaEscribir = recibirString(socketCliente);
       int posicionAEscribir = recibirEntero(socketCliente);
+      log_info(
+        logger,
+        "PID: <PID> - Acción: <LEER> - Dirección física: <%d> - Tamaño: <%d> - Origen: <FS>",
+        posicionAEscribir, strlen(cosaParaEscribir)
+      );
       usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAEscribir, cosaParaEscribir, strlen(cosaParaEscribir));
       enviarContexto(contexto,socketCliente,SUCCESS_READ_MEMORY);
@@ -299,7 +307,6 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       liberarBuffer(buffer);
       break;
     default:
-      puts("------------- Entre Default -------------");
       /*
       close(socketCliente);
       */
