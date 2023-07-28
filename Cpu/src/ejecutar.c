@@ -41,6 +41,13 @@ op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instr
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
   int continuarEjecutando;
+  
+  t_log* logger = recursosCpu->logger;
+  log_info(
+    logger,
+    "PID: <%d> - Ejecutando: <%s>",
+    contexto->pid, identificador
+  );
 
   log_info(logger, "Ejecutando %s", identificador);
   if (strcmp("YIELD", identificador) == 0) {
@@ -60,7 +67,11 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
   char* primerParametro = instruccion->strings[1];
   int continuarEjecutando = 0;
 
-  log_info(logger, "Ejecutando %s %s", identificador, primerParametro);
+  log_info(
+    logger,
+    "PID: <%d> - Ejecutando: <%s> - <%s>",
+    contexto->pid, identificador, primerParametro
+  );
   if (strcmp("I/O", identificador) == 0) {
     int tiempoBloqueado = atoi(primerParametro);
     enviarContexto(contexto, socketKernel, IO);
@@ -252,7 +263,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   int socketKernel = recursosCpu->conexiones->socketKernel;
   int socketMemoria = recursosCpu->conexiones->socketMemoria;
 
-  log_info(logger, "Ejecutando %s %s %s", identificador, primerParametro, segundoParametro);
+    log_info(
+    logger,
+    "PID: <%d> - Ejecutando: <%s> - <%s> <%s>",
+    contexto->pid, identificador, primerParametro, segundoParametro
+  );
   if (strcmp("SET", identificador) == 0) {
     int retardoInstruccion = recursosCpu->configuracion->RETARDO_INSTRUCCION * 1000;
     usleep(retardoInstruccion);
@@ -268,6 +283,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     Segmento* segmento = buscarSegmentoPorId(contexto->tablaSegmentos, numeroSegmento);
 
     if(numeroDesplazamiento + tamanioALeer > segmento->limite) {
+      log_info(
+        logger,
+        "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
+        contexto->pid, numeroSegmento, segmento->base, segmento->limite, numeroDesplazamiento, tamanioALeer
+      );
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
       continuarEjecutando = 0;
     } else {
@@ -278,7 +298,11 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
       enviarEntero(tamanioALeer,socketMemoria);
 
       char* parametro = recibirString(socketMemoria);
-      printf("El parametro recibido es %s\n", parametro);
+       log_info(
+        logger,
+        "PID: <%d> - Acción: <LEER DE MEMORIA> - Segmento: <%d> - Dirección Física: <%d> - Valor: <%s>",
+        contexto->pid, numeroSegmento, numeroDesplazamiento, parametro
+      );
       setearRegistro(primerParametro,parametro);
       contexto->registros = recursosCpu->registros;
       continuarEjecutando = 1;
@@ -293,12 +317,23 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
 
     // Si hay problemas chqueamos aca
     if(numeroDesplazamiento + tamanioALeer > segmento->limite){
+       log_info(
+        logger,
+        "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
+        contexto->pid, numeroSegmento, segmento->base, segmento->limite, numeroDesplazamiento, tamanioALeer
+      );
+
       enviarContexto(contexto, socketKernel, SEGMENTATION_FAULT);
       continuarEjecutando = 0;
     } else {
       int posicion2 = posicionEnMemoria(numeroSegmento,numeroDesplazamiento,contexto);
 
       char* valorDeRegistro = valorRegistro(segundoParametro, tamanioALeer);
+       log_info(
+        logger,
+        "PID: <%d> - Acción: <ESCRIBIR EN MEMORIA> - Segmento: <%d> - Dirección Física: <%d> - Valor: <%s>",
+        contexto->pid, numeroSegmento, numeroDesplazamiento, valorDeRegistro
+      );
       enviarContexto(contexto, socketMemoria, MOV_OUT);
       enviarEntero(posicion2,socketMemoria);
       enviarString(valorDeRegistro,socketMemoria);
@@ -360,7 +395,11 @@ int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instrucci
   int continuarEjecutando;
   int socketKernel = recursosCpu->conexiones->socketKernel;
 
-  log_info(logger, "Ejecutando %s %s %s %s", identificador, primerParametro, segundoParametro, tercerParametro);
+    log_info(
+    logger,
+    "PID: <%d> - Ejecutando: <%s> - <%s> <%s> <%s>",
+    contexto->pid , identificador, primerParametro, segundoParametro, tercerParametro
+  );
   if (strcmp("F_READ", identificador) == 0) {
     continuarEjecutando = 0;
     char* nombreArchivoAEscribir = primerParametro;
@@ -369,6 +408,11 @@ int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instrucci
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     if(numeroDesplazamiento + tamanio > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+      log_info(
+        logger,
+        "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
+        contexto->pid, numeroSegmento, segmento->base, segmento->limite, numeroDesplazamiento, tamanio
+      );
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
       return continuarEjecutando;
     }
@@ -385,6 +429,11 @@ int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instrucci
     int numeroSegmento = darNumeroSegmentoMMU(direccionLogica);
     int numeroDesplazamiento = darDesplazamientoMMU(direccionLogica);
     if(numeroDesplazamiento + tamanio > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
+      log_info(
+        logger,
+        "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
+        contexto->pid, numeroSegmento, segmento->base, segmento->limite, numeroDesplazamiento, tamanio
+      );
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
       return continuarEjecutando;
     }
