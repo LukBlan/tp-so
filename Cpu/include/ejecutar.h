@@ -7,6 +7,8 @@
   #include <estructuras.h>
   #include <recursos.h>
 
+extern int idProcesoEjecutandose;
+
   void ejecutarContexto(contextoEjecucion* contexto);
   int ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instruccion);
   int ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instruccion);

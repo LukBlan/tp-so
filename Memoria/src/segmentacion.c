@@ -150,7 +150,7 @@ void compactacion() {
   contextoEjecucion* contextoAlRePedo = generarContextoAlPedo();
   enviarContexto(contextoAlRePedo, clienteActual, COMPACTACION);
   int retardoCompactacion = recursosMemoria->configuracion->RETARDO_COMPACTACION * 1000;
-  usleep(retardoCompactacion);
+  //usleep(retardoCompactacion);
   t_list* listaDeProcesosConContenido = obtenerContenidoSegmentos();
   limpiarArrayBits();
   ocuparMemoriaPrincipal(listaDeProcesosConContenido);
