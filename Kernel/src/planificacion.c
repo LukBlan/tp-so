@@ -8,10 +8,6 @@
 #include <utils.h>
 #include <colaDeRecursos.h>
 
-void mostrarTablaRara() {
-  tablaGlobal* tablaActual = list_get(tablaGlobalDeArchivos, 0);
-  printf("->>>>>>> Nombre Archivo %s\n", tablaActual->nomArchivo);
-}
 
 t_list* tablaGlobalDeArchivos;
 int cantidadDeProcesos = 0;
@@ -523,7 +519,6 @@ void recibirInstruccion() {
 
     case F_TRUNCATE:
       puts("-------------------- Llego F_TRUNCATE --------------------");
-      mostrarTablaRara();
       char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
       printf("Tamanio %d", tamanioNuevo);
@@ -538,14 +533,10 @@ void recibirInstruccion() {
 
       op_code respuestaTruncado = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoTruncado = recibirContexto(socketFileSystem);
-      mostrarTablaRara();
       switch(respuestaTruncado) {
         case SUCCESS_TRUNCATE:
-        mostrarTablaRara();
         actualizarContexto(procesoTruncado, nuevoTruncado);
-        mostrarTablaRara();
         agregarAListo(procesoDevuelto);
-        mostrarTablaRara();
         break;
 
         default:
@@ -621,7 +612,7 @@ void recibirInstruccion() {
 
     case F_SEEK:
       puts("-------------------- Llego F_SEEK --------------------");
-      mostrarTablaRara();
+
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
       puts("1");
@@ -634,7 +625,7 @@ void recibirInstruccion() {
       arch->punteroArchivo = posicion;
       puts("5");
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
-      mostrarTablaRara();
+
 
       puts("6");
       free(nomArchivo);
@@ -674,7 +665,7 @@ void recibirInstruccion() {
     case F_WRITE:
       puts("-------------------- Llego F_WRITE --------------------");
       PCB* procesoQueEscribio = procesoEjecutandose;
-      mostrarTablaRara();
+
       sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
       char* nombreArchivoAEscribir = recibirString(socketCpu);
@@ -688,7 +679,7 @@ void recibirInstruccion() {
       enviarEntero(posicionDeArchivo,socketFileSystem);
       op_code respuestaEscritura = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoEscrito = recibirContexto(socketFileSystem);
-      mostrarTablaRara();
+
       switch(respuestaEscritura) {
         case SUCCESS_WRITE:
         actualizarContexto(procesoQueEscribio, nuevoEscrito);
@@ -748,7 +739,7 @@ void recibirInstruccion() {
 
     case SIGNAL:
       puts("-------------------- Llego SIGNAL --------------------");
-      mostrarTablaRara();
+
       char* recursoPedidoSignal = recibirString(socketCpu);
       int posicionRecursoSignal = validarRecurso(recursoPedidoSignal);
       if (posicionRecursoSignal >= 0) {
@@ -756,7 +747,7 @@ void recibirInstruccion() {
         if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
           puts("Candtidad de instancias mayor a 0");
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
-          mostrarTablaRara();
+
           recibirInstruccion();
         } else {
           puts("Candtidad de instancias menor a 0");
@@ -764,7 +755,7 @@ void recibirInstruccion() {
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           agregarAListo(procesoBloqueado);
-          mostrarTablaRara();
+
           recibirInstruccion();
         }
       } else {
