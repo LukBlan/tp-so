@@ -595,6 +595,7 @@ void recibirInstruccion() {
       nuevoContexto = recibirContexto(socketMemoria);
       pthread_mutex_unlock(&operandoConMemoria);
       actualizarContexto(procesoEjecutandose, nuevoContexto);
+      enviarEntero(7, socketCpu);
       enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
       recibirInstruccion();
       break;

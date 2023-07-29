@@ -87,7 +87,7 @@ void recibirContextoAEjecutar() {
     op_code codigoOperacion = obtenerCodigoOperacion(socketKernel);
     switch(codigoOperacion) {
       case Pcb:
-        contextoEjecucion* contexto = recibirContexto(socketKernel);
+        contexto = recibirContexto(socketKernel);
         ejecutarContexto(contexto);
         break;
       default:

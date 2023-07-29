@@ -5,8 +5,9 @@
 #include <utils.h>
 
 int idProcesoEjecutandose = -1;
+contextoEjecucion* contexto;
 
-void ejecutarContexto(contextoEjecucion* contexto) {
+void ejecutarContexto() {
   int continuarEjecutando = 1;
 
   while(continuarEjecutando) {
@@ -14,32 +15,32 @@ void ejecutarContexto(contextoEjecucion* contexto) {
       t_instruccion* instruccion = list_get(contexto->instrucciones, contexto->programCounter);
       contexto->programCounter++;
       recursosCpu->registros = contexto->registros;
-      continuarEjecutando = ejecutarInstruccion(contexto, instruccion);
+      continuarEjecutando = ejecutarInstruccion(instruccion);
   }
   liberarContexto(contexto);
 }
 
-int ejecutarInstruccion(contextoEjecucion* contexto, t_instruccion* instruccion) {
+int ejecutarInstruccion(t_instruccion* instruccion) {
   int continuarEjecutando;
 
   switch (instruccion->cantidadParametros) {
     case 0:
-      continuarEjecutando = ejecutarCeroParametros(contexto, instruccion);
+      continuarEjecutando = ejecutarCeroParametros(instruccion);
       break;
     case 1:
-      continuarEjecutando = ejecutarUnParametro(contexto, instruccion);
+      continuarEjecutando = ejecutarUnParametro(instruccion);
       break;
     case 2:
-      continuarEjecutando = ejecutarDosParametros(contexto, instruccion);
+      continuarEjecutando = ejecutarDosParametros(instruccion);
       break;
     case 3:
-      continuarEjecutando = ejecutarTresParametros(contexto, instruccion);
+      continuarEjecutando = ejecutarTresParametros(instruccion);
       break;
   }
   return continuarEjecutando;
 }
 
-op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
+op_code ejecutarCeroParametros(t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
   int continuarEjecutando;
@@ -60,7 +61,7 @@ op_code ejecutarCeroParametros(contextoEjecucion* contexto, t_instruccion* instr
   return continuarEjecutando;
 }
 
-int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion) {
+int ejecutarUnParametro(t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   int socketKernel = recursosCpu->conexiones->socketKernel;
   char* identificador = instruccion->strings[0];
@@ -117,7 +118,9 @@ int ejecutarUnParametro(contextoEjecucion* contexto, t_instruccion* instruccion)
     int idSegmentoDelete = atoi(primerParametro);
     enviarContexto(contexto, socketKernel, DELETE_SEGMENT);
     enviarEntero(idSegmentoDelete, socketKernel);
-    liberarContexto(contexto);
+    //liberarContexto(contexto);
+    int numero = recibirEntero(socketKernel);
+    printf("Numero recibido %d\n", numero);
     obtenerCodigoOperacion(socketKernel);
     contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
@@ -254,7 +257,7 @@ int posicionEnMemoria(int numeroSegmento, int numeroDesplazamiento, contextoEjec
   return baseSegmento + numeroDesplazamiento ;
 }
 
-int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
+int ejecutarDosParametros(t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
   char* primerParametro = instruccion->strings[1];
@@ -268,6 +271,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
     "PID: <%d> - Ejecutando: <%s> - <%s> <%s>",
     idProcesoEjecutandose, identificador, primerParametro, segundoParametro
   );
+
   if (strcmp("SET", identificador) == 0) {
     int retardoInstruccion = recursosCpu->configuracion->RETARDO_INSTRUCCION * 1000;
     usleep(retardoInstruccion);
@@ -387,7 +391,7 @@ int ejecutarDosParametros(contextoEjecucion* contexto, t_instruccion* instruccio
   return continuarEjecutando;
 }
 
-int ejecutarTresParametros(contextoEjecucion* contexto, t_instruccion* instruccion) {
+int ejecutarTresParametros(t_instruccion* instruccion) {
   t_log* logger = recursosCpu->logger;
   char* identificador = instruccion->strings[0];
   char* primerParametro = instruccion->strings[1];
