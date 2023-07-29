@@ -10,6 +10,7 @@
 
 t_list* tablaGlobalDeArchivos;
 int cantidadDeProcesos = 0;
+int usoDeMemoria = 0;
 
 void planificador_corto_plazo_fifo() {
   t_log* logger = recursosKernel->logger;
@@ -682,6 +683,8 @@ void recibirInstruccion() {
                   "PID: <%d> Leer Archivo -Nombre Archivo: <%s> - Puntero: <%d> - Direccion Memoria: <%d> - Tamaño : <%d>",
                   procesoDevuelto->pid, nombreArchivoALeer,posicionDeArchivoLectura,posicionEnMemoriaAleer,tamanioALeer
                 );
+      usoDeMemoria ++;
+      sem_wait(&usoMemoria);
       enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_READ);
       enviarString(nombreArchivoALeer,socketFileSystem);
       enviarEntero(tamanioALeer,socketFileSystem);
@@ -690,6 +693,8 @@ void recibirInstruccion() {
       op_code respuestaLectura = obtenerCodigoOperacion(socketFileSystem);
 
       contextoEjecucion* nuevoLeido = recibirContexto(socketFileSystem);
+      sem_post(&usoMemoria);
+      usoDeMemoria --;
       switch(respuestaLectura) {
         case SUCCESS_READ:
         actualizarContexto(procesoQueLeyo, nuevoLeido);
@@ -715,6 +720,8 @@ void recibirInstruccion() {
                  "PID: <%d> Escribir Archivo -Nombre Archivo: <%s> - Puntero: <%d> - Direccion Memoria: <%d> - Tamaño : <%d>",
                  procesoDevuelto->pid, nombreArchivoAEscribir,posicionDeArchivo,posicionEnMemoria,tamanioAEscribir
                );
+      usoDeMemoria ++;
+      sem_wait(&usoMemoria);
       enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_WRITE);
       enviarString(nombreArchivoAEscribir,socketFileSystem);
       enviarEntero(posicionEnMemoria,socketFileSystem);
@@ -722,6 +729,9 @@ void recibirInstruccion() {
       enviarEntero(posicionDeArchivo,socketFileSystem);
       op_code respuestaEscritura = obtenerCodigoOperacion(socketFileSystem);
       contextoEjecucion* nuevoEscrito = recibirContexto(socketFileSystem);
+      sem_post(&usoMemoria);
+      usoDeMemoria --;
+
 
       switch(respuestaEscritura) {
         case SUCCESS_WRITE:
@@ -857,8 +867,13 @@ void recibirInstruccion() {
         case COMPACTACION:
           contextoEjecucion* contextoAlRePedo = recibirContexto(socketMemoria);
           log_info(recursosKernel->logger, "Se solicitó compactación");
+          if(usoDeMemoria > 0){
+        	  log_info(recursosKernel->logger, "Esperando a que termine File System");
+                    }
+          sem_wait(&usoMemoria);
           obtenerCodigoOperacion(socketMemoria);
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
+          sem_post(&usoMemoria);
           log_info(recursosKernel->logger, "Se finalizó el proceso de compactación");
           mostrarContexto(procesoEjecutandose->contexto);
           mostrarTablaDeSegmentos(tablaDeSegmentos);
