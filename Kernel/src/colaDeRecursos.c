@@ -51,7 +51,11 @@ void disminuirInstanciasRecurso(int posicionRecurso) {
   recurso->cantidad_inst_recurso -= 1;
   printf("Cantidad de recursos: %d\n", recurso->cantidad_inst_recurso);
 }
-
+int darInstanciasRecurso(int posicionRecurso) {
+  recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
+  int cantidadRecurso = recurso->cantidad_inst_recurso;
+  return cantidadRecurso;
+}
 void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
   queue_push(recurso->colaBloqueados, proceso);

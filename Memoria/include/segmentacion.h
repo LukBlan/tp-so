@@ -44,5 +44,6 @@
   Segmento* elegirCriterio (t_list* segmentos, int tamanio);
   Segmento* segmentoBest(t_list* segmentos, int tamanio);
   Segmento* segmentoWorst(t_list* segmentos, int tamanio);
+  contextoEjecucion* generarContextoAlPedo();
 
 #endif
