@@ -80,12 +80,15 @@
   extern sem_t semaforoCantidadProcesosExec;
   extern sem_t comunicacionMemoria;
 
-  void iniciarColas();
-  void iniciarSemaforos();
   void crearRecursos();
+  t_list* obtenerListaDeInstancias(t_config* fileConfig);
+  t_list* obtenerListaDeRecursos(t_config* fileConfig);
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarLogger(char* pathLogger);
   void liberarRecursos();
   void termination_handler(int signum);
   void agarrarSenial();
+  void iniciarColas();
+  void iniciarSemaforos();
+
 #endif
