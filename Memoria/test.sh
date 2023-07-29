@@ -19,27 +19,27 @@ if [ "$1" == "BASE" ]; then
 	./Debug/Memoria  memoriabase.config
 fi
 if [ "$1" == "MEMORIA" -a "$2" == "FIRST" ]; then 
-	echo "MEMORIA FIRST"
+	./Debug/Memoria  memoria-memoria-first.config
 fi
 
 if [ "$1" == "MEMORIA" -a "$2" == "WORST" ]; then 
-	echo "MEMORIA WORST"
+	./Debug/Memoria  memoria-memoria-worst.config
 fi
 
 if [ "$1" == "MEMORIA" -a "$2" == "BEST" ]; then 
-	echo "MEMORIA BEST"
+	./Debug/Memoria  memoria-memoria-best.config
 fi
 
 if [ "$1" == "ERROR" ]; then 
-	echo "ERROR"
+	./Debug/Memoria  memoriaerror.config
 fi
 
 if [ "$1" == "FS" ]; then 
-	echo "FS"
+	./Debug/Memoria  memoria-fileSystem.config
 fi
 
 if [ "$1" == "DEADLOCK" ]; then 
-	echo "DEADLOCK"
+	./Debug/Memoria  memoriadeadlock.config
 fi
 
 
