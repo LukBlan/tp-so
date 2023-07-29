@@ -222,9 +222,15 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int posicion = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       int tamanio = recibirEntero(socketCliente);
+      int idProcesoMov = recibirEntero(socketCliente);
 
       char* cosaAEnviar = malloc(tamanio + 1);
 
+      log_info(
+        logger,
+        "PID: <%d> - Acción: <LEER> - Dirección física: <%d> - Tamaño: <%d> - Origen: <CPU>",
+        idProcesoMov, posicion, tamanio
+      );
       usleep(retardoMemoria);
       memcpy(cosaAEnviar, memoriaPrincipal + posicion, tamanio);
       cosaAEnviar[tamanio] = '\0';
@@ -237,6 +243,13 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       contexto = recibirContexto(socketCliente);
       int posicionAMovear = recibirEntero(socketCliente); // id de proceso para elimnar de la tabla global
       char* cosaAEscribir = recibirString(socketCliente);
+      int idProcesoOut = recibirEntero(socketCliente);
+
+      log_info(
+        logger,
+        "PID: <%d> - Acción: <ESCRIBIR> - Dirección física: <%d> - Tamaño: <%d> - Origen: <CPU>",
+        idProcesoOut, posicionAMovear, strlen(cosaAEscribir)
+      );
 
       usleep(retardoMemoria);
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));

@@ -300,7 +300,8 @@ int ejecutarDosParametros(t_instruccion* instruccion) {
       printf("<%d>\n", segmento->id );
       enviarContexto(contexto, socketMemoria, MOV_IN);
       enviarEntero(posicion,socketMemoria);
-      enviarEntero(tamanioALeer,socketMemoria);
+      enviarEntero(tamanioALeer, socketMemoria);
+      enviarEntero(idProcesoEjecutandose, socketMemoria);
 
       char* parametro = recibirString(socketMemoria);
       log_info(
@@ -342,6 +343,7 @@ int ejecutarDosParametros(t_instruccion* instruccion) {
       enviarContexto(contexto, socketMemoria, MOV_OUT);
       enviarEntero(posicion2,socketMemoria);
       enviarString(valorDeRegistro,socketMemoria);
+      enviarEntero(idProcesoEjecutandose, socketMemoria);
       obtenerCodigoOperacion(socketMemoria);
       contextoEjecucion* contextoAlPedo = recibirContexto(socketMemoria);
       continuarEjecutando = 1;
