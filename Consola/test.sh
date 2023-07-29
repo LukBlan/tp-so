@@ -15,13 +15,15 @@ cd ..
 
 export LD_LIBRARY_PATH=/home/utnso/Desktop/tp-2023-1c-Pneumonoultramicroscopicsilicovolcanoconiosis-/shared/Debug
 
-if [ "$1" == "BASE" ]; then 
+if [ "$1" == "BASE" -a "$2" == "1"  ]; then 
     ./Debug/Consola consola.config BASE_1
-    ./Debug/Consola consola.config BASE_2
+fi
+
+if [ "$1" == "BASE" -a "$2" == "2" ]; then 
     ./Debug/Consola consola.config BASE_2
 fi
 
-if [ "$1" == "MEMORIA"]; then 
+if [ "$1" == "MEMORIA" ]; then 
     ./Debug/Consola consola.config MEMORIA_1
     ./Debug/Consola consola.config MEMORIA_2
     ./Debug/Consola consola.config MEMORIA_3
@@ -48,19 +50,19 @@ if [ "$1" == "FS" -a "$2" == "1" ]; then
     ./Debug/Consola consola.config FS_2
 fi
 
-if [ "$1" == "FS" -a "$2" == "2"  ]; then 
+if [ "$1" == "FS" -a "$2" == "2" ]; then 
     ./Debug/Consola consola.config FS_3
     ./Debug/Consola consola.config FS_3
     ./Debug/Consola consola.config FS_3
     ./Debug/Consola consola.config FS_3
 fi
 
-if [ "$1" == "DEADLOCK" -a "$2" == "1"]; then 
+if [ "$1" == "DEADLOCK" -a "$2" == "1" ]; then 
     ./Debug/Consola consola.config DEADLOCK_1
     ./Debug/Consola consola.config DEADLOCK_2
     ./Debug/Consola consola.config DEADLOCK_3
 fi
 
-if [ "$1" == "DEADLOCK" -a "$2" == "2"]; then 
+if [ "$1" == "DEADLOCK" -a "$2" == "2" ]; then 
     ./Debug/Consola consola.config DEADLOCK_4
 fi

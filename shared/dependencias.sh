@@ -16,6 +16,19 @@ if [ "$1" == "install" ]; then
 	make debug
 	sudo make install
 	
+	
+	cd $cwd
+	cd ./../Memoria
+	chmod u+x test.sh
+	cd ./../FileSystem
+	chmod u+x test.sh
+	cd ./../Kernel
+	chmod u+x test.sh
+	cd ./../Cpu
+	chmod u+x test.sh
+	cd ./../Consola
+	chmod u+x test.sh
+		
 	cd $cwd
 	sudo cp -r ./include/* /usr/local/include
 	cd $cwd
