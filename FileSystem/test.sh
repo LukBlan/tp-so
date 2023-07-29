@@ -24,7 +24,7 @@ if [ "$1" == "ERROR" ]; then
 fi
 
 if [ "$1" == "MEMORIA" ]; then 
-	./Debug/FileSystem  filesSystem-memoria.config
+	./Debug/FileSystem  fileSystem-memoria.config
 fi
 
 if [ "$1" == "FS" ]; then 
