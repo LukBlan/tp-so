@@ -120,25 +120,18 @@ int ejecutarUnParametro(t_instruccion* instruccion) {
     enviarEntero(idSegmentoDelete, socketKernel);
     //liberarContexto(contexto);
     int numero = recibirEntero(socketKernel);
-    printf("Numero recibido %d\n", numero);
     obtenerCodigoOperacion(socketKernel);
     contexto = recibirContexto(socketKernel);
   } else if (strcmp("F_OPEN", identificador) == 0) {
-    printf("Nombre Archivo %s\n", primerParametro);
     char* nombreArchivo = primerParametro;
-    printf("Nombre Archivo %s\n", nombreArchivo);
     enviarContexto(contexto, socketKernel, F_OPEN);
     enviarString(nombreArchivo, socketKernel);
     op_code respuestaFS = obtenerCodigoOperacion(socketKernel);
 
     switch(respuestaFS) {
       case SUCCESS_OPEN_CPU:
-        puts("Entre en el switch");
         liberarContexto(contexto);
-        puts("1");
-        puts("2");
         contexto = recibirContexto(socketKernel);
-        puts("3");
         continuarEjecutando = 1;
         break;
       case BLOCK:
@@ -296,8 +289,7 @@ int ejecutarDosParametros(t_instruccion* instruccion) {
       continuarEjecutando = 0;
     } else {
       int posicion = posicionEnMemoria(numeroSegmentoMov,numeroDesplazamientoMov,contexto);
-      printf("<%d>\n", segmento->base );
-      printf("<%d>\n", segmento->id );
+
       enviarContexto(contexto, socketMemoria, MOV_IN);
       enviarEntero(posicion,socketMemoria);
       enviarEntero(tamanioALeer, socketMemoria);
@@ -362,7 +354,6 @@ int ejecutarDosParametros(t_instruccion* instruccion) {
   } else if (strcmp("F_TRUNCATE", identificador) == 0) {
     continuarEjecutando = 0;
     int tamanioNuevo = atoi(segundoParametro);
-    printf("Tamanio de truncate %d", tamanioNuevo);
     char* nombreArchivoATruncar = primerParametro;
     enviarContexto(contexto, socketKernel, F_TRUNCATE);
     enviarString(nombreArchivoATruncar,socketKernel);

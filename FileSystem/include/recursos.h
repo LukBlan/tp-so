@@ -61,16 +61,16 @@ typedef struct{
   extern void* bloque;
   
   void crearRecursosFileSystem();
-  void cargarLogger(char* pathLogger);
-  void cargarConfiguracion(char* pathConfiguracin);
-  void liberarRecursos();
-  void agarrarSenial();
-  void termination_handler(int signum);
-  void cargarBloques();
-  void cargarBitMap();
-  void cargarSuperbloque();
   void generarListaDeFCB();
+  void cargarConfiguracion(char* pathConfiguracin);
+  void cargarSuperbloque();
+  void cargarBitMap();
+  void cargarBloques();
   void iniciarFCBExistente();
+  void cargarLogger(char* pathLogger);
+  void liberarRecursos();
   void inicializarSemaforos();
+  void termination_handler(int signum);
+  void agarrarSenial();
 
 #endif

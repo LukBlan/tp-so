@@ -30,6 +30,7 @@
   PCB* sacarBloqueado();
   void *io();
   void agregar_proceso_bloqueado(PCB *procesoBloqueado);
+  void agregar_proceso_bloqueado_io(PCB *procesoBloqueado);
   char* asignarStringLiteral(char* stringLiteral);
   char* estadoAsString(estadoProceso estado);
   void sacarDeEjecutando(estadoProceso estado,PCB* proceso);
@@ -44,11 +45,19 @@
   void bloquearEnCola(char* nombreArchivo, PCB* proceso);
   int encontrarEnTablaDeArchivos(t_list* tablaArchivos, char* nombre);
   int encontrarEnTablaGlobal(char* nombre);
+  int obtenerPosicion(char* nomArchivo, contextoEjecucion* contexto);
   void eliminarDeTablaDeArchivos(char* nombreArchivo,PCB* procesoDevuelto);
   bool hayEnCola(char* nombre);
   void moverAListoColaDeArchivo(char* nombreArchivo);
   void eliminarDeTablaGlobal(char* nombreArchivo);
   void iniciarTablaGlobal();
+  void actualizarSegmentos(t_list* segmentosDesactualizados, t_list* segmentosNuevos);
+  int actualizarSiEstaEn(int idProceso, t_list* segmentosProceso, t_list* colaProcesos, pthread_mutex_t mutextCola);
+  int actualizarSiEstaBloqueadoPorArchivo(int idProceso, t_list* segmentosProceso);
+  int actualizarSiEstaBloqueadoPorRecurso(int idProceso, t_list* segmentosProceso);
+  void actualizarSegmentosProcesos(t_list* tablaDeSegmentos);
+  void agregarATablaArchivo(contextoEjecucion* contexto, char* nombreArchivo);
+  void actualizarProceso(int idProceso, t_list* segmentosProceso);
   void agregarFinalizado(PCB* proceso);
   int findElementPosition(char array[], int size, char* target);
   void liberar_semaforos();

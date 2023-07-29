@@ -29,6 +29,8 @@ sem_t semProcesoNew;
 sem_t semProcesoReady;
 sem_t semaProcesoExec;
 
+sem_t usoMemoria;
+
 sem_t blockCounter;
 
 sem_t largoPlazo;
@@ -178,6 +180,7 @@ void iniciarSemaforos() {
   pthread_mutex_init(&operandoConMemoria, NULL);
 
   sem_init(&semProcesoNew, 0, 0);
+  sem_init(&usoMemoria,0,1);
   sem_init(&semProcesoReady, 0, 0);
   sem_init(&blockCounter, 0, 0);
   sem_init(&semaforoCantidadProcesosExec, 0, 1);

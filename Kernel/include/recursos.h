@@ -8,6 +8,7 @@
   #include <commons/log.h>
   #include <commons/collections/list.h>
   #include <commons/collections/queue.h>
+#include <commons/config.h>
 
   #include <estructuras.h>
 
@@ -72,7 +73,7 @@
   extern sem_t semProcesoNew;
   extern sem_t semProcesoReady;
   extern sem_t semaProcesoExec;
-
+  extern sem_t usoMemoria;
   extern sem_t blockCounter;
 
   extern sem_t largoPlazo;
@@ -80,12 +81,15 @@
   extern sem_t semaforoCantidadProcesosExec;
   extern sem_t comunicacionMemoria;
 
-  void iniciarColas();
-  void iniciarSemaforos();
   void crearRecursos();
+  t_list* obtenerListaDeInstancias(t_config* fileConfig);
+  t_list* obtenerListaDeRecursos(t_config* fileConfig);
   void cargarConfiguracion(char* pathConfiguracion);
   void cargarLogger(char* pathLogger);
   void liberarRecursos();
   void termination_handler(int signum);
   void agarrarSenial();
+  void iniciarColas();
+  void iniciarSemaforos();
+
 #endif
