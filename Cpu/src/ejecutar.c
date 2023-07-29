@@ -436,11 +436,11 @@ int ejecutarTresParametros(t_instruccion* instruccion) {
     int numeroDesplazamientoWrite = darDesplazamientoMMU(direccionLogicaWrite);
     Segmento* segmentoWrite = buscarSegmentoPorId(contexto->tablaSegmentos,numeroSegmentoWrite);
     if(numeroDesplazamientoWrite + tamanioWrite > recursosCpu->configuracion->TAM_MAX_SEGMENTO){
-      /*log_info(
-        logger,
-        "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
-		idProcesoEjecutandose, numeroSegmentoWrite, segmentoWrite->base, segmentoWrite->limite, numeroDesplazamientoWrite, tamanioWrite
-      );*/
+    log_info(
+      logger,
+      "PID: <%d> - Error SEG_FAULT- Segmento: <%d> base: <%d> limite: <%d> Offset: <%d> - Tamaño: <%d>",
+      idProcesoEjecutandose, numeroSegmentoWrite, segmentoWrite->base, segmentoWrite->limite, numeroDesplazamientoWrite, tamanioWrite
+    );
       enviarContexto(contexto,socketKernel,SEGMENTATION_FAULT);
       return continuarEjecutando;
     }

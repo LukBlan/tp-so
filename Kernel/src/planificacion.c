@@ -496,6 +496,7 @@ void ejecutar(PCB* proceso) {
   log_info(recursosKernel->logger, "Envio proceso con PID: [%d] a CPU.", proceso->pid);
   cambiarEstado(EXEC, procesoEjecutandose);
   enviarContexto(proceso->contexto, socketCpu, Pcb);
+  enviarEntero(proceso->pid, socketCpu);
   recibirInstruccion();
 }
 
