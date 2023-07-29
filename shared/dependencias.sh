@@ -11,17 +11,18 @@ if [ "$1" == "install" ]; then
 	cd ~
 	mkdir so-libraries
 	cd so-libraries
-	
 	git clone https://github.com/sisoputnfrba/so-commons-library.git
-	
 	cd so-commons-library
+	make debug
 	sudo make install
-	cd ..
 	
+	cd $cwd
+	sudo cp -r ./include/* /usr/local/include
 	cd $cwd
 	cd Debug
 	make clean
 	make all
+	sudo cp libshared.so /usr/local/lib/
 fi
 
 if [ "$1" == "uninstall" ]; then
