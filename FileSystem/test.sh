@@ -32,7 +32,7 @@ if [ "$1" == "FS" ]; then
 fi
 
 if [ "$1" == "DEADLOCK" ]; then 
-	./Debug/FileSystem  filesydeadlock.config
+	./Debug/FileSystem  filesystemdeadlock.config
 fi
 
 

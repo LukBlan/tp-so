@@ -154,8 +154,6 @@ void enviarString(char* valorAEnviar, int socket) {
     memcpy(&(cantidadCaracteresDeserializados), buffer->stream, sizeof(int));
     char* stringDeserializado = malloc(cantidadCaracteresDeserializados);
     memcpy(stringDeserializado, buffer->stream + sizeof(int), cantidadCaracteresDeserializados);
-  printf("Cantidad caracteres: %d, string %s\n", cantidadCaracteresDeserializados, stringDeserializado);
-
   t_paquete* paquete = crearPaquete(buffer, ENTERO);
   enviar_paquete(paquete, socket);
   liberarPaquete(paquete);
@@ -175,7 +173,6 @@ char* recibirString(int socket) {
 
 void enviarTablaDeSegmentos(t_list* tablaDeSegmentos, int socketCpu, op_code codigoOperacion) {
   int tamanioTablaDeSegmentos = tamanioBytesTablaDeSegmentos(tablaDeSegmentos);
-  printf("El Tamaño de la tabla de segmentos es %d\n", tamanioTablaDeSegmentos);
   t_buffer* buffer = generarBuffer(tamanioTablaDeSegmentos);
   serializarTablaDeSegmentos(buffer, tablaDeSegmentos);
   t_list* tablaDeSegmentosRecibida = deserializarTablaDeSegmentos(buffer);

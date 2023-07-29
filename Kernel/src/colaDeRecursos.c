@@ -30,7 +30,7 @@ int validarRecurso(char* recursoPedido) {
     char* elementoRecurso = reg_recurso->recurso;
 
     if (strcmp(recursoPedido, elementoRecurso) == 0) {
-      puts("Existe El recurso");
+
       posicionRecurso = i;
     }
   }
@@ -40,16 +40,16 @@ int validarRecurso(char* recursoPedido) {
 int validarInstanciasDeRecurso(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
   int cantidadInstancias = recurso->cantidad_inst_recurso;
-  printf("Recurso: %s %d\n", recurso->recurso, recurso->cantidad_inst_recurso);
+
 
   return (cantidadInstancias > 0)? 1 : 0;
 }
 
 void disminuirInstanciasRecurso(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
-  printf("Cantidad de recursos: %d\n", recurso->cantidad_inst_recurso);
+
   recurso->cantidad_inst_recurso -= 1;
-  printf("Cantidad de recursos: %d\n", recurso->cantidad_inst_recurso);
+
 }
 int darInstanciasRecurso(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
@@ -59,12 +59,10 @@ int darInstanciasRecurso(int posicionRecurso) {
 void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
   queue_push(recurso->colaBloqueados, proceso);
-  printf("Cantidad procesos bloqueados en recurso %s %d\n", recurso->recurso, recurso->colaBloqueados->elements->elements_count);
 }
 
 PCB* obtenerProcesoBloqueado(int posicionRecurso) {
   recursoSolicitados* recurso =  list_get(listaRecursos, posicionRecurso);
-  printf("Cantidad procesos bloqueados en recurso %s %d\n", recurso->recurso, recurso->colaBloqueados->elements->elements_count);
   PCB* procesoBloqueado = queue_pop(recurso->colaBloqueados);
   return procesoBloqueado;
 }

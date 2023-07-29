@@ -11,7 +11,6 @@ void ejecutarContexto() {
   int continuarEjecutando = 1;
 
   while(continuarEjecutando) {
-    mostrarContexto(contexto);
       t_instruccion* instruccion = list_get(contexto->instrucciones, contexto->programCounter);
       contexto->programCounter++;
       recursosCpu->registros = contexto->registros;

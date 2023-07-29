@@ -331,7 +331,6 @@ bool estaEnTablaGlobal (char* nomArchivo) {
 void agregarATabla (char* nombreArchivo) {
     tablaGlobal* tabla1 = malloc(sizeof(tablaGlobal));
     tabla1->nomArchivo = nombreArchivo;
-    printf("%s\n", tabla1->nomArchivo);
     tabla1->colaBloqueado =  queue_create();
     list_add(tablaGlobalDeArchivos, tabla1);
 }
@@ -418,9 +417,7 @@ void actualizarSegmentos(t_list* segmentosDesactualizados, t_list* segmentosNuev
 
   for (int i = 0; i < cantidadSegmentosDesactualizados; i++) {
     Segmento* segmentoViejo = list_get(segmentosDesactualizados, i + 1);
-    printf("Segmento Viejo id %d\n", segmentoViejo->id);
     Segmento* segmentoNuevo = list_get(segmentosNuevos, i);
-    printf("Segmento Nuevo id %d\n", segmentoNuevo->id);
     segmentoViejo->base = segmentoNuevo->base;
   }
 
@@ -431,14 +428,12 @@ void actualizarSegmentos(t_list* segmentosDesactualizados, t_list* segmentosNuev
     ultimoSegmentoNuevo->base = ultimoSegmento->base;
     ultimoSegmentoNuevo->limite = ultimoSegmento->limite;
     list_add(segmentosDesactualizados, ultimoSegmentoNuevo);
-    printf("Segmento Nuevo id %d\n", ultimoSegmentoNuevo->id);
   }
 }
 
 int actualizarSiEstaEjecutandose(int idProceso, t_list* segmentosProceso) {
   int procesoEncontrado = 0;
   if (procesoEjecutandose->pid == idProceso) {
-    printf("Proceso: %d\n", procesoEjecutandose->pid);
     actualizarSegmentos(procesoEjecutandose->contexto->tablaSegmentos, segmentosProceso);
     procesoEncontrado = 1;
   }
@@ -454,7 +449,6 @@ int actualizarSiEstaEn(int idProceso, t_list* segmentosProceso, t_list* colaProc
     PCB* pcb = list_get(colaProcesos, i);
     pthread_mutex_unlock(&mutextCola);
     if (pcb->pid == idProceso) {
-      printf("Proceso: %d\n", pcb->pid);
       actualizarSegmentos(pcb->contexto->tablaSegmentos, segmentosProceso);
       procesoEncontrado = 1;
     }
@@ -854,7 +848,6 @@ void recibirInstruccion() {
       enviarEntero(tamanioSegmento, socketMemoria);
       op_code respuestaMemoria = obtenerCodigoOperacion(socketMemoria);
 
-      printf("Respuesta memoria %d\n", respuestaMemoria);
       switch(respuestaMemoria) {
         case Pcb:
           contextoEjecucion* nuevoActualizado = recibirContexto(socketMemoria);
@@ -875,10 +868,7 @@ void recibirInstruccion() {
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
           sem_post(&usoMemoria);
           log_info(recursosKernel->logger, "Se finalizó el proceso de compactación");
-          mostrarContexto(procesoEjecutandose->contexto);
-          mostrarTablaDeSegmentos(tablaDeSegmentos);
           actualizarSegmentosProcesos(tablaDeSegmentos);
-          mostrarContexto(procesoEjecutandose->contexto);
           enviarContexto(procesoEjecutandose->contexto, socketCpu, SUCCESS);
           pthread_mutex_unlock(&operandoConMemoria);
           recibirInstruccion();
