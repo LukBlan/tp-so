@@ -59,7 +59,7 @@ PCB* sacarProcesoMayorHRRN() {
 
 void planificador_corto_plazo_HRRN() {
   t_log* logger = recursosKernel->logger;
-  log_info(logger, "INICIO PLANIFICACION FIFO");
+  log_info(logger, "INICIO PLANIFICACION HRRN");
   while (1) {
     sem_wait(&semProcesoReady);
     sem_wait(&semaforoCantidadProcesosExec);
@@ -162,7 +162,6 @@ void planificador_largo_plazo() {
   log_info(logger, "Inicio PLanificador LARGO PLAZO en [%s]", config->ALGORITMO_PLANIFICACION);
   while (1) {
     sem_wait(&largoPlazo);
-    puts("Me llego un proceso");
     if (sePuedeAgregarMasProcesos()) {
       PCB *procesoSaliente = queue_pop(colaNew);
       agregarAListo(procesoSaliente);
@@ -228,12 +227,32 @@ void cambiarEstado(estadoProceso estado, PCB* proceso) {
   free(estadoAnterior);
   free(estadoNuevo);
 }
+char* obtenerProcesosEnReady() {
+  int cantidadProcesEnReady = colaReady->elements_count;
+  char* stringDeProcesos = malloc(cantidadProcesEnReady * 2);
+  PCB* primerProceso = list_get(colaReady, 0);
+  stringDeProcesos[0] = '0' + primerProceso->pid;
+
+  for (int i = 1,j = 1; j < cantidadProcesEnReady; i+=2,j++) {
+    PCB* proceso = list_get(colaReady, j);
+    stringDeProcesos[i] = '-';
+    stringDeProcesos[i+1] = '0' + proceso->pid;
+  }
+
+  stringDeProcesos[(cantidadProcesEnReady * 2) - 1] = '\0';
+  return stringDeProcesos;
+}
 
 void agregarAListo(PCB* proceso) {
   t_log* logger = recursosKernel->logger;
   pthread_mutex_lock(&mutexColaReady);
   list_add(colaReady, proceso);
   log_info(logger, "Proceso: [%d] se movio a listo", proceso->pid);
+  log_info(
+    logger,
+    "Cola Ready <%s>: <%s>",
+    recursosKernel->configuracion->ALGORITMO_PLANIFICACION, obtenerProcesosEnReady()
+  );
   pthread_mutex_unlock(&mutexColaReady);
   sem_post(&semProcesoReady);
 }
@@ -511,17 +530,18 @@ void recibirInstruccion() {
 
   switch (codigoOperacion) {
     case YIELD:
-      puts("-------------------- Llego YIELD --------------------");
       sacarDeEjecutando(READY,procesoDevuelto);
       agregarAListo(procesoDevuelto);
       break;
 
     case F_TRUNCATE:
-      puts("-------------------- Llego F_TRUNCATE --------------------");
       char* nombreArchivoATruncar = recibirString(socketCpu);
       int tamanioNuevo = recibirEntero(socketCpu);
-      printf("Tamanio %d", tamanioNuevo);
-      puts("");
+      log_info(
+                  recursosKernel->logger,
+                  "PID: <%d> Truncar Archivo -Nombre Archivo: <%s> - Tamaño: <%d>",
+                  procesoDevuelto->pid, nombreArchivoATruncar,tamanioNuevo
+                );
       PCB* procesoTruncado = procesoEjecutandose;
       sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
@@ -549,17 +569,23 @@ void recibirInstruccion() {
       break;
 
     case F_OPEN:
-      puts("-------------------- Llego F_OPEN --------------------");
       char* nombreArchivo = recibirString(socketCpu);
-      printf("Recibi archivo con nombre %s\n", nombreArchivo);
+      log_info(
+                 recursosKernel->logger,
+                 "PID: <%d> - Abrir Archivo - Nombre Archivo: <%s>",
+                 procesoDevuelto->pid, nombreArchivo
+               );
         if(estaEnTablaGlobal(nombreArchivo)) {
-          puts("-------------------  YA ESTA EN TABLA ESE MALDITO ARCHIVO ------------------");
           agregarATablaArchivo(procesoDevuelto->contexto, nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
+          log_info(
+                   recursosKernel->logger,
+                   "PID: <%d> - Bloqueado por: <%s>",
+                   procesoDevuelto->pid, nombreArchivo
+                 );
           sacarDeEjecutando(BLOCK,procesoDevuelto);
           bloquearEnCola(nombreArchivo, procesoDevuelto);
         } else {
-          puts("-------------------  NOOOOOOOOOOOOOOOOOOOOOOO ESTA ------------------");
           agregarATabla(nombreArchivo);
           enviarContexto(procesoDevuelto->contexto, socketFileSystem, F_OPEN);
           enviarString(nombreArchivo, socketFileSystem);
@@ -569,7 +595,6 @@ void recibirInstruccion() {
 
           switch(respuestaFS) {
             case SUCCESS_OPEN:
-              puts("Entre en SUCCESS");
               actualizarContexto(procesoEjecutandose, nuevoFS);
               agregarATablaArchivo(nuevoFS, nombreArchivo);
               enviarContexto(nuevoFS, socketCpu, SUCCESS_OPEN_CPU);
@@ -584,8 +609,12 @@ void recibirInstruccion() {
       break;
 
     case DELETE_SEGMENT:
-      puts("-------------------- Llego DELETE_SEGMENT --------------------");
       int idSeg = recibirEntero(socketCpu);
+      log_info(
+                  recursosKernel->logger,
+                  "PID: <%d> - Eliminar Segmento - ID segmento: <%d>",
+                  procesoDevuelto->pid, idSeg
+                );
       pthread_mutex_lock(&operandoConMemoria);
       enviarContexto(procesoDevuelto->contexto, socketMemoria, DELETE_SEGMENT);
       enviarEntero(procesoEjecutandose->pid, socketMemoria);
@@ -600,9 +629,12 @@ void recibirInstruccion() {
       recibirInstruccion();
       break;
     case F_CLOSE:
-      puts("-------------------- Llego F_CLOSE --------------------");
       char* nombrArchivo = recibirString(socketCpu);
-      printf("Nombre archivo %s\n", nombrArchivo);
+      log_info(
+                 recursosKernel->logger,
+                 "PID: <%d> - Cerrar Archivo - Nombre Archivo: <%s>",
+                 procesoDevuelto->pid, nombrArchivo
+               );
       eliminarDeTablaDeArchivos(nombrArchivo, procesoDevuelto);
       if(hayEnCola(nombrArchivo)){
         moverAListoColaDeArchivo(nombrArchivo);
@@ -615,28 +647,26 @@ void recibirInstruccion() {
       break;
 
     case F_SEEK:
-      puts("-------------------- Llego F_SEEK --------------------");
+
       char* nomArchivo = recibirString(socketCpu);
       int posicion = recibirEntero(socketCpu);
-      puts("1");
+      log_info(
+                  recursosKernel->logger,
+                  "PID: <%d> -Actualizar Puntero Archivo - Nombre Archivo: <%s> - Puntero: <%d>",
+                  procesoDevuelto->pid, nomArchivo,posicion
+                );
+
       t_list* archivosAbiertos = procesoDevuelto->contexto->archivosAbiertos;
-      puts("2");
       int posicionEnTabla = encontrarEnTablaDeArchivos(archivosAbiertos,nomArchivo);
-      puts("3");
-      archivoAbierto* arch = list_get(archivosAbiertos, posicionEnTabla);
-      puts("4");
-      arch->punteroArchivo = posicion;
-      puts("5");
+     archivoAbierto* arch = list_get(archivosAbiertos, posicionEnTabla);
+     arch->punteroArchivo = posicion;
       enviarContexto(procesoDevuelto->contexto,socketCpu,SUCCESS);
-
-
-      puts("6");
       free(nomArchivo);
       recibirInstruccion();
       break;
 
     case F_READ:
-      puts("-------------------- Llego F_READ --------------------");
+
       PCB* procesoQueLeyo = procesoEjecutandose;
       sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado(procesoDevuelto);
@@ -646,6 +676,11 @@ void recibirInstruccion() {
       int posicionEnMemoriaAleer = recibirEntero(socketCpu);
       int tamanioALeer = recibirEntero(socketCpu);
       int posicionDeArchivoLectura = obtenerPosicion(nombreArchivoALeer,procesoDevuelto->contexto);
+      log_info(
+                  recursosKernel->logger,
+                  "PID: <%d> Leer Archivo -Nombre Archivo: <%s> - Puntero: <%d> - Direccion Memoria: <%d> - Tamaño : <%d>",
+                  procesoDevuelto->pid, nombreArchivoALeer,posicionDeArchivoLectura,posicionEnMemoriaAleer,tamanioALeer
+                );
       enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_READ);
       enviarString(nombreArchivoALeer,socketFileSystem);
       enviarEntero(tamanioALeer,socketFileSystem);
@@ -666,7 +701,6 @@ void recibirInstruccion() {
       break;
 
     case F_WRITE:
-      puts("-------------------- Llego F_WRITE --------------------");
       PCB* procesoQueEscribio = procesoEjecutandose;
 
       sacarDeEjecutando(BLOCK,procesoDevuelto);
@@ -675,6 +709,11 @@ void recibirInstruccion() {
       int posicionEnMemoria = recibirEntero(socketCpu);
       int tamanioAEscribir = recibirEntero (socketCpu);
       int posicionDeArchivo = obtenerPosicion(nombreArchivoAEscribir,procesoDevuelto->contexto);
+      log_info(
+                 recursosKernel->logger,
+                 "PID: <%d> Escribir Archivo -Nombre Archivo: <%s> - Puntero: <%d> - Direccion Memoria: <%d> - Tamaño : <%d>",
+                 procesoDevuelto->pid, nombreArchivoAEscribir,posicionDeArchivo,posicionEnMemoria,tamanioAEscribir
+               );
       enviarContexto(procesoDevuelto->contexto,socketFileSystem,F_WRITE);
       enviarString(nombreArchivoAEscribir,socketFileSystem);
       enviarEntero(posicionEnMemoria,socketFileSystem);
@@ -696,14 +735,19 @@ void recibirInstruccion() {
       break;
 
     case IO:
-      puts("-------------------- Llego IO --------------------");
+
       procesoDevuelto->tiempoBloqueadoIO = recibirEntero(socketCpu);
+      log_info(
+            recursosKernel->logger,
+            "PID: <%d> - Bloqueado por: <IO>",
+            procesoDevuelto->pid
+          );
       sacarDeEjecutando(BLOCK,procesoDevuelto);
       agregar_proceso_bloqueado_io(procesoDevuelto);
       break;
 
     case EXIT:
-      puts("-------------------- Llego Exit --------------------");
+
       PCB* procesoTerminado = procesoDevuelto;
       sacarDeEjecutando(EXITSTATE,procesoDevuelto);
       log_info(recursosKernel->logger, "Finaliza el Proceso [%d], Motivo: SUCCESS", proceso->pid);
@@ -712,19 +756,28 @@ void recibirInstruccion() {
       break;
 
     case WAIT:
-      puts("-------------------- Llego WAIT --------------------");
       char* recursoPedido = recibirString(socketCpu);
       int posicionRecurso = validarRecurso(recursoPedido);
+      int cantidadDeInstancias = darInstanciasRecurso(posicionRecurso);
+      log_info(
+                recursosKernel->logger,
+                "PID: <%d> - Wait: <%s>- Cantidad de Instancias: <%d>",
+                procesoDevuelto->pid, recursoPedido,cantidadDeInstancias-1
+              );
       if (posicionRecurso >= 0) {
         if(validarInstanciasDeRecurso(posicionRecurso)) {
           disminuirInstanciasRecurso(posicionRecurso);
-          puts("Candtidad de instancias mayor a 0");
+
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
           recibirInstruccion();
         } else {
           disminuirInstanciasRecurso(posicionRecurso);
-          puts("Candtidad de instancias menor a 0");
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a BLOQUEADO", procesoDevuelto->pid);
+                    log_info(
+                      recursosKernel->logger,
+                      "PID: <%d> - Bloqueado por: <%s>",
+                      procesoDevuelto->pid, recursoPedido
+                    );
           bloquearProcesoPorRecurso(procesoDevuelto, posicionRecurso);
           enviarContexto(procesoDevuelto->contexto, socketCpu, BLOCK);
           sacarDeEjecutando(BLOCK,procesoDevuelto);
@@ -741,19 +794,23 @@ void recibirInstruccion() {
       break;
 
     case SIGNAL:
-      puts("-------------------- Llego SIGNAL --------------------");
 
       char* recursoPedidoSignal = recibirString(socketCpu);
       int posicionRecursoSignal = validarRecurso(recursoPedidoSignal);
+      int cantidad = darInstanciasRecurso(posicionRecursoSignal);
+             log_info(
+                recursosKernel->logger,
+                "PID: <%d> - Signal: <%s>- Cantidad de Instancias: <%d>",
+                procesoDevuelto->pid, recursoPedidoSignal,cantidad+1
+              );
       if (posicionRecursoSignal >= 0) {
         aumentarRecurso(posicionRecursoSignal);
         if(validarInstanciasDeRecurso(posicionRecursoSignal)) {
-          puts("Candtidad de instancias mayor a 0");
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
 
           recibirInstruccion();
         } else {
-          puts("Candtidad de instancias menor a 0");
+
           PCB* procesoBloqueado = obtenerProcesoBloqueado(posicionRecursoSignal);
           log_info(recursosKernel->logger, "Proceso: [%d] se movio a LISTO", procesoBloqueado->pid);
           enviarContexto(procesoDevuelto->contexto, socketCpu, SUCCESS);
@@ -772,12 +829,14 @@ void recibirInstruccion() {
       break;
 
     case CREATE_SEGMENT:
-      puts("-------------------- Llego CREATE_SEGMENT --------------------");
-      printf("Entre en create_segment, codigo Operacion %d\n", codigoOperacion);
       int idSegmento = recibirEntero(socketCpu);
       int tamanioSegmento = recibirEntero(socketCpu);
       pthread_mutex_lock(&operandoConMemoria);
-
+      log_info(
+                  recursosKernel->logger,
+                  "PID: <%d> - Crear Segmento - ID segmento: <%d> - Tamaño: <%d> ",
+                  procesoDevuelto->pid, idSegmento,tamanioSegmento
+                );
       enviarContexto(procesoDevuelto->contexto, socketMemoria, CREATE_SEGMENT);
       enviarEntero(procesoEjecutandose->pid, socketMemoria);
       enviarEntero(idSegmento, socketMemoria);
@@ -795,7 +854,6 @@ void recibirInstruccion() {
           break;
 
         case COMPACTACION:
-          puts("Entre en compactacion");
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
           mostrarContexto(procesoEjecutandose->contexto);
           mostrarTablaDeSegmentos(tablaDeSegmentos);
