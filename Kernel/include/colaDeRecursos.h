@@ -19,5 +19,6 @@
   void bloquearProcesoPorRecurso(PCB* proceso, int posicionRecurso);
   PCB* obtenerProcesoBloqueado(int posicionRecurso);
   void aumentarRecurso(int posicionRecurso);
+  int darInstanciasRecurso(int posicionRecurso);
 
 #endif
