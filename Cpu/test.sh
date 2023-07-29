@@ -20,19 +20,19 @@ if [ "$1" == "BASE" ]; then
 fi
 
 if [ "$1" == "MEMORIA" ]; then 
-	echo "MEMORIA FIRST"
+	./Debug/Cpu  cpu-memoria.config
 fi
 
 if [ "$1" == "ERROR" ]; then 
-	echo "ERROR"
+	./Debug/Cpu  cpuerror.config
 fi
 
 if [ "$1" == "FS" ]; then 
-	echo "FS"
+	./Debug/Cpu  cpu-fileSystem.config
 fi
 
 if [ "$1" == "DEADLOCK" ]; then 
-	echo "DEADLOCK"
+	./Debug/Cpu  cpudeadlock.config
 fi
 
 
