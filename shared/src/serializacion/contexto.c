@@ -185,7 +185,6 @@ t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {
 
     memcpy(&(cantidadCaracteres), buffer->stream + *posicion, sizeof(int));
     *posicion += sizeof(int);
-    printf("cantidad caracteres %d", cantidadCaracteres);
 
     char* nombreArchivo = malloc(cantidadCaracteres);
     memcpy(nombreArchivo, buffer->stream + *posicion,  cantidadCaracteres);
@@ -195,7 +194,6 @@ t_list* deserializarArchivosAbiertos(t_buffer* buffer, int* posicion) {
     memcpy(&(punteroArchivo), buffer->stream + *posicion, sizeof(int));
     *posicion += sizeof(int);
 
-    printf("dirrecion deserializada %d\n", punteroArchivo);
     archivo->nombre = nombreArchivo;
     archivo->punteroArchivo = punteroArchivo;
     list_add(listaArchivos, archivo);
