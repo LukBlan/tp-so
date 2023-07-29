@@ -70,6 +70,7 @@ void ocuparMemoriaSegmento(Segmento* segmento, contenidoSegmento* contenidoSegme
     idProceso, segmento->id, segmento->base, segmento->limite
   );
   ocuparBitArray(segmento);
+  free(contenidoSegmento->contenido);
 }
 
 void ocuparMemoriaProceso(tablaDeSegmento* contenidoProceso, tablaDeSegmento* segmentosProceso, int* base) {
@@ -114,12 +115,8 @@ void obtenerContenidoPorProceso(int idProceso, tablaDeSegmento* contenidoProceso
   for (int i = 0; i < cantidadSegmentos; i++) {
     contenidoSegmento* contenido = malloc(sizeof(contenidoSegmento));
     Segmento* segmento = list_get(listaSegmentos, i);
-    char* contenidoSring = malloc(5);
     void* contenidoMemoria = malloc(segmento->limite);
     memcpy(contenidoMemoria, memoriaPrincipal + segmento->base, segmento->limite);
-    memcpy(contenidoSring, contenidoMemoria, 4);
-    contenidoSring[4] = '\0';
-    printf("El contenido es %s\n", contenidoSring);
     contenido->idSegmento = segmento->id;
     contenido->contenido = contenidoMemoria;
     list_add(contenidoProceso->segmentos_proceso, contenido);
@@ -149,11 +146,12 @@ void compactacion() {
   contextoEjecucion* contextoAlRePedo = generarContextoAlPedo();
   enviarContexto(contextoAlRePedo, clienteActual, COMPACTACION);
   int retardoCompactacion = recursosMemoria->configuracion->RETARDO_COMPACTACION * 1000;
-  //usleep(retardoCompactacion);
+  usleep(retardoCompactacion);
   t_list* listaDeProcesosConContenido = obtenerContenidoSegmentos();
   limpiarArrayBits();
   ocuparMemoriaPrincipal(listaDeProcesosConContenido);
   respuestaMemoria = COMPACTACION;
+  liberarContexto(contextoAlRePedo);
 }
 
 Segmento* buscarCandidato(int tamanio) {

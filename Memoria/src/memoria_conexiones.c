@@ -256,6 +256,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       memcpy(memoriaPrincipal+posicionAMovear, cosaAEscribir, strlen(cosaAEscribir));
       enviarContexto(contexto, socketCliente, SUCCESS);
       liberarContexto(contexto);
+      free(cosaAEscribir);
       break;
 
       case F_WRITE_MEMORIA:

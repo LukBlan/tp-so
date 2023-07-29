@@ -85,7 +85,6 @@ void montarServidor() {
   while (1) {
     int socketCliente = esperarCliente(socketServidor);
     instrucciones = obtenerListaInstruciones(socketCliente);
-    mostrarInstrucciones(instrucciones);
     pcb = crearPcb(instrucciones);
     pthread_mutex_lock(&operandoConMemoria);
     recibirSegementoMemoria(pcb);

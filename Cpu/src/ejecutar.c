@@ -269,7 +269,6 @@ int ejecutarDosParametros(t_instruccion* instruccion) {
     usleep(retardoInstruccion);
     setearRegistro(primerParametro, segundoParametro);
     contexto->registros = recursosCpu->registros;
-    mostrarRegistros(contexto->registros);
   } else if (strcmp("MOV_IN", identificador) == 0) {
     int direccionLogicaMov = atoi (segundoParametro);
     int numeroSegmentoMov = darNumeroSegmentoMMU(direccionLogicaMov);
