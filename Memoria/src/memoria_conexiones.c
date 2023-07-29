@@ -182,6 +182,7 @@ void procesarOperacion(op_code codigoOperacion, int socketCliente) {
       int idSegmento = recibirEntero(socketCliente);
       int tamanioSegmento = recibirEntero(socketCliente);
       respuestaMemoria = Pcb; // Se usa cuando se compacta
+      clienteActual = socketCliente;
 
       if (puedoGuardar(tamanioSegmento)) {
         usleep(retardoMemoria);

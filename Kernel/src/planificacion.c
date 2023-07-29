@@ -855,7 +855,11 @@ void recibirInstruccion() {
           break;
 
         case COMPACTACION:
+          contextoEjecucion* contextoAlRePedo = recibirContexto(socketMemoria);
+          log_info(recursosKernel->logger, "Se solicitó compactación");
+          obtenerCodigoOperacion(socketMemoria);
           t_list* tablaDeSegmentos = recibirTablaDeSegmentos(socketMemoria);
+          log_info(recursosKernel->logger, "Se finalizó el proceso de compactación");
           mostrarContexto(procesoEjecutandose->contexto);
           mostrarTablaDeSegmentos(tablaDeSegmentos);
           actualizarSegmentosProcesos(tablaDeSegmentos);
